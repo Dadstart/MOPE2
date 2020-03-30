@@ -24,5 +24,46 @@ namespace B4.Mope
 		{
 			InitializeComponent();
 		}
+
+		private void CommandBinding_HelpCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+		}
+
+		private void CommandBinding_HelpExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+		}
+
+		private void CommandBinding_OpenCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+		}
+
+		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+
+		}
+
+		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			// TODO: Check dirty state
+			e.CanExecute = true;
+		}
+
+		private void CommandBinding_SaveExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+
+		}
+
+		private void CommandBinding_SaveAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			// TODO: Check for open file
+			e.CanExecute = true;
+		}
+
+		private void CommandBinding_SaveAsExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+
+		}
 	}
 }
