@@ -5,8 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MOPE" Height="450" Width="800">
+    <DockPanel>
+        <Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
+            <MenuItem Header="File" />
+            <MenuItem Header="View" />
+            <MenuItem Header="Tools" />
+        </Menu>
+        <Grid DockPanel.Dock="Left" Background="LightGreen" Width="240">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0">
+                <Button x:Name="btnPartsView" DockPanel.Dock="Top">Parts (Files)</Button>
+                <ListView x:Name="lstViewParts"></ListView>
+            </DockPanel>
+            <DockPanel Grid.Row="1">
+            <Button x:Name="btnZipFilesView" DockPanel.Dock="Top">Zip Archive Layout</Button>
+            <TreeView x:Name="treeViewZipFiles"></TreeView>
+            </DockPanel>
+            <DockPanel Grid.Row="2">
+            <Button x:Name="btnPackageView" DockPanel.Dock="Top">Package Relationships</Button>
+            <TreeView x:Name="treeViewPackage"></TreeView>
+            </DockPanel>
+        
+        </Grid>
+        <TabPanel Background="LightPink">
 
-    </Grid>
+        </TabPanel>
+        
+    </DockPanel>
 </Window>
