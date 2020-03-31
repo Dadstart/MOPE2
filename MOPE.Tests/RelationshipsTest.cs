@@ -10,11 +10,12 @@ namespace MOPE.Tests
 	public class RelationshipsTest
 	{
 		[Theory]
-		[InlineData("rId1", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", "word/document.xml")]
-		[InlineData("rId2", "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties", "docProps/core.xml")]
-		[InlineData("rId3", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties", "docProps/app.xml")]
-		[InlineData("rId4", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties", "docProps/custom.xml")]
-		public void TestLoad(string id, string type, string target)
+		[InlineData("rId1", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", "word/document.xml", false)]
+		[InlineData("rId2", "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties", "docProps/core.xml", false)]
+		[InlineData("rId3", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties", "docProps/app.xml", false)]
+		[InlineData("rId4", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties", "docProps/custom.xml", false)]
+		[InlineData("rId5", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", "https://www.bing.com", true)]
+		public void TestLoad(string id, string type, string target, bool external)
 		{
 			Relationships rels;
 			var assembly = Assembly.GetExecutingAssembly();
@@ -23,14 +24,15 @@ namespace MOPE.Tests
 				rels = Relationships.Load(Mock.Of<Package>(), null, xmlFile);
 			}
 
-			AssertRel(rels[id], id, type, target);
+			AssertRel(rels[id], id, type, target, external);
 		}
 
-		private void AssertRel(Relationship rel, string id, string type, string target)
+		private void AssertRel(Relationship rel, string id, string type, string target, bool external)
 		{
 			Assert.Equal(id, rel.Id);
 			Assert.Equal(type, rel.Type);
 			Assert.Equal(target, rel.Target);
+			Assert.Equal(external, rel.External);
 		}
 
 		[Theory]

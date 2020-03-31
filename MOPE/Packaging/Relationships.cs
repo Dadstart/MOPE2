@@ -61,12 +61,17 @@ namespace B4.Mope.Packaging
 					|| !string.Equals(elt.LocalName, "Relationship", StringComparison.Ordinal))
 					continue;
 
+				// read target mode; default to internal
+				bool external = string.Equals(elt.GetAttribute("TargetMode"), "External", StringComparison.Ordinal);
+
+				// create the rel
 				var rel = new Relationship(
 					package,
 					source,
 					elt.GetAttribute("Id"),
 					elt.GetAttribute("Type"),
-					elt.GetAttribute("Target"));
+					elt.GetAttribute("Target"),
+					external);
 
 				rels.Add(rel.Id, rel);
 			}

@@ -32,15 +32,21 @@ namespace B4.Mope.Packaging
 		public string Target { get; }
 
 		/// <summary>
+		/// External or internal relationship
+		/// </summary>
+		public bool External { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
-		public Relationship(Package package, string source, string id, string type, string target)
+		public Relationship(Package package, string source, string id, string type, string target, bool external = false)
 		{
 			Package = package ?? throw new ArgumentNullException(nameof(package));
 			Source = source;
 			Id = string.IsNullOrEmpty(id) ? throw new ArgumentNullException(nameof(id)) : id;
 			Type = string.IsNullOrEmpty(type) ? throw new ArgumentNullException(nameof(type)) : type;
 			Target = string.IsNullOrEmpty(target) ? throw new ArgumentNullException(nameof(target)) : target;
+			External = external;
 		}
 
 		/// <summary>
