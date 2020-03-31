@@ -11,7 +11,7 @@ namespace B4.Mope.Packaging
 		private string m_zipFile;
 		private string m_tempDir;
 		public Dictionary<string, Part> Parts { get; } = new Dictionary<string, Part>();
-		public Dictionary<string, string> ContentTypes { get; private set; }
+		public ContentTypes ContentTypes { get; private set; }
 
 		public Package(string path, string tempDir)
 		{
@@ -35,66 +35,10 @@ namespace B4.Mope.Packaging
 		void LoadContentTypes()
 		{
 			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(Path.Combine(m_tempDir, "[Content_Types].xml"));
-
-			XmlElement typesRoot = null;
-
-			// get Types root element
-			foreach (var node in xmlDoc.ChildNodes)
+			using (var stream = File.OpenRead(Path.Combine(m_tempDir, "[Content_Types].xml")))
 			{
-				// ignore if not an element
-				var elt = node as XmlElement;
-				if (elt == null)
-					continue;
-
-				if (string.Equals(elt.NamespaceURI, Namespaces.ContentTypes, StringComparison.Ordinal))
-				{
-					typesRoot = elt;
-					break;
-				}
+				ContentTypes = ContentTypes.Load(stream);
 			}
-
-			if (typesRoot == null)
-				throw new Exception("Invalid [Content_Types].xml. Missing Types root element.");
-
-			var contentTypes = new Dictionary<string, string>();
-
-			// now parse content types
-			foreach (XmlNode node in typesRoot.ChildNodes)
-			{
-				var elt = node as XmlElement;
-				// ignore if not an element
-				if (elt == null)
-					continue;
-
-				// ignore if not the right namespace
-				if (!string.Equals(elt.NamespaceURI, Namespaces.ContentTypes, StringComparison.Ordinal))
-					continue;
-
-				string key;
-				string contentType;
-
-				switch (elt.LocalName)
-				{
-					case "Default":
-						key = elt.GetAttribute("Extension", Namespaces.ContentTypes);
-						contentType = elt.GetAttribute("ContentType", Namespaces.ContentTypes);
-						break;
-					case "Override":
-						key = elt.GetAttribute("PartName", Namespaces.ContentTypes);
-						contentType = elt.GetAttribute("ContentType", Namespaces.ContentTypes);
-						break;
-					default:
-						continue;
-				}
-
-				if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(contentType))
-					throw new Exception("Invalid content type entry");
-
-				contentTypes.Add(key, contentType);
-			}
-
-			ContentTypes = contentTypes;
 		}
 
 		#region IDisposable Support
