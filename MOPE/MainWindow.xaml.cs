@@ -45,7 +45,6 @@ namespace B4.Mope
 			using (var z = new ZipContainer("foo"))
 			{
 				var package = new Package(@"C:\temp\1.docx", @"C:\temp\x");
-				package.Open();
 			}
 		}
 

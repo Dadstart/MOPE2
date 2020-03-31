@@ -10,7 +10,6 @@ namespace B4.Mope.Packaging
 {
 	public class ZipContainer : IContainer
 	{
-		private Dictionary<string, ZipArchiveEntry> m_entries;
 		private ZipArchive m_archive;
 
 		/// <summary>
@@ -30,22 +29,21 @@ namespace B4.Mope.Packaging
 		/// <param name="access">The file access in which to open with package.</param>
 		/// <param name="share">The sharing access other apps have</param>
 		/// <returns>Collection of zip entries indexed by relative URI</returns>
-		public static Dictionary<string, ZipArchiveEntry> ExtractTo(string file, string outputDir, FileMode mode = FileMode.Open, FileAccess access = FileAccess.Read, FileShare share = FileShare.ReadWrite)
+		public static IEnumerable<ZipArchiveEntry> ExtractTo(string file, string outputDir, FileMode mode = FileMode.Open, FileAccess access = FileAccess.Read, FileShare share = FileShare.ReadWrite)
 		{
 			using (var archive = new ZipArchive(File.Open(file, mode, access, share)))
 			{
-				var entries = new Dictionary<string, ZipArchiveEntry>(archive.Entries.Count, StringComparer.OrdinalIgnoreCase);
 				Directory.CreateDirectory(outputDir);
 				foreach (var entry in archive.Entries)
 				{
 					string relativePath = entry.FullName.Replace('/', '\\');
-					entries.Add(relativePath, entry);
 					string outputFile = Path.Combine(outputDir, relativePath);
 					string directory = outputFile.Substring(0, outputFile.Length - entry.Name.Length - 1);
 					Directory.CreateDirectory(directory);
 					entry.ExtractToFile(outputFile, overwrite: true);
 				}
-			return entries;
+
+				return archive.Entries;
 			}
 		}
 
@@ -137,7 +135,7 @@ namespace B4.Mope.Packaging
 		/// <returns>An array of file URIs</returns>
 		public IEnumerable<string> GetFiles()
 		{
-			return m_entries.Keys;
+			return null;
 		}
 
 		/// <summary>

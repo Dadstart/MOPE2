@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -8,37 +9,84 @@ namespace B4.Mope.Packaging
 {
 	public class Package : IDisposable
 	{
-		private string m_zipFile;
-		private string m_tempDir;
+		public string ZipFile { get; }
+		public string TempDirectory { get; }
 		public Dictionary<string, Part> Parts { get; } = new Dictionary<string, Part>();
-		public ContentTypes ContentTypes { get; private set; }
+		public ContentTypes ContentTypes { get; }
+		public Relationships Relationships { get; }
+
+		public Package()
+		{
+
+		}
 
 		public Package(string path, string tempDir)
 		{
-			this.m_zipFile = path;
-			this.m_tempDir = tempDir;
-		}
+			ZipFile = path;
+			TempDirectory = tempDir;
 
-		public void Open()
-		{
-			Directory.CreateDirectory(m_tempDir);
-			var entries = ZipContainer.ExtractTo(m_zipFile, m_tempDir, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+			Directory.CreateDirectory(TempDirectory);
+			var entries = ZipContainer.ExtractTo(ZipFile, TempDirectory, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
 			// read [Content_Types].xml
-			LoadContentTypes();
+			ContentTypes = LoadContentTypes();
 
+			// loop through entries and create parts
+			foreach (var entry in entries)
+			{
+				var part = new Part(this, entry.Name, entry.FullName, ContentTypes.GetContentType(entry.FullName), entry.Crc32);
+				Parts.Add(part.Uri, part);
+			}
 		}
 
 		/// <summary>
 		/// Load content types from xml file
 		/// </summary>
-		void LoadContentTypes()
+		ContentTypes LoadContentTypes()
 		{
-			XmlDocument xmlDoc = new XmlDocument();
-			using (var stream = File.OpenRead(Path.Combine(m_tempDir, "[Content_Types].xml")))
+			using (var stream = File.OpenRead(Path.Combine(TempDirectory, "[Content_Types].xml")))
 			{
-				ContentTypes = ContentTypes.Load(stream);
+				return ContentTypes.Load(stream);
 			}
+		}
+
+		/// <summary>
+		/// Load all relationships returning root relationships
+		/// </summary>
+		/// <returns></returns>
+		Relationships LoadRelationships()
+		{
+			Relationships rootRels;
+
+			// first load root
+			var rootRelsFile = Parts["_rels/.rels"].GetFileInfo();
+			using (var stream = rootRelsFile.OpenRead())
+			{
+				rootRels = Relationships.Load(this, null, stream);
+			}
+
+			// now loop through all .rels parts
+			foreach (var part in Parts.Values.Where(p => p.Name.EndsWith(".rels")))
+			{
+				Relationships rels;
+				string source = Relationships.GetRelationshipPartOwner(part.Uri);
+				using (var stream = part.GetFileInfo().OpenRead())
+				{
+					rels = Relationships.Load(this, source, stream);
+				}
+			}
+
+			return rootRels;
+		}
+
+		public FileInfo GetPartFileInfo(string uri)
+		{
+			if (string.IsNullOrEmpty(uri))
+				throw new ArgumentNullException(nameof(uri));
+
+			var part = Parts[uri];
+			var fullPath = Path.Combine(TempDirectory, part.Uri.Replace('/', '\\'));
+			return new FileInfo(fullPath);
 		}
 
 		#region IDisposable Support

@@ -9,8 +9,8 @@ namespace B4.Mope.Packaging
 {
 	public class ContentTypes
 	{
-		public Dictionary<string, string> Defaults { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
-		public Dictionary<string, string> Overrides { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
+		public Dictionary<string, string> Defaults { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		public Dictionary<string, string> Overrides { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
 		public void AddDefault(string ext, string contentType)
 		{
@@ -90,6 +90,21 @@ namespace B4.Mope.Packaging
 			}
 
 			return contentTypes;
+		}
+
+		public string GetContentType(string uri)
+		{
+			if (string.IsNullOrEmpty(uri))
+				throw new ArgumentNullException(nameof(uri));
+
+			if (Overrides.ContainsKey(uri))
+				return Overrides[uri];
+
+			var ext = Path.GetExtension(uri);
+			if (Overrides.ContainsKey(ext))
+				return Overrides[ext];
+
+			throw new Exception($"No known content type for {ext}");
 		}
 	}
 }
