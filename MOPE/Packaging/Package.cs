@@ -42,6 +42,14 @@ namespace B4.Mope.Packaging
 		}
 
 		/// <summary>
+		/// Close package and free resources
+		/// </summary>
+		public void Close()
+		{
+			Dispose();
+		}
+
+		/// <summary>
 		/// Load content types from xml file
 		/// </summary>
 		ContentTypes LoadContentTypes()
@@ -103,19 +111,31 @@ namespace B4.Mope.Packaging
 					// TODO: dispose managed state (managed objects).
 				}
 
-				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-				// TODO: set large fields to null.
+				// free unmanaged resources
+				if (Directory.Exists(TempDirectory))
+				{
+					try
+					{
+						Directory.Delete(TempDirectory, true);
+					}
+					catch
+					{
+						// we did our best, swallow exception
+					}
+				}
 
 				m_isDisposed = true;
 			}
 		}
 
-		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-		// ~Package()
-		// {
-		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-		//   Dispose(false);
-		// }
+		/// <summary>
+		/// Finalizer
+		/// </summary>
+		~Package()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(false);
+		}
 
 		// This code added to correctly implement the disposable pattern.
 		public void Dispose()
