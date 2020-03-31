@@ -47,7 +47,8 @@ namespace B4.Mope.Packaging
 				if (elt == null)
 					continue;
 
-				if (string.Equals(elt.NamespaceURI, Namespaces.ContentTypes, StringComparison.Ordinal))
+				if (string.Equals(elt.NamespaceURI, Namespaces.ContentTypes, StringComparison.Ordinal)
+					&& string.Equals(elt.LocalName, "Types"))
 				{
 					typesRoot = elt;
 					break;
