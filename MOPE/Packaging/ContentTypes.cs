@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -28,13 +29,13 @@ namespace B4.Mope.Packaging
 			if (string.IsNullOrEmpty(contentType))
 				throw new ArgumentNullException(nameof(contentType), "Invalid override content type");
 
-			Defaults.Add(partName, contentType)''
+			Overrides.Add(partName, contentType);
 		}
 
-		public static ContentTypes Load(string filename)
+		public static ContentTypes Load(Stream xml)
 		{
 			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(filename);
+			xmlDoc.Load(xml);
 
 			XmlElement typesRoot = null;
 
@@ -74,13 +75,13 @@ namespace B4.Mope.Packaging
 				{
 					case "Default":
 						contentTypes.AddDefault(
-							elt.GetAttribute("Extension", Namespaces.ContentTypes),
-							elt.GetAttribute("ContentType", Namespaces.ContentTypes));
+							elt.GetAttribute("Extension"),
+							elt.GetAttribute("ContentType"));
 						break;
 					case "Override":
 						contentTypes.AddOverride(
-							elt.GetAttribute("PartName", Namespaces.ContentTypes),
-							elt.GetAttribute("ContentType", Namespaces.ContentTypes));
+							elt.GetAttribute("PartName"),
+							elt.GetAttribute("ContentType"));
 						break;
 					default:
 						continue;
