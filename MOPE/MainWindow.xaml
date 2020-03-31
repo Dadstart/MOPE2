@@ -29,24 +29,21 @@
                 <MenuItem Header="_About" Icon="❔" Command="ApplicationCommands.Help"/>
             </MenuItem>
         </Menu>
-        <Grid DockPanel.Dock="Left" Background="LightGreen" Width="240">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <DockPanel Grid.Row="0">
-                <Button x:Name="btnPartsView" DockPanel.Dock="Top">Parts (Files)</Button>
-                <ListView x:Name="lstViewParts"></ListView>
-            </DockPanel>
-            <DockPanel Grid.Row="1">
-            <Button x:Name="btnZipFilesView" DockPanel.Dock="Top">Zip Archive Layout</Button>
-            <TreeView x:Name="treeViewZipFiles"></TreeView>
-            </DockPanel>
-            <DockPanel Grid.Row="2">
-            <Button x:Name="btnPackageView" DockPanel.Dock="Top">Package Relationships</Button>
-            <TreeView x:Name="treeViewPackage"></TreeView>
-            </DockPanel>
+        <Grid x:Name="gridContentViews">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0" Expanded="expanderPartsView_Expanded" Collapsed="expanderPartsView_Collapsed">
+				<ListView x:Name="lstViewParts"></ListView>
+			</Expander>
+			<Expander x:Name="expanderFilesView" Header="Zip Archive Layout" Grid.Row="1" Expanded="expanderFilesView_Expanded" Collapsed="expanderFilesView_Collapsed">
+                <TreeView x:Name="treeViewZipFiles"></TreeView>
+            </Expander>
+			<Expander x:Name="expanderRelationshipsView" Header="Package Relationships" Grid.Row="2" Expanded="expanderRelationshipsView_Expanded" Collapsed="expanderRelationshipsView_Collapsed">
+                <TreeView x:Name="treeViewPackage"></TreeView>
+            </Expander>
         
         </Grid>
         <TabPanel Background="LightPink">

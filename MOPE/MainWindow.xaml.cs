@@ -21,6 +21,11 @@ namespace B4.Mope
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		/// <summary>
+		/// App data
+		/// </summary>
+		public Data Data { get; private set; } = new Data();
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -42,10 +47,8 @@ namespace B4.Mope
 
 		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			using (var z = new ZipContainer("foo"))
-			{
-				var package = new Package(@"C:\temp\1.docx", @"C:\temp\x");
-			}
+			Data.Package?.Close();
+			Data.Package = new Package(@"C:\temp\1.docx", @"C:\temp\x");
 		}
 
 		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -68,6 +71,42 @@ namespace B4.Mope
 		private void CommandBinding_SaveAsExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 
+		}
+
+		protected override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+			Data?.Package?.Close();
+		}
+
+		private void expanderPartsView_Expanded(object sender, RoutedEventArgs e)
+		{
+			gridContentViews.RowDefinitions[0].Height = GridLength.Auto;
+		}
+
+		private void expanderPartsView_Collapsed(object sender, RoutedEventArgs e)
+		{
+			gridContentViews.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+		}
+
+		private void expanderFilesView_Expanded(object sender, RoutedEventArgs e)
+		{
+			gridContentViews.RowDefinitions[1].Height = GridLength.Auto;
+		}
+
+		private void expanderFilesView_Collapsed(object sender, RoutedEventArgs e)
+		{
+			gridContentViews.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
+		}
+
+		private void expanderRelationshipsView_Expanded(object sender, RoutedEventArgs e)
+		{
+			gridContentViews.RowDefinitions[2].Height = GridLength.Auto;
+		}
+
+		private void expanderRelationshipsView_Collapsed(object sender, RoutedEventArgs e)
+		{
+			gridContentViews.RowDefinitions[2].Height = new GridLength(1, GridUnitType.Star);
 		}
 	}
 }
