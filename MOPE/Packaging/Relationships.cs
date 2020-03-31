@@ -63,6 +63,7 @@ namespace B4.Mope.Packaging
 
 				var rel = new Relationship(
 					package,
+					source,
 					elt.GetAttribute("Id"),
 					elt.GetAttribute("Type"),
 					elt.GetAttribute("Target"));

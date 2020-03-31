@@ -13,7 +13,7 @@ namespace B4.Mope.Packaging
 		public string Uri { get; }
 		public string ContentType { get; }
 		public uint Crc32 { get; }
-		public Relationships Relationships { get; }
+		public Relationships Relationships { get; set; }
 
 		public Part(Package package, string name, string uri, string contentType, uint crc32)
 		{

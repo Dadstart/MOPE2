@@ -37,6 +37,8 @@ namespace B4.Mope.Packaging
 				var part = new Part(this, entry.Name, entry.FullName, ContentTypes.GetContentType(entry.FullName), entry.Crc32);
 				Parts.Add(part.Uri, part);
 			}
+
+			Relationships = LoadRelationships();
 		}
 
 		/// <summary>
@@ -73,6 +75,7 @@ namespace B4.Mope.Packaging
 				using (var stream = part.GetFileInfo().OpenRead())
 				{
 					rels = Relationships.Load(this, source, stream);
+					part.Relationships = rels;
 				}
 			}
 

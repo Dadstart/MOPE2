@@ -100,9 +100,9 @@ namespace B4.Mope.Packaging
 			if (Overrides.ContainsKey(uri))
 				return Overrides[uri];
 
-			var ext = Path.GetExtension(uri);
-			if (Overrides.ContainsKey(ext))
-				return Overrides[ext];
+			var ext = Path.GetExtension(uri).Substring(1);
+			if (Defaults.ContainsKey(ext))
+				return Defaults[ext];
 
 			throw new Exception($"No known content type for {ext}");
 		}

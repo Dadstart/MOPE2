@@ -21,6 +21,7 @@ namespace MOPE.Tests
 			}
 
 			Assert.Equal(contentType, ct.Overrides[partUri]);
+			Assert.Equal(contentType, ct.GetContentType(partUri));
 		}
 
 		[Theory]
@@ -37,11 +38,7 @@ namespace MOPE.Tests
 			}
 
 			Assert.Equal(contentType, ct.Defaults[ext]);
-			Assert.Equal("application/vnd.openxmlformats-package.relationships+xml", ct.Defaults["rels"]);
-			Assert.Equal("application/xml", ct.Defaults["xml"]);
-
-			Assert.Equal("application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml", ct.Overrides["/word/document.xml"]);
-			Assert.Equal("application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml", ct.Overrides["/word/styles.xml"]);
+			Assert.Equal(contentType, ct.GetContentType($"foo.{ext}"));
 		}
 	}
 }
