@@ -1,4 +1,5 @@
-﻿using System;
+﻿using B4.Mope.Packaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,7 +42,11 @@ namespace B4.Mope
 
 		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-
+			using (var z = new ZipContainer("foo"))
+			{
+				var package = new Package(@"C:\temp\1.docx", @"C:\temp\x");
+				package.Open();
+			}
 		}
 
 		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)
