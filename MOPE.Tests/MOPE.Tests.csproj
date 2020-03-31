@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Collateral\.rels" />
     <None Remove="Collateral\Lorem.docx" />
     <None Remove="Collateral\[Content_Types].xml" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Collateral\.rels" />
     <EmbeddedResource Include="Collateral\Lorem.docx" />
     <EmbeddedResource Include="Collateral\[Content_Types].xml" />
   </ItemGroup>
