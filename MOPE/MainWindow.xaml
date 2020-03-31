@@ -6,49 +6,54 @@
         xmlns:local="clr-namespace:B4.Mope"
         mc:Ignorable="d"
         Title="MOPE: Office Package Editor" Height="450" Width="800">
-    <Window.CommandBindings>
-        <CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>
-        <CommandBinding Command="Open" CanExecute="CommandBinding_OpenCanExecute" Executed="CommandBinding_OpenExecuted"/>
-        <CommandBinding Command="Save" CanExecute="CommandBinding_SaveCanExecute" Executed="CommandBinding_SaveExecuted"/>
-    </Window.CommandBindings>
-    <DockPanel>
-        <Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Open" Icon="📂" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open"/>
-                <MenuItem Header="_Save" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
-                <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs"/>
-                <Separator />
-                <MenuItem Header="E_xit" />
-            </MenuItem>
-            <MenuItem Header="_View" />
-            <MenuItem Header="_Tools">
-                <MenuItem Header="_Options" Icon="⛭"/>
-            </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="_Feedback" Icon="📣"/>
-                <MenuItem Header="_About" Icon="❔" Command="ApplicationCommands.Help"/>
-            </MenuItem>
-        </Menu>
-        <Grid x:Name="gridContentViews">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
-			<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0" Expanded="expanderPartsView_Expanded" Collapsed="expanderPartsView_Collapsed">
-				<ListView x:Name="lstViewParts"></ListView>
-			</Expander>
-			<Expander x:Name="expanderFilesView" Header="Zip Archive Layout" Grid.Row="1" Expanded="expanderFilesView_Expanded" Collapsed="expanderFilesView_Collapsed">
-                <TreeView x:Name="treeViewZipFiles"></TreeView>
-            </Expander>
-			<Expander x:Name="expanderRelationshipsView" Header="Package Relationships" Grid.Row="2" Expanded="expanderRelationshipsView_Expanded" Collapsed="expanderRelationshipsView_Collapsed">
-                <TreeView x:Name="treeViewPackage"></TreeView>
-            </Expander>
-        
-        </Grid>
-        <TabPanel Background="LightPink">
+	<Window.CommandBindings>
+		<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>
+		<CommandBinding Command="Open" CanExecute="CommandBinding_OpenCanExecute" Executed="CommandBinding_OpenExecuted"/>
+		<CommandBinding Command="Save" CanExecute="CommandBinding_SaveCanExecute" Executed="CommandBinding_SaveExecuted"/>
+	</Window.CommandBindings>
+	<DockPanel>
+		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
+			<MenuItem Header="_File">
+				<MenuItem Header="_Open" Icon="📂" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open"/>
+				<MenuItem Header="_Save" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
+				<MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs"/>
+				<Separator />
+				<MenuItem Header="E_xit" />
+			</MenuItem>
+			<MenuItem Header="_View" />
+			<MenuItem Header="_Tools">
+				<MenuItem Header="_Options" Icon="⛭"/>
+			</MenuItem>
+			<MenuItem Header="_Help">
+				<MenuItem Header="_Feedback" Icon="📣"/>
+				<MenuItem Header="_About" Icon="❔" Command="ApplicationCommands.Help"/>
+			</MenuItem>
+		</Menu>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" MinWidth="240" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid x:Name="gridContentViews" Grid.Column="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0" Expanded="expanderPartsView_Expanded" Collapsed="expanderPartsView_Collapsed">
+					<ListView x:Name="lstViewParts"></ListView>
+				</Expander>
+				<Expander x:Name="expanderFilesView" Header="Zip Archive Layout" Grid.Row="1" Expanded="expanderFilesView_Expanded" Collapsed="expanderFilesView_Collapsed">
+					<TreeView x:Name="treeViewZipFiles"></TreeView>
+				</Expander>
+				<Expander x:Name="expanderRelationshipsView" Header="Package Relationships" Grid.Row="2" Expanded="expanderRelationshipsView_Expanded" Collapsed="expanderRelationshipsView_Collapsed">
+					<TreeView x:Name="treeViewPackage"></TreeView>
+				</Expander>
+			</Grid>
+			<GridSplitter Grid.Column="0" Width="5"/>
+			<TabPanel Background="LightPink" Grid.Column="1">
 
-        </TabPanel>
-        
-    </DockPanel>
+			</TabPanel>
+		</Grid>
+	</DockPanel>
 </Window>
