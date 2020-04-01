@@ -78,35 +78,5 @@ namespace B4.Mope
 			base.OnClosed(e);
 			Data?.Package?.Close();
 		}
-
-		private void expanderPartsView_Expanded(object sender, RoutedEventArgs e)
-		{
-			gridContentViews.RowDefinitions[0].Height = GridLength.Auto;
-		}
-
-		private void expanderPartsView_Collapsed(object sender, RoutedEventArgs e)
-		{
-			gridContentViews.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-		}
-
-		private void expanderFilesView_Expanded(object sender, RoutedEventArgs e)
-		{
-			gridContentViews.RowDefinitions[1].Height = GridLength.Auto;
-		}
-
-		private void expanderFilesView_Collapsed(object sender, RoutedEventArgs e)
-		{
-			gridContentViews.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
-		}
-
-		private void expanderRelationshipsView_Expanded(object sender, RoutedEventArgs e)
-		{
-			gridContentViews.RowDefinitions[2].Height = GridLength.Auto;
-		}
-
-		private void expanderRelationshipsView_Collapsed(object sender, RoutedEventArgs e)
-		{
-			gridContentViews.RowDefinitions[2].Height = new GridLength(1, GridUnitType.Star);
-		}
 	}
 }
