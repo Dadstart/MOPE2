@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:B4.Mope"
         xmlns:localUI="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
-        Title="MOPE: Office Package Editor" Height="450" Width="800">
+        Title="MOPE: Office Package Editor" Height="600" Width="800">
 	<Window.CommandBindings>
 		<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>
 		<CommandBinding Command="Open" CanExecute="CommandBinding_OpenCanExecute" Executed="CommandBinding_OpenExecuted"/>
@@ -14,6 +14,7 @@
 	</Window.CommandBindings>
 	<Window.Resources>
 		<localUI:BoolToGridLengthConverter x:Key="expanderGridLengthConverter" />
+		<local:Data x:Key="appData" />
 	</Window.Resources>
 	<DockPanel>
 		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
@@ -42,16 +43,20 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="{Binding Path=IsExpanded, ElementName=expanderPartsView, Converter={StaticResource expanderGridLengthConverter}}" />
 					<RowDefinition Height="{Binding Path=IsExpanded, ElementName=expanderFilesView, Converter={StaticResource expanderGridLengthConverter}}" />
-					<RowDefinition Height="{Binding Path=IsExpanded, ElementName=expanderRelationshipsView, Converter={StaticResource expanderGridLengthConverter}}" />
 				</Grid.RowDefinitions>
-				<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0">
-					<ListView x:Name="lstViewParts"></ListView>
+				<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0" IsExpanded="True">
+					<ListView x:Name="listViewParts">
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="URI" Width="120" DisplayMemberBinding="{Binding Name}"/>
+								<GridViewColumn Header="Content Type" Width="10" DisplayMemberBinding="{Binding ContentType}"/>
+								<GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size}" />
+							</GridView>
+						</ListView.View>
+					</ListView>
 				</Expander>
-				<Expander x:Name="expanderFilesView" Header="Zip Archive Layout" Grid.Row="1">
+				<Expander x:Name="expanderFilesView" Header="Zip Archive Layout" Grid.Row="1" IsExpanded="True">
 					<TreeView x:Name="treeViewZipFiles"></TreeView>
-				</Expander>
-				<Expander x:Name="expanderRelationshipsView" Header="Package Relationships" Grid.Row="2">
-					<TreeView x:Name="treeViewPackage"></TreeView>
 				</Expander>
 			</Grid>
 			<GridSplitter Grid.Column="0" Width="5"/>

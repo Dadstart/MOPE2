@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\Assets\Color.ico">
+    <Resource Include="..\Assets\Color.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
-    </None>
+    </Resource>
   </ItemGroup>
 
 </Project>

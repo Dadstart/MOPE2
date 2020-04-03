@@ -34,7 +34,7 @@ namespace B4.Mope.Packaging
 			// loop through entries and create parts
 			foreach (var entry in entries)
 			{
-				var part = new Part(this, entry.Name, entry.FullName, ContentTypes.GetContentType(entry.FullName), entry.Crc32);
+				var part = new Part(this, entry.Name, entry.FullName, ContentTypes.GetContentType(entry.FullName), entry.Crc32, entry.Length);
 				Parts.Add(part.Uri, part);
 			}
 
