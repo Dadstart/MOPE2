@@ -16,6 +16,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="icons\folder.ico" />
+    <None Remove="icons\magnifying glass.ico" />
+    <None Remove="icons\rels.ico" />
+    <None Remove="icons\unknown.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icons\folder.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="icons\magnifying glass.ico" />
+    <Resource Include="icons\rels.ico" />
+    <Resource Include="icons\unknown.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
 
