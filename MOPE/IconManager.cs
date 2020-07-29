@@ -1,4 +1,5 @@
-﻿using B4.Mope.UI;
+﻿using B4.Mope.Packaging;
+using B4.Mope.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -70,6 +71,9 @@ namespace B4.Mope
 			}
 		}
 
+		/// <summary>
+		/// Get image based on content type
+		/// </summary>
 		public BitmapSource GetImageForContentType(string contentType, int size)
 		{
 			switch (contentType)
@@ -79,6 +83,18 @@ namespace B4.Mope
 				default:
 					return UnknownIcon.Get(size);
 			}
+		}
+
+		/// <summary>
+		/// Get image for a part, either a special icon for known parts or based on content-type
+		/// </summary>
+		public BitmapSource GetImageForPart(Part part, int size)
+		{
+			// [Content Types].xml is special
+			if (string.Equals(part.Name, "[Content_Types].xml", StringComparison.Ordinal))
+				return ContentTypesIcon.Get(size);
+
+			return GetImageForContentType(part.ContentType, size);
 		}
 	}
 }
