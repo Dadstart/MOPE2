@@ -5,6 +5,9 @@ using System.Drawing;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace B4.Mope
 {
@@ -35,10 +38,11 @@ namespace B4.Mope
 			}
 		}
 
-		public Bitmap GetImageForContentType(string contentType)
+		public ImageSource GetImageForContentType(string contentType)
 		{
 			var icon = GetIconForContentType(contentType);
-			return Bitmap.FromHicon(icon.Handle);
+			var source = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(64, 64));
+			return source;
 		}
 	}
 }

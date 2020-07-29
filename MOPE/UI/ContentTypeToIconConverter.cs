@@ -24,9 +24,7 @@ namespace B4.Mope.UI
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			//BitmapSource.Create(64, 64, );
-			//BitmapImage bi = new BitmapImage();
-			//bi
+			//return "icons/unknown.ico";			
 			return IconManager.GetImageForContentType(value as string);
 		}
 

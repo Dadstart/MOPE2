@@ -26,17 +26,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="icons\BW.ico" />
-    <EmbeddedResource Include="icons\Color.ico" />
+    <Resource Include="icons\BW.ico" />
+    <Resource Include="icons\Color.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="icons\folder.ico">
+    <Resource Include="icons\folder.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="icons\magnifying glass.ico" />
-    <EmbeddedResource Include="icons\rels.ico" />
-    <EmbeddedResource Include="icons\unknown.ico" />
+    </Resource>
+    <Resource Include="icons\magnifying glass.ico" />
+    <Resource Include="icons\rels.ico" />
+    <Resource Include="icons\unknown.ico" />
   </ItemGroup>
 
   <ItemGroup>
