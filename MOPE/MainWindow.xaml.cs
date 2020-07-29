@@ -154,7 +154,7 @@ namespace B4.Mope
 		private void ListViewDetailsClick(object sender, RoutedEventArgs e)
 		{
 			ToggleMenuCheckedStates(listViewMenuDetails);
-			listViewParts.View = (ViewBase)listViewParts.FindResource("listViewGridView");
+			listViewParts.View = (ViewBase)listViewParts.FindName("listViewDefaultGridView");
 		}
 	}
 }

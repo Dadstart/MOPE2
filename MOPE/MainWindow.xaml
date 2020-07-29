@@ -18,21 +18,6 @@
         <localUI:PartToSizeStringConverter x:Key="partToSizeStringConverter" />
         <localUI:SizeStringConverter x:Key="sizeStringConverter" />
 
-        <GridView x:Key="listViewGridView">
-			<GridViewColumn Header="URI" Width="140">
-				<GridViewColumn.CellTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}"/>
-							<TextBlock Text="{Binding Name}" />
-						</StackPanel>
-					</DataTemplate>
-				</GridViewColumn.CellTemplate>
-			</GridViewColumn>
-			<GridViewColumn Header="Content Type" Width="120" DisplayMemberBinding="{Binding ContentType}"/>
-            <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size, Converter={StaticResource sizeStringConverter}}" />
-        </GridView>
-
 		<DataTemplate x:Key="tilesViewDataTemplate">
 			<DockPanel>
                 <Image DockPanel.Dock="Left" Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=64}" />
@@ -109,7 +94,7 @@
 							</ContextMenu>
 						</ListView.ContextMenu>
 						<ListView.View>
-                            <GridView>
+                            <GridView x:Name="listViewDefaultGridView">
                                 <GridViewColumn Header="URI" Width="140">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
