@@ -1,0 +1,127 @@
+﻿<Window x:Class="B4.Mope.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:B4.Mope"
+        xmlns:localUI="clr-namespace:B4.Mope.UI" xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
+		mc:Ignorable="d"
+        Title="MOPE: Office Package Editor" Height="600" Width="800">
+	<Window.CommandBindings>
+		<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>
+		<CommandBinding Command="Open" CanExecute="CommandBinding_OpenCanExecute" Executed="CommandBinding_OpenExecuted"/>
+		<CommandBinding Command="Save" CanExecute="CommandBinding_SaveCanExecute" Executed="CommandBinding_SaveExecuted"/>
+	</Window.CommandBindings>
+	<Window.Resources>
+		<local:Data x:Key="appData" />
+        <localUI:PartToBitmapSourceConverter x:Key="partToBitmapSourceConverter" />
+        <localUI:PartToSizeStringConverter x:Key="partToSizeStringConverter" />
+        <localUI:SizeStringConverter x:Key="sizeStringConverter" />
+
+		<DataTemplate x:Key="tilesViewDataTemplate">
+			<DockPanel>
+                <Image DockPanel.Dock="Left" Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=64}" />
+				<StackPanel>
+					<StackPanel.Margin>
+						<Thickness Right="4" />
+					</StackPanel.Margin>
+					<TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold" />
+                    <TextBlock Text="{Binding ContentType}" FontSize="12" />
+                    <TextBlock Text="{Binding Converter={StaticResource partToSizeStringConverter}}" FontSize="12" />
+				</StackPanel>
+			</DockPanel>
+		</DataTemplate>
+
+		<DataTemplate x:Key="smallIconViewDataTemplate">
+			<StackPanel Orientation="Horizontal">
+				<StackPanel.Margin>
+					<Thickness Right="2" />
+				</StackPanel.Margin>
+                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}"/>
+				<TextBlock Text="{Binding Name}" FontSize="12" />
+			</StackPanel>
+		</DataTemplate>
+
+		<DataTemplate x:Key="largeIconViewDataTemplate">
+			<StackPanel Orientation="Horizontal">
+				<StackPanel.Margin>
+					<Thickness Right="2" />
+				</StackPanel.Margin>
+                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=32}" />
+				<TextBlock Text="{Binding Name}" FontSize="12" />
+			</StackPanel>
+		</DataTemplate>
+
+		<localUI:IconCustomListView x:Key="iconCustomListViewTiles" ItemWidth="128" />
+
+	</Window.Resources>
+	<DockPanel>
+		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
+			<MenuItem Header="_File">
+				<MenuItem Header="_Open" Icon="📂" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open"/>
+				<MenuItem Header="_Save" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
+				<MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs"/>
+				<Separator />
+				<MenuItem Header="E_xit" />
+			</MenuItem>
+			<MenuItem Header="_View" />
+			<MenuItem Header="_Tools">
+				<MenuItem Header="_Options" Icon="⛭"/>
+			</MenuItem>
+			<MenuItem Header="_Help">
+				<MenuItem Header="_Feedback" Icon="📣"/>
+				<MenuItem Header="_About" Icon="❔" Command="ApplicationCommands.Help"/>
+			</MenuItem>
+		</Menu>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" MinWidth="320" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid x:Name="gridContentViews" Grid.Column="0">
+				<Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+				<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0" IsExpanded="True">
+					<ListView x:Name="listViewParts">
+						<ListView.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
+								<MenuItem Header="Large Icons" Click="ListViewMenuLargeIconsClick" IsCheckable="True" x:Name="listViewMenuLargeIcons"/>
+								<MenuItem Header="Small Icons" Click="ListViewMenuSmallIconsClick" IsCheckable="True" x:Name="listViewMenuSmallIcons"/>
+								<MenuItem Header="Details" Click="ListViewDetailsClick" IsCheckable="True" IsChecked="True" x:Name="listViewMenuDetails" />
+							</ContextMenu>
+						</ListView.ContextMenu>
+						<ListView.View>
+                            <GridView x:Name="listViewDefaultGridView">
+                                <GridViewColumn Header="URI" Width="140">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<StackPanel Orientation="Horizontal">
+                                                <StackPanel.Margin>
+                                                    <Thickness Right="2" />
+                                                </StackPanel.Margin>
+                                                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}"/>
+                                                <TextBlock Text="{Binding Name}" />
+											</StackPanel>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="Content Type" Width="120" DisplayMemberBinding="{Binding ContentType}"/>
+								<GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size, Converter={StaticResource sizeStringConverter}}" />
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</Expander>
+				<Expander x:Name="expanderFilesView" Header="Zip Archive Layout" Grid.Row="1" IsExpanded="True">
+					<TreeView x:Name="treeViewZipFiles"></TreeView>
+				</Expander>
+			</Grid>
+			<GridSplitter Grid.Column="0" Width="5"/>
+			<TabPanel Background="LightPink" Grid.Column="1">
+
+			</TabPanel>
+		</Grid>
+	</DockPanel>
+</Window>

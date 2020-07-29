@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>B4.Mope</RootNamespace>
+    <Authors>abishop</Authors>
+    <Company>abishop</Company>
+    <PackageIcon>Color.ico</PackageIcon>
+    <Version>2.0.0</Version>
+    <RepositoryUrl>https://github.com/Dadstart/MOPE2</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ApplicationIcon>icons\Color.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="icons\BW.ico" />
+    <None Remove="icons\Color.ico" />
+    <None Remove="icons\folder.ico" />
+    <None Remove="icons\magnifying glass.ico" />
+    <None Remove="icons\rels.ico" />
+    <None Remove="icons\unknown.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icons\BW.ico" />
+    <Resource Include="icons\Color.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icons\folder.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="icons\magnifying glass.ico" />
+    <Resource Include="icons\rels.ico" />
+    <Resource Include="icons\unknown.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
