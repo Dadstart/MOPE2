@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope"
         xmlns:localUI="clr-namespace:B4.Mope.UI" xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
 		mc:Ignorable="d"
-        Title="MOPE: Office Package Editor" Height="600" Width="800">
+        Title="MOPE: Office Package Editor" Height="640" Width="1024">
 	<Window.CommandBindings>
 		<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>
 		<CommandBinding Command="Open" CanExecute="CommandBinding_OpenCanExecute" Executed="CommandBinding_OpenExecuted"/>
@@ -119,9 +120,11 @@
 				</Expander>
 			</Grid>
 			<GridSplitter Grid.Column="0" Width="5"/>
-			<TabPanel Background="LightPink" Grid.Column="1">
-
-			</TabPanel>
+			<TabControl Background="LightPink" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+                <TabItem Header="Test">
+                    <wv2:WebView2 Name="webView" Source="file:///C:/temp/1.xml" />
+                </TabItem>
+			</TabControl>
 		</Grid>
 	</DockPanel>
 </Window>

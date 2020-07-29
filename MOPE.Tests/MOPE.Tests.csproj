@@ -30,4 +30,8 @@
     <ProjectReference Include="..\MOPE\MOPE.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UI\" />
+  </ItemGroup>
+
 </Project>
