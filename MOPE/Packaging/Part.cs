@@ -14,9 +14,10 @@ namespace B4.Mope.Packaging
 		public string ContentType { get; }
 		public uint Crc32 { get; }
 		public long Size { get; }
+		public long CompressedSize { get; }
 		public Relationships Relationships { get; set; }
 
-		public Part(Package package, string name, string uri, string contentType, uint crc32, long size)
+		public Part(Package package, string name, string uri, string contentType, uint crc32, long size, long compressedSize)
 		{
 			Package = package ?? throw new ArgumentNullException(nameof(package));
 			Name = string.IsNullOrEmpty(name) ? throw new ArgumentNullException(nameof(name)) : name;
@@ -24,6 +25,7 @@ namespace B4.Mope.Packaging
 			ContentType = string.IsNullOrEmpty(contentType) ? throw new ArgumentNullException(nameof(contentType)) : contentType;
 			Crc32 = crc32;
 			Size = size;
+			CompressedSize = compressedSize;
 		}
 
 		public FileInfo GetFileInfo()

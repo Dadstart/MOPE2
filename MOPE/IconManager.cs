@@ -46,7 +46,7 @@ namespace B4.Mope
 				collection.Add(GetBitmapSourceFromIconStream(stream, 32), 32);
 				stream.Seek(0, SeekOrigin.Begin);
 
-				collection.Add(GetBitmapSourceFromIconStream(stream, 256), 256);
+				collection.Add(GetBitmapSourceFromIconStream(stream, 64), 64);
 
 				return collection;
 			}
