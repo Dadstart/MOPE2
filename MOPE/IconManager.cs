@@ -74,6 +74,8 @@ namespace B4.Mope
 		{
 			switch (contentType)
 			{
+				case "application/vnd.openxmlformats-package.relationships+xml":
+					return RelsIcon.Get(size);
 				default:
 					return UnknownIcon.Get(size);
 			}
