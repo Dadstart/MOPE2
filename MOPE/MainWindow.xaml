@@ -13,7 +13,6 @@
 		<CommandBinding Command="Save" CanExecute="CommandBinding_SaveCanExecute" Executed="CommandBinding_SaveExecuted"/>
 	</Window.CommandBindings>
 	<Window.Resources>
-		<localUI:BoolToGridLengthConverter x:Key="expanderGridLengthConverter" />
 		<local:Data x:Key="appData" />
         <localUI:PartToBitmapSourceConverter x:Key="partToBitmapSourceConverter" />
 
@@ -93,9 +92,9 @@
 			</Grid.ColumnDefinitions>
 			<Grid x:Name="gridContentViews" Grid.Column="0">
 				<Grid.RowDefinitions>
-					<RowDefinition Height="{Binding Path=IsExpanded, ElementName=expanderPartsView, Converter={StaticResource expanderGridLengthConverter}}" />
-					<RowDefinition Height="{Binding Path=IsExpanded, ElementName=expanderFilesView, Converter={StaticResource expanderGridLengthConverter}}" />
-				</Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 				<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0" IsExpanded="True">
 					<ListView x:Name="listViewParts">
 						<ListView.ContextMenu>
