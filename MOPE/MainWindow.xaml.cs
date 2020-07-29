@@ -26,10 +26,12 @@ namespace B4.Mope
 		/// App data
 		/// </summary>
 		public Data Data { get; private set; } = new Data();
+		public static IconManager IconManager { get; private set; } //TODO: remove static
 
 		public MainWindow()
 		{
 			InitializeComponent();
+			IconManager = new IconManager();
 		}
 
 		private void CommandBinding_HelpCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -118,6 +120,41 @@ namespace B4.Mope
 		private void InitializePartsListView()
 		{
 			listViewParts.ItemsSource = Data.Package.Parts.Values;
+		}
+
+		private void ToggleMenuCheckedStates(MenuItem itemToCheck)
+		{
+			foreach (MenuItem mi in listViewParts.ContextMenu.Items)
+			{
+				mi.IsChecked = itemToCheck == mi;
+			}
+		}
+
+		private void ListViewMenuTilesClick(object sender, RoutedEventArgs e)
+		{
+			ToggleMenuCheckedStates(listViewMenuTiles);
+			listViewParts.View = null;
+			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("tilesViewDataTemplate");
+		}
+
+		private void ListViewMenuLargeIconsClick(object sender, RoutedEventArgs e)
+		{
+			ToggleMenuCheckedStates(listViewMenuLargeIcons);
+			listViewParts.View = null;
+			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("largeIconViewDataTemplate");
+		}
+
+		private void ListViewMenuSmallIconsClick(object sender, RoutedEventArgs e)
+		{
+			ToggleMenuCheckedStates(listViewMenuSmallIcons);
+			listViewParts.View = null;
+			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("smallIconViewDataTemplate");
+		}
+
+		private void ListViewDetailsClick(object sender, RoutedEventArgs e)
+		{
+			ToggleMenuCheckedStates(listViewMenuDetails);
+			listViewParts.View = (ViewBase)listViewParts.FindResource("listViewGridView");
 		}
 	}
 }
