@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Xml;
 
 namespace B4.Mope.Packaging
@@ -14,18 +16,19 @@ namespace B4.Mope.Packaging
 		public Dictionary<string, Part> Parts { get; } = new Dictionary<string, Part>();
 		public ContentTypes ContentTypes { get; }
 		public Relationships Relationships { get; }
+		public List<PackageItem> Items { get; }
 
 		public Package()
 		{
 
 		}
 
-		public Package(string path, string tempDir)
+		public Package(string path, string tempDirPath)
 		{
 			ZipFile = path;
-			TempDirectory = tempDir;
+			TempDirectory = tempDirPath;
 
-			Directory.CreateDirectory(TempDirectory);
+			var tempDir = Directory.CreateDirectory(TempDirectory);
 			var entries = ZipContainer.ExtractTo(ZipFile, TempDirectory, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
 			// read [Content_Types].xml
@@ -39,6 +42,41 @@ namespace B4.Mope.Packaging
 			}
 
 			Relationships = LoadRelationships();
+
+			// generate items hierarchy tree
+			var rootItems = new SortedList<string, PackageItem>();
+			foreach (var info in tempDir.GetFileSystemInfos())
+			{
+				var item = PackagePartFromFileSystemInfo(info);
+				rootItems.Add(item.Name, item);
+			}
+			Items = rootItems.Values.ToList();
+		}
+
+		private PackageItem PackagePartFromFileSystemInfo(FileSystemInfo info)
+		{
+			var relativePath = System.IO.Path.GetRelativePath(TempDirectory, info.FullName);
+			relativePath = relativePath.Replace('\\', '/');
+
+			var dir = info as DirectoryInfo;
+			
+			if (dir == null)
+			{
+				return new PackageItem(info.Name, info.FullName, Parts[relativePath]);
+			}
+			else
+			{
+				var packageItem = new PackageItem(info.Name, info.FullName, null);
+				var childrenItems = new SortedList<string, PackageItem>();
+				foreach (var childInfo in dir.GetFileSystemInfos())
+				{
+					var childItem = PackagePartFromFileSystemInfo(childInfo);
+					childrenItems.Add(childItem.Name, childItem);
+				}
+
+				packageItem.Children = childrenItems.Values.ToList();
+				return packageItem;
+			}
 		}
 
 		/// <summary>

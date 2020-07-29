@@ -94,27 +94,7 @@ namespace B4.Mope
 
 		private void InitializeZipFilesTreeView()
 		{
-			treeViewZipFiles.Items.Clear();
-			var dir = new DirectoryInfo(Data.Package.TempDirectory);
-			foreach (var info in dir.GetFileSystemInfos())
-			{
-				treeViewZipFiles.Items.Add(TreeViewItemFromFileSystemInfo(info));
-			}
-		}
-
-		private TreeViewItem TreeViewItemFromFileSystemInfo(FileSystemInfo info)
-		{
-			var item = new TreeViewItem() { Header = info.Name };
-			var dir = info as DirectoryInfo;
-			if (dir != null)
-			{
-				foreach (var childInfo in dir.GetFileSystemInfos())
-				{
-					item.Items.Add(TreeViewItemFromFileSystemInfo(childInfo));
-				}
-			}
-
-			return item;
+			treeViewZipFiles.ItemsSource = Data.Package.Items;
 		}
 
 		private void InitializePartsListView()
@@ -155,6 +135,16 @@ namespace B4.Mope
 		{
 			ToggleMenuCheckedStates(listViewMenuDetails);
 			listViewParts.View = (ViewBase)listViewParts.FindName("listViewDefaultGridView");
+		}
+
+		private void treeViewZipFiles_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		{
+
+		}
+
+		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
 		}
 	}
 }

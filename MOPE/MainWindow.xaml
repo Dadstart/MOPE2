@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope"
+        xmlns:localPackaging="clr-namespace:B4.Mope.Packaging"
         xmlns:localUI="clr-namespace:B4.Mope.UI" xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
 		mc:Ignorable="d"
@@ -16,41 +17,36 @@
 	<Window.Resources>
 		<local:Data x:Key="appData" />
         <localUI:PartToBitmapSourceConverter x:Key="partToBitmapSourceConverter" />
+        <localUI:PackageItemToBitmapSourceConverter x:Key="packageItemToBitmapSourceConverter" />
         <localUI:PartToSizeStringConverter x:Key="partToSizeStringConverter" />
         <localUI:SizeStringConverter x:Key="sizeStringConverter" />
 
 		<DataTemplate x:Key="tilesViewDataTemplate">
 			<DockPanel>
                 <Image DockPanel.Dock="Left" Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=64}" />
-				<StackPanel>
-					<StackPanel.Margin>
-						<Thickness Right="4" />
-					</StackPanel.Margin>
-					<TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold" />
-                    <TextBlock Text="{Binding ContentType}" FontSize="12" />
-                    <TextBlock Text="{Binding Converter={StaticResource partToSizeStringConverter}}" FontSize="12" />
+				<StackPanel Margin="1">
+					<TextBlock Text="{Binding Name}" FontSize="12" />
+                    <TextBlock Text="{Binding ContentType}" FontSize="11" />
+                    <TextBlock Text="{Binding Converter={StaticResource partToSizeStringConverter}}" FontSize="11" />
 				</StackPanel>
 			</DockPanel>
 		</DataTemplate>
 
 		<DataTemplate x:Key="smallIconViewDataTemplate">
 			<StackPanel Orientation="Horizontal">
-				<StackPanel.Margin>
-					<Thickness Right="2" />
-				</StackPanel.Margin>
-                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}"/>
-				<TextBlock Text="{Binding Name}" FontSize="12" />
+                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+				<TextBlock Text="{Binding Name}" FontSize="12" Margin="1"/>
 			</StackPanel>
 		</DataTemplate>
 
 		<DataTemplate x:Key="largeIconViewDataTemplate">
 			<StackPanel Orientation="Horizontal">
-				<StackPanel.Margin>
-					<Thickness Right="2" />
-				</StackPanel.Margin>
-                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=32}" />
+                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=32}" Margin="1"/>
+                <StackPanel Orientation="Vertical" Margin="1">
 				<TextBlock Text="{Binding Name}" FontSize="12" />
-			</StackPanel>
+                    <TextBlock Text="{Binding ContentType}" FontSize="10"/>
+                </StackPanel>
+            </StackPanel>
 		</DataTemplate>
 
 		<localUI:IconCustomListView x:Key="iconCustomListViewTiles" ItemWidth="128" />
@@ -85,7 +81,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 				<Expander x:Name="expanderPartsView" Header="Parts (Files)" Grid.Row="0" IsExpanded="True">
-					<ListView x:Name="listViewParts">
+					<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged">
 						<ListView.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
@@ -100,11 +96,8 @@
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<StackPanel Orientation="Horizontal">
-                                                <StackPanel.Margin>
-                                                    <Thickness Right="2" />
-                                                </StackPanel.Margin>
-                                                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}"/>
-                                                <TextBlock Text="{Binding Name}" />
+                                                <Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+                                                <TextBlock Text="{Binding Name}" Margin="1"/>
 											</StackPanel>
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
@@ -116,7 +109,16 @@
 					</ListView>
 				</Expander>
 				<Expander x:Name="expanderFilesView" Header="Zip Archive Layout" Grid.Row="1" IsExpanded="True">
-					<TreeView x:Name="treeViewZipFiles"></TreeView>
+					<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type localPackaging:PackageItem}" ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding Converter={StaticResource packageItemToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+                                    <TextBlock Text="{Binding Name}" Margin="1" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
 				</Expander>
 			</Grid>
 			<GridSplitter Grid.Column="0" Width="5"/>

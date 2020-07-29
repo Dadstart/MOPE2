@@ -29,6 +29,11 @@ namespace B4.Mope
 			FolderIcon = LoadKnownIcon("folder");
 		}
 
+		internal object GetFolderImage(int size)
+		{
+			return FolderIcon.Get(size);
+		}
+
 		/// <summary>
 		/// Loads a known icon from the app resources
 		/// </summary>
