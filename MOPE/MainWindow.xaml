@@ -15,7 +15,6 @@
 	<Window.Resources>
 		<localUI:BoolToGridLengthConverter x:Key="expanderGridLengthConverter" />
 		<local:Data x:Key="appData" />
-        <localUI:ContentTypeToIconConverter x:Key="contentTypeToIconConverter" />
         <localUI:PartToBitmapSourceConverter x:Key="partToBitmapSourceConverter" />
 
         <GridView x:Key="listViewGridView">
