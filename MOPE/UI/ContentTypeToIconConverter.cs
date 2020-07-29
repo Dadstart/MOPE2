@@ -24,8 +24,10 @@ namespace B4.Mope.UI
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			//return "icons/unknown.ico";			
-			return IconManager.GetImageForContentType(value as string);
+			//return "icons/unknown.ico";
+			if (!int.TryParse(parameter as string, out int size))
+				size = 32;
+			return IconManager.GetImageForContentType(value as string, size);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

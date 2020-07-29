@@ -22,7 +22,7 @@
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<Image Source="icons/unknown.ico" Height="16" Width="16" />
+                            <Image Height="16" Width="16" Source="{Binding Path=ContentType, Converter={StaticResource contentTypeToIconConverter}, ConverterParameter=16}"/>
 							<TextBlock Text="{Binding Name}" />
 						</StackPanel>
 					</DataTemplate>
@@ -34,7 +34,7 @@
 
 		<DataTemplate x:Key="tilesViewDataTemplate">
 			<DockPanel>
-                <Image DockPanel.Dock="Left" Width="64" Source="icons/unknown.ico" />
+                <Image DockPanel.Dock="Left" Width="64" Source="{Binding Path=ContentType, Converter={StaticResource contentTypeToIconConverter}, ConverterParameter=256}" />
 				<StackPanel>
 					<StackPanel.Margin>
 						<Thickness Right="4" />
@@ -50,7 +50,7 @@
 				<StackPanel.Margin>
 					<Thickness Right="2" />
 				</StackPanel.Margin>
-                <Image Width="16" Height="16" Source="icons/unknown.ico"/>
+                <Image Width="16" Height="16" Source="{Binding Path=ContentType, Converter={StaticResource contentTypeToIconConverter}, ConverterParameter=16}"/>
 				<TextBlock Text="{Binding Name}" FontSize="12" />
 			</StackPanel>
 		</DataTemplate>
@@ -60,7 +60,7 @@
 				<StackPanel.Margin>
 					<Thickness Right="2" />
 				</StackPanel.Margin>
-				<Image Width="32" Height="32" Source="{Binding Path=ContentType, Converter={StaticResource contentTypeToIconConverter}}" />
+				<Image Width="32" Height="32" Source="{Binding Path=ContentType, Converter={StaticResource contentTypeToIconConverter}, ConverterParameter=32}" />
 				<TextBlock Text="{Binding Name}" FontSize="12" />
 			</StackPanel>
 		</DataTemplate>
