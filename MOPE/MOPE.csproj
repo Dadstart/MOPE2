@@ -12,11 +12,13 @@
     <RepositoryUrl>https://github.com/Dadstart/MOPE2</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <ApplicationIcon>C:\repos\MOPE2\Assets\Color.ico</ApplicationIcon>
+    <ApplicationIcon>icons\Color.ico</ApplicationIcon>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="icons\BW.ico" />
+    <None Remove="icons\Color.ico" />
     <None Remove="icons\folder.ico" />
     <None Remove="icons\magnifying glass.ico" />
     <None Remove="icons\rels.ico" />
@@ -24,24 +26,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="icons\folder.ico">
+    <EmbeddedResource Include="icons\BW.ico" />
+    <EmbeddedResource Include="icons\Color.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="icons\folder.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="icons\magnifying glass.ico" />
-    <Resource Include="icons\rels.ico" />
-    <Resource Include="icons\unknown.ico" />
+    </EmbeddedResource>
+    <EmbeddedResource Include="icons\magnifying glass.ico" />
+    <EmbeddedResource Include="icons\rels.ico" />
+    <EmbeddedResource Include="icons\unknown.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="..\Assets\Color.ico">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </Resource>
   </ItemGroup>
 
 </Project>
