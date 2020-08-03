@@ -13,7 +13,7 @@ namespace B4.Mope
 		HttpListener HttpListener { get; } = new HttpListener();
 		public int Port { get; }
 		private bool m_stopped;
-		Thread m_listeningThread;
+		//Thread m_listeningThread;
 
 		public string GetUrl(string relativePath)
 		{

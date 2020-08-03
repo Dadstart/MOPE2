@@ -8,6 +8,7 @@
         xmlns:localUI="clr-namespace:B4.Mope.UI" xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
         xmlns:Drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" x:Class="B4.Mope.MainWindow"
         xmlns:toolkit="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls.WebView"
+    xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
         Title="MOPE: Office Package Editor" Height="640" Width="1024">
     <Window.Resources>
@@ -126,7 +127,8 @@
             <TabControl Background="LightPink" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
                 <TabItem Header="Test">
                     <!--<Label>Content goes here</Label>-->
-                    <toolkit:WebView Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser" />
+                    <!--<toolkit:WebView Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser" />-->
+                    <wv2:WebView2 Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser" />
                 </TabItem>
             </TabControl>
         </Grid>
