@@ -144,7 +144,6 @@ namespace B4.Mope
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
 		}
 	}
 }
