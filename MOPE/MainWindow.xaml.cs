@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,11 +29,37 @@ namespace B4.Mope
 		/// </summary>
 		public Data Data { get; private set; } = new Data();
 		public static IconManager IconManager { get; private set; } //TODO: remove static
+		public WebHost m_webHost;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			IconManager = new IconManager();
+			//browser.ContentLoading += Browser_ContentLoading;
+			//browser.AddInitializeScript(GetEmbeddedResourceAsText("monaco", "loader.js"));
+			//browser.AddInitializeScript(GetEmbeddedResourceAsText("monaco", "editor.main.js"));
+			//browser.AddInitializeScript(GetEmbeddedResourceAsText("monaco", "editor.main.nls.js"));
+			//browser.NavigateToString(GetEmbeddedResourceAsText("monaco", "editor.html"));
+
+			Unloaded += MainWindow_Unloaded;
+
+			m_webHost = new WebHost();
+			m_webHost.ListenOnThread();
+		}
+
+		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
+		{
+			m_webHost?.Stop();
+		}
+
+		private string GetEmbeddedResourceAsText(string folder, string name)
+		{
+			
+			using (var stream = Application.GetResourceStream(new Uri($"pack://application:,,,/MOPE;component/{folder}/{name}")).Stream)
+			using (var reader = new StreamReader(stream))
+			{
+				return reader.ReadToEnd();
+			}
 		}
 
 		private void CommandBinding_HelpCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -144,6 +172,8 @@ namespace B4.Mope
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			var url = m_webHost.GetUrl("monaco/editor.html");
+			browser.Source = new Uri(url);
 		}
 	}
 }

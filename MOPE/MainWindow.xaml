@@ -126,7 +126,7 @@
             <TabControl Background="LightPink" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
                 <TabItem Header="Test">
                     <!--<Label>Content goes here</Label>-->
-                    <toolkit:WebView Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" />
+                    <toolkit:WebView Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser" />
                 </TabItem>
             </TabControl>
         </Grid>
