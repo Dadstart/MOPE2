@@ -6,7 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Resources;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -27,7 +29,7 @@ namespace B4.Mope
 		/// <summary>
 		/// App data
 		/// </summary>
-		public Data Data { get; private set; } = new Data();
+		public Data Data { get; }
 		public static IconManager IconManager { get; private set; } //TODO: remove static
 		public WebHost m_webHost;
 
@@ -42,8 +44,8 @@ namespace B4.Mope
 			//browser.NavigateToString(GetEmbeddedResourceAsText("monaco", "editor.html"));
 
 			Unloaded += MainWindow_Unloaded;
-
-			m_webHost = new WebHost();
+			Data = new Data();
+			m_webHost = new WebHost(Data);
 			m_webHost.ListenOnThread();
 		}
 
@@ -172,7 +174,8 @@ namespace B4.Mope
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var url = m_webHost.GetUrl("monaco/editor.html");
+			var part = (Part)listViewParts.SelectedItem;
+			var url = m_webHost.GetUrl($"monaco/editor.html?part={HttpUtility.UrlEncode(part.Uri)}");
 			browser.Source = new Uri(url);
 		}
 	}

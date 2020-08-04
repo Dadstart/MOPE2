@@ -4,11 +4,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <link rel="stylesheet" data-name="vs/editor/editor.main" href="/monaco-editor/min/vs/editor/editor.main.css">
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-
-    <h2>Monaco Editor Sync Loading Sample</h2>
-    <div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+    <div id="container" style="height:98%; width:100%"></div>
 
     <script>var require = { paths: { 'vs': '/monaco-editor/min/vs' } };</script>
     <script src="/monaco-editor/min/vs/loader.js"></script>
@@ -16,14 +20,42 @@
     <script src="/monaco-editor/min/vs/editor/editor.main.js"></script>
 
     <script>
-	var editor = monaco.editor.create(document.getElementById('container'), {
-		value: [
-			'function x() {',
-			'\tconsole.log("Hello world!");',
-			'}'
-		].join('\n'),
-		language: 'javascript'
-	});
+        const urlParams = new URLSearchParams(document.location.search);
+        const partUri = urlParams.get("part");
+        const fetchUri = "http://" + document.location.host + "/part/" + partUri;
+        console.log("fetching " + partUri + " from " + fetchUri);
+        fetch(fetchUri)
+            .then(response => {
+                if (!response.ok) {
+                    window.alert("Error fetching " + partUri);
+                    return;
+                }
+
+                response.text().then(text => {
+                    var editor = monaco.editor.create(document.getElementById('container'), {
+                        value: text,
+                        //value: [
+                        //    'function x() {',
+                        //    '\tconsole.log("Hello world!");',
+                        //    '}'
+                        //].join('\n'),
+                        language: 'xml',
+                        automaticLayout: true,
+                        options: {
+                            codeLens: false,
+                            scrollbar: {
+                                horizontal: "visible",
+                                vertical: "visible"
+                            }
+                        }
+                    });
+                });
+
+            }).catch(error => {
+                console.log(error);
+                window.alert("Error fetching " + partUri);
+            });
+
     </script>
 
 </body>

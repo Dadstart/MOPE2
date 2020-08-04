@@ -125,10 +125,11 @@
             </Grid>
             <GridSplitter Grid.Column="0" Width="5"/>
             <TabControl Background="LightPink" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
-                <TabItem Header="Test">
+                <TabItem Header="Test" ScrollViewer.CanContentScroll="False">
                     <!--<Label>Content goes here</Label>-->
                     <!--<toolkit:WebView Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser" />-->
-                    <wv2:WebView2 Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser" />
+                    <wv2:WebView2 Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser">
+                    </wv2:WebView2>
                 </TabItem>
             </TabControl>
         </Grid>

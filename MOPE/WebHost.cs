@@ -1,10 +1,13 @@
-﻿using System;
+﻿using B4.Mope.Packaging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Resources;
 using System.Text;
 using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace B4.Mope
 {
@@ -12,6 +15,7 @@ namespace B4.Mope
 	{
 		HttpListener HttpListener { get; } = new HttpListener();
 		public int Port { get; }
+		public Data Data { get; }
 		private bool m_stopped;
 		//Thread m_listeningThread;
 
@@ -22,7 +26,7 @@ namespace B4.Mope
 
 		private bool m_isDisposed;
 
-		public WebHost(int? port = null)
+		public WebHost(Data data, int? port = null)
 		{
 			if (port != null)
 			{
@@ -35,6 +39,7 @@ namespace B4.Mope
 				Port = rand.Next(49152, 65535);
 			}
 			HttpListener.Prefixes.Add($"http://127.0.0.1:{Port}/");
+			Data = data ?? throw new ArgumentNullException(nameof(data));
 		}
 
 		public void ListenOnThread()
@@ -83,12 +88,45 @@ namespace B4.Mope
 			try
 			{
 				var url = context.Request.Url;
-				using (var resourceStream = System.Windows.Application.GetResourceStream(new Uri($"pack://application:,,,/MOPE;component/{url.LocalPath}")).Stream)
+				if (url.LocalPath.StartsWith("/part/"))
 				{
-					//context.Response.ContentLength64 = resourceStream.Length;
-					context.Response.ContentType = GetContentType(url.LocalPath);
-					resourceStream.CopyTo(context.Response.OutputStream);
-					context.Response.OutputStream.Close();
+					var partUri = url.LocalPath.Substring(6);
+					var part = webHost.Data.Package.Parts[partUri];
+					using (var partStream = part.GetFileInfo().OpenRead())
+					{
+						if (part.IsXml())
+						{
+							context.Response.ContentType = "application/xml";
+							var writerSettings = new XmlWriterSettings()
+							{
+								Indent = true,
+							};
+
+							using (var textReader = new StreamReader(partStream))
+							using (var xmlWriter = XmlWriter.Create(context.Response.OutputStream, writerSettings))
+							{
+								var elt = XElement.Parse(textReader.ReadToEnd());
+								elt.Save(xmlWriter);
+							}
+						}
+						else
+						{
+							context.Response.ContentType = part.ContentType;
+							partStream.CopyTo(context.Response.OutputStream);
+						}
+
+						context.Response.OutputStream.Close();
+					}
+				}
+				else
+				{
+					using (var resourceStream = System.Windows.Application.GetResourceStream(new Uri($"pack://application:,,,/MOPE;component/{url.LocalPath}")).Stream)
+					{
+						//context.Response.ContentLength64 = resourceStream.Length;
+						context.Response.ContentType = GetContentType(url.LocalPath);
+						resourceStream.CopyTo(context.Response.OutputStream);
+						context.Response.OutputStream.Close();
+					}
 				}
 			}
 			catch (IOException)

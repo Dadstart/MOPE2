@@ -17,6 +17,11 @@ namespace B4.Mope.Packaging
 		public long CompressedSize { get; }
 		public Relationships Relationships { get; set; }
 
+		public bool IsXml()
+		{
+			return string.Equals(ContentType, "application/xml", StringComparison.OrdinalIgnoreCase) || ContentType.EndsWith("+xml");
+		}
+
 		public Part(Package package, string name, string uri, string contentType, uint crc32, long size, long compressedSize)
 		{
 			Package = package ?? throw new ArgumentNullException(nameof(package));
