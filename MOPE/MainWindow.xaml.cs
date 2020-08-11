@@ -166,13 +166,40 @@ namespace B4.Mope
 		private void treeViewZipFiles_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var packageItem = (PackageItem)treeViewZipFiles.SelectedItem;
-			browser.Part = packageItem.Part;
+			SetActivePart(packageItem.Part);
 		}
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			browser.Part = (Part)listViewParts.SelectedItem;
+			SetActivePart((Part)listViewParts.SelectedItem);
 		}
+
+		private void SetActivePart(Part part)
+        {
+			var tabItem = GetTabItemWithPart(part);
+			if (tabItem == null)
+			{
+				tabItem = new WebViewTabItem();
+				partsTabControl.Items.Add(tabItem);
+				tabItem.Part = part;
+			}
+
+			partsTabControl.SelectedItem = tabItem;
+		}
+
+		private WebViewTabItem GetTabItemWithPart(Part part)
+        {
+			if (part == null)
+				return null;
+
+			foreach (WebViewTabItem item in partsTabControl.Items)
+            {
+				if (item.Part == part)
+					return item;
+            }
+
+			return null;
+        }
 
 		private void Exit_Click(object sender, RoutedEventArgs e)
 		{

@@ -134,6 +134,21 @@ namespace B4.Mope
 				// error
 				context.Response.StatusCode = 404;
 			}
+			catch (InvalidOperationException exc)
+            {
+				// TODO: handle app being shutdown
+				// if app is being shutdown stop
+				// if (exc.HResult == 0x80131509)
+				//           {
+				//webHost.m_stopped = true;
+				//           }
+				//else
+				//{
+				//	throw;
+				//}
+
+				throw;
+            }
 
 			if (!webHost.m_stopped)
 			{

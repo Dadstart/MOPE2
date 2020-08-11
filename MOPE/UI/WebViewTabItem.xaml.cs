@@ -38,9 +38,11 @@ namespace B4.Mope.UI
 				{
 					var data = (Data)Window.GetWindow(this).DataContext;
 					url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
+					((WebViewTabItemHeader)Header).Text = m_part.Uri;
 				}
 				else
                 {
+					((WebViewTabItemHeader)Header).Text = "???";
 					url = "about:blank";
                 }
 
