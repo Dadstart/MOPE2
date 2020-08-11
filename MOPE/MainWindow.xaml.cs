@@ -1,4 +1,5 @@
 ﻿using B4.Mope.Packaging;
+using B4.Mope.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,6 @@ namespace B4.Mope
 		/// </summary>
 		public Data Data { get; }
 		public static IconManager IconManager { get; private set; } //TODO: remove static
-		public WebHost m_webHost;
 
 		public MainWindow()
 		{
@@ -40,8 +40,9 @@ namespace B4.Mope
 
 			Unloaded += MainWindow_Unloaded;
 			Data = new Data();
-			m_webHost = new WebHost(Data);
-			m_webHost.ListenOnThread();
+			Data.WebHost = new WebHost(Data);
+			Data.WebHost.ListenOnThread();
+			DataContext = Data;
 		}
 
 		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
@@ -169,14 +170,12 @@ namespace B4.Mope
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var part = (Part)listViewParts.SelectedItem;
-			var url = m_webHost.GetUrl($"monaco/editor.html?part={HttpUtility.UrlEncode(part.Uri)}");
-			browser.Browser.Source = new Uri(url);
+			browser.Part = (Part)listViewParts.SelectedItem;
 		}
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
+		private void Exit_Click(object sender, RoutedEventArgs e)
+		{
 			Close();
-        }
+		}
     }
 }
