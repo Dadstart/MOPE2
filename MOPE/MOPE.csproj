@@ -25,10 +25,6 @@
         <Resource Include="icons\rels.ico" />
         <Resource Include="icons\unknown.ico" />
         <Resource Include="monaco\editor.html" />
-        <Resource Include="monaco\editor.main.css" />
-        <Resource Include="monaco\editor.main.js" />
-        <Resource Include="monaco\editor.main.nls.js" />
-        <Resource Include="monaco\loader.js" />
     </ItemGroup>
 
     <ItemGroup>

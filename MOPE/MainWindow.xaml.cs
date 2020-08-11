@@ -37,11 +37,6 @@ namespace B4.Mope
 		{
 			InitializeComponent();
 			IconManager = new IconManager();
-			//browser.ContentLoading += Browser_ContentLoading;
-			//browser.AddInitializeScript(GetEmbeddedResourceAsText("monaco", "loader.js"));
-			//browser.AddInitializeScript(GetEmbeddedResourceAsText("monaco", "editor.main.js"));
-			//browser.AddInitializeScript(GetEmbeddedResourceAsText("monaco", "editor.main.nls.js"));
-			//browser.NavigateToString(GetEmbeddedResourceAsText("monaco", "editor.html"));
 
 			Unloaded += MainWindow_Unloaded;
 			Data = new Data();

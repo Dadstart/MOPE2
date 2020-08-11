@@ -20,6 +20,24 @@
     <script src="/monaco-editor/min/vs/editor/editor.main.js"></script>
 
     <script>
+        function getLanguageType(contentType) {
+            console.log(contentType);
+            switch (contentType) {
+                case "application/javascript":
+                    return "javascript";
+                case "application/json":
+                    return "json";
+                case "application/xml":
+                    return "xml";
+                case "text/css":
+                    return "css";
+                case "text/html":
+                    return "html";
+                default:
+                    return "text";
+            }
+        }
+
         const urlParams = new URLSearchParams(document.location.search);
         const partUri = urlParams.get("part");
         const fetchUri = "http://" + document.location.host + "/part/" + partUri;
@@ -30,16 +48,10 @@
                     window.alert("Error fetching " + partUri);
                     return;
                 }
-
                 response.text().then(text => {
                     var editor = monaco.editor.create(document.getElementById('container'), {
                         value: text,
-                        //value: [
-                        //    'function x() {',
-                        //    '\tconsole.log("Hello world!");',
-                        //    '}'
-                        //].join('\n'),
-                        language: 'xml',
+                        language: getLanguageType(response.headers.get("Content-Type")),
                         automaticLayout: true,
                         options: {
                             codeLens: false,
