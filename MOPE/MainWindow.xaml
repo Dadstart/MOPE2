@@ -10,7 +10,7 @@
         xmlns:toolkit="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls.WebView"
     xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="MOPE: Office Package Editor" Height="640" Width="1024">
+        Title="MOPE: Office Package Editor" Height="720" Width="1200">
     <Window.Resources>
         <local:Data x:Key="appData" />
         <localUI:PartToBitmapSourceConverter x:Key="partToBitmapSourceConverter" />
@@ -124,10 +124,14 @@
                 </Expander>
             </Grid>
             <GridSplitter Grid.Column="0" Width="5"/>
-            <TabControl Background="LightPink" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
-                <TabItem Header="Test" ScrollViewer.CanContentScroll="False">
-                    <!--<Label>Content goes here</Label>-->
-                    <!--<toolkit:WebView Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser" />-->
+            <TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+                <TabItem ScrollViewer.CanContentScroll="False">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Test 1</TextBlock>
+                            <Button Margin="3,0,0,0" Padding="5,0" FontWeight="Bold" Background="Transparent" BorderThickness="0">X</Button>
+                        </StackPanel>
+                    </TabItem.Header>
                     <wv2:WebView2 Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser">
                     </wv2:WebView2>
                 </TabItem>
