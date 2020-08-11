@@ -33,8 +33,17 @@ namespace B4.Mope.UI
 			set
 			{
 				m_part = value;
-				var data = (Data)Window.GetWindow(this).DataContext;
-				var url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
+				string url;
+				if (m_part != null)
+				{
+					var data = (Data)Window.GetWindow(this).DataContext;
+					url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
+				}
+				else
+                {
+					url = "about:blank";
+                }
+
 				Browser.Source = new Uri(url);
 			}
 		}

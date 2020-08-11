@@ -47,7 +47,7 @@ namespace B4.Mope
 
 		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
 		{
-			m_webHost?.Stop();
+			Data?.WebHost?.Stop();
 		}
 
 		private string GetEmbeddedResourceAsText(string folder, string name)
@@ -165,7 +165,8 @@ namespace B4.Mope
 
 		private void treeViewZipFiles_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-
+			var packageItem = (PackageItem)treeViewZipFiles.SelectedItem;
+			browser.Part = packageItem.Part;
 		}
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
