@@ -171,7 +171,7 @@ namespace B4.Mope
 		{
 			var part = (Part)listViewParts.SelectedItem;
 			var url = m_webHost.GetUrl($"monaco/editor.html?part={HttpUtility.UrlEncode(part.Uri)}");
-			browser.Source = new Uri(url);
+			browser.Browser.Source = new Uri(url);
 		}
 	}
 }

@@ -8,7 +8,7 @@
         xmlns:localUI="clr-namespace:B4.Mope.UI" xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
         xmlns:Drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" x:Class="B4.Mope.MainWindow"
         xmlns:toolkit="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls.WebView"
-    xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
         Title="MOPE: Office Package Editor" Height="720" Width="1200">
     <Window.Resources>
@@ -45,7 +45,7 @@
                 </StackPanel>
             </StackPanel>
         </DataTemplate>
-
+        
         <localUI:IconCustomListView x:Key="iconCustomListViewTiles" ItemWidth="128" />
 
     </Window.Resources>
@@ -127,13 +127,9 @@
             <TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
                 <TabItem ScrollViewer.CanContentScroll="False">
                     <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock>Test 1</TextBlock>
-                            <Button Margin="3,0,0,0" Padding="5,0" FontWeight="Bold" Background="Transparent" BorderThickness="0">X</Button>
-                        </StackPanel>
+                        <localUI:WebViewTabItemHeader Text="Test1" />
                     </TabItem.Header>
-                    <wv2:WebView2 Source="https://bing.com" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser">
-                    </wv2:WebView2>
+                    <localUI:WebViewTabItem Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser"/>
                 </TabItem>
             </TabControl>
         </Grid>
