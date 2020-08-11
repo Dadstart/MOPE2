@@ -125,12 +125,7 @@
             </Grid>
             <GridSplitter Grid.Column="0" Width="5"/>
             <TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
-                <TabItem ScrollViewer.CanContentScroll="False">
-                    <TabItem.Header>
-                        <localUI:WebViewTabItemHeader Text="Test1" />
-                    </TabItem.Header>
-                    <localUI:WebViewTabItem Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="browser"/>
-                </TabItem>
+                <localUI:WebViewTabItem x:Name="browser"/>
             </TabControl>
         </Grid>
     </DockPanel>

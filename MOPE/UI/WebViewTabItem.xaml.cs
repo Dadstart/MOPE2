@@ -19,12 +19,12 @@ namespace B4.Mope.UI
 	/// <summary>
 	/// Interaction logic for WebViewTabItem.xaml
 	/// </summary>
-	public partial class WebViewTabItem : UserControl
+	public partial class WebViewTabItem : TabItem
 	{
 		public WebViewTabItem()
 		{
-			InitializeComponent();
-		}
+            InitializeComponent();
+        }
 
 		private Part m_part;
 		public Part Part
