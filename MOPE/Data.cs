@@ -11,5 +11,7 @@ namespace B4.Mope
 	public class Data
 	{
 		public Package Package { get; set; }
+
+		public WebHost WebHost { get; set; }
 	}
 }
