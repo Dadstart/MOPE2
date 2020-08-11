@@ -173,5 +173,10 @@ namespace B4.Mope
 			var url = m_webHost.GetUrl($"monaco/editor.html?part={HttpUtility.UrlEncode(part.Uri)}");
 			browser.Browser.Source = new Uri(url);
 		}
-	}
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+			Close();
+        }
+    }
 }
