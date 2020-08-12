@@ -50,7 +50,7 @@
 
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>
+        <!--<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>-->
         <CommandBinding Command="Open" CanExecute="CommandBinding_OpenCanExecute" Executed="CommandBinding_OpenExecuted"/>
         <CommandBinding Command="Save" CanExecute="CommandBinding_SaveCanExecute" Executed="CommandBinding_SaveExecuted"/>
     </Window.CommandBindings>
@@ -69,7 +69,7 @@
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_Feedback" Icon="📣"/>
-                <MenuItem Header="_About" Icon="❔" Command="ApplicationCommands.Help"/>
+                <MenuItem Header="_About" Icon="❔"/>
             </MenuItem>
         </Menu>
         <Grid>

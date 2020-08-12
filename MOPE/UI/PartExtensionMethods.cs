@@ -12,5 +12,14 @@ namespace B4.Mope.UI
 		{
 			return $"monaco/editor.html?part={HttpUtility.UrlEncode(part.Uri)}";
 		}
+
+		public static bool CanViewInBrowser(this Part part)
+		{
+			var contentType = part.ContentType;
+			return ContentTypes.IsXml(contentType)
+				|| ContentTypes.IsSupportedAudioType(contentType)
+				|| ContentTypes.IsSupportedVideoType(contentType)
+				|| ContentTypes.IsSupportedImageType(contentType);
+		}
 	}
 }

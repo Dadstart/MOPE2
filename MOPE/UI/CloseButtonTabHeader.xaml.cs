@@ -15,24 +15,24 @@ using System.Windows.Shapes;
 namespace B4.Mope.UI
 {
     /// <summary>
-    /// Interaction logic for WebViewTabItemHeader.xaml
+    /// Interaction logic for CloseButtonTabHeader.xaml
     /// </summary>
-    public partial class WebViewTabItemHeader : UserControl
+    public partial class CloseButtonTabHeader : UserControl
     {
-        public WebViewTabItemHeader()
+        public CloseButtonTabHeader()
         {
             InitializeComponent();
             this.DataContext = this;
         }
 
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(WebViewTabItemHeader), new UIPropertyMetadata(string.Empty));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(CloseButtonTabHeader), new UIPropertyMetadata(string.Empty));
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
-        public static readonly DependencyProperty ViewTypeProperty = DependencyProperty.Register("ViewType", typeof(string), typeof(WebViewTabItemHeader), new UIPropertyMetadata(string.Empty));
+        public static readonly DependencyProperty ViewTypeProperty = DependencyProperty.Register("ViewType", typeof(string), typeof(CloseButtonTabHeader), new UIPropertyMetadata(string.Empty));
         public string ViewType
         {
             get { return (string)GetValue(ViewTypeProperty); }

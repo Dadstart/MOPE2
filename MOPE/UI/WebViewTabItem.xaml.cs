@@ -23,62 +23,61 @@ namespace B4.Mope.UI
 	{
 		public WebViewTabItem()
 		{
-            InitializeComponent();
-        }
+			InitializeComponent();
+		}
 
 		private Part m_part;
 		public Part Part
 		{
 			get { return m_part; }
-			set
-			{
-				m_part = value;
-				string url;
-				string viewType;
-				if (m_part != null)
-				{
-					var data = (Data)Window.GetWindow(this).DataContext;
-					if (ContentTypes.IsXml(m_part.ContentType))
-					{
-						url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
-						viewType = "</>";
-					}
-					else if (ContentTypes.IsSupportedAudioType(m_part.ContentType))
-					{
-						url = data.WebHost.GetUrl($"part/{m_part.Uri}");
-						viewType = "🎵";
-					}
-					else if (ContentTypes.IsSupportedImageType(m_part.ContentType))
-					{
-						url = data.WebHost.GetUrl($"part/{m_part.Uri}");
-						viewType = "🎨";
-					}
-					else if (ContentTypes.IsSupportedVideoType(m_part.ContentType))
-					{
-						url = data.WebHost.GetUrl($"part/{m_part.Uri}");
-						viewType = "🖥";
-					}
-					else
-					{
-						url = "about:blank";
-						viewType = "🧩";
-					}
-
-					var header = ((WebViewTabItemHeader)Header);
-					header.Text = $"{m_part.Uri}";
-					header.ViewType = viewType;
-
-				}
-				else
-                {
-					((WebViewTabItemHeader)Header).Text = "???";
-					url = "about:blank";
-                }
-
-				Browser.Source = new Uri(url);
-			}
+			set { m_part = value; UpdatePartView(); }
 		}
 
+		void UpdatePartView()
+		{
+			string url;
+			string viewType;
+			if (m_part != null)
+			{
+				var data = (Data)Window.GetWindow(this).DataContext;
+				if (ContentTypes.IsXml(m_part.ContentType))
+				{
+					url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
+					viewType = "⚡";
+				}
+				else if (ContentTypes.IsSupportedAudioType(m_part.ContentType))
+				{
+					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+					viewType = "🎵";
+				}
+				else if (ContentTypes.IsSupportedImageType(m_part.ContentType))
+				{
+					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+					viewType = "🎨";
+				}
+				else if (ContentTypes.IsSupportedVideoType(m_part.ContentType))
+				{
+					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+					viewType = "🖥";
+				}
+				else
+				{
+					url = "about:blank";
+					viewType = "?";
+				}
 
+				var header = ((CloseButtonTabHeader)Header);
+				header.Text = $"{m_part.Uri}";
+				header.ViewType = viewType;
+
+			}
+			else
+			{
+				((CloseButtonTabHeader)Header).Text = "???";
+				url = "about:blank";
+			}
+
+			Browser.Source = new Uri(url);
+		}
 	}
 }

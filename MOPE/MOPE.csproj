@@ -119,6 +119,19 @@
         <PackageReference Include="Microsoft.Web.WebView2" Version="0.9.579-prerelease" />
         <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
         <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+        <PackageReference Include="WPFHexaEditor" Version="2.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="UI\BinaryViewTabItem.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="UI\BinaryViewTabItem.xaml">
+        <SubType>Designer</SubType>
+      </Page>
     </ItemGroup>
 
 </Project>

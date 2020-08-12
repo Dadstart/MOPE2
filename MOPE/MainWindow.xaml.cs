@@ -1,5 +1,6 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.UI;
+using Microsoft.Web.WebView2.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfHexaEditor;
 
 namespace B4.Mope
 {
@@ -179,24 +181,38 @@ namespace B4.Mope
 			var tabItem = GetTabItemWithPart(part);
 			if (tabItem == null)
 			{
-				tabItem = new WebViewTabItem();
-				partsTabControl.Items.Add(tabItem);
-				tabItem.Part = part;
+				if (part.CanViewInBrowser())
+				{
+					var webItem = new WebViewTabItem();
+					partsTabControl.Items.Add(webItem);
+					webItem.Part = part;
+					partsTabControl.SelectedItem = webItem;
+				}
+				else
+				{
+					var binaryItem = new BinaryViewTabItem();
+					partsTabControl.Items.Add(binaryItem);
+					binaryItem.Part = part;
+					partsTabControl.SelectedItem = binaryItem;
+				}
 			}
-
-			partsTabControl.SelectedItem = tabItem;
 		}
 
-		private WebViewTabItem GetTabItemWithPart(Part part)
+		private TabItem GetTabItemWithPart(Part part)
         {
 			if (part == null)
 				return null;
 
-			foreach (WebViewTabItem item in partsTabControl.Items)
+			foreach (TabItem item in partsTabControl.Items)
             {
-				if (item.Part == part)
+				var bItem = item as BinaryViewTabItem;
+				if ((bItem != null) && (bItem.Part == part))
 					return item;
-            }
+
+				var webItem = item as WebViewTabItem;
+				if ((webItem != null) && (webItem.Part == part))
+					return item;
+			}
 
 			return null;
         }
