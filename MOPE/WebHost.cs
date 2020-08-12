@@ -92,11 +92,13 @@ namespace B4.Mope
 				{
 					var partUri = url.LocalPath.Substring(6);
 					var part = webHost.Data.Package.Parts[partUri];
+
+					context.Response.ContentType = part.ContentType;
+
 					using (var partStream = part.GetFileInfo().OpenRead())
 					{
-						if (part.IsXml())
+						if (ContentTypes.IsXml(part.ContentType))
 						{
-							context.Response.ContentType = "application/xml";
 							var writerSettings = new XmlWriterSettings()
 							{
 								Indent = true,
@@ -111,7 +113,6 @@ namespace B4.Mope
 						}
 						else
 						{
-							context.Response.ContentType = part.ContentType;
 							partStream.CopyTo(context.Response.OutputStream);
 						}
 
@@ -135,20 +136,17 @@ namespace B4.Mope
 				context.Response.StatusCode = 404;
 			}
 			catch (InvalidOperationException exc)
-            {
-				// TODO: handle app being shutdown
+			{
 				// if app is being shutdown stop
-				// if (exc.HResult == 0x80131509)
-				//           {
-				//webHost.m_stopped = true;
-				//           }
-				//else
-				//{
-				//	throw;
-				//}
-
-				throw;
-            }
+				if (exc.HResult == -2146233079)
+				{
+					webHost.m_stopped = true;
+				}
+				else
+				{
+					throw;
+				}
+			}
 
 			if (!webHost.m_stopped)
 			{

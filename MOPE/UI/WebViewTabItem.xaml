@@ -12,7 +12,7 @@
         <local:WebViewTabItemHeader Text="Test1" />
     </TabItem.Header>
     <DockPanel LastChildFill="True">
-        <wv2:WebView2 Source="https://bing.com" x:Name="Browser">
+        <wv2:WebView2 x:Name="Browser">
         </wv2:WebView2>
     </DockPanel>
 </TabItem>

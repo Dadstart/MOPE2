@@ -37,7 +37,12 @@ namespace B4.Mope.UI
 				if (m_part != null)
 				{
 					var data = (Data)Window.GetWindow(this).DataContext;
-					url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
+					if (ContentTypes.IsXml(m_part.ContentType))
+						url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
+					else if (ContentTypes.IsSupportedAudioType(m_part.ContentType) || ContentTypes.IsSupportedImageType(m_part.ContentType) || ContentTypes.IsSupportedVideoType(m_part.ContentType))
+						url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+					else
+						url = "about:blank";
 					((WebViewTabItemHeader)Header).Text = m_part.Uri;
 				}
 				else

@@ -12,6 +12,52 @@ namespace B4.Mope.Packaging
 		public Dictionary<string, string> Defaults { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public Dictionary<string, string> Overrides { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+		/// <summary>
+		/// List of image content types supported in browser view
+		/// </summary>
+		private static HashSet<string> m_imageContentTypes = new HashSet<string>()
+		{
+			"image/apng",
+			"image/bmp",
+			"image/gif",
+			"image/ico",
+			"image/cur",
+			"image/jpg",
+			"image/jpeg",
+			"image/jfif",
+			"image/pjpeg",
+			"image/pjp",
+			"image/png",
+			"image/svg",
+			"image/webp",
+		};
+
+		/// <summary>
+		/// List of video content types supported in browser view
+		/// </summary>
+		private static HashSet<string> m_videoContentTypes = new HashSet<string>()
+		{
+			"video/mp4",
+			"video/mpeg",
+			"video/ogg",
+			"video/webm",
+		};
+
+		/// <summary>
+		/// List of audio content types supported in browser view
+		/// </summary>
+		private static HashSet<string> m_audioContentTypes = new HashSet<string>()
+		{
+			"audio/wav",
+			"audio/mpeg",
+			"audio/mp4",
+			"audio/aac",
+			"audio/aacp",
+			"audio/webm",
+			"audio/ogg",
+			"audio/flac",
+		};
+
 		public void AddDefault(string ext, string contentType)
 		{
 			if (string.IsNullOrEmpty(ext))
@@ -105,6 +151,32 @@ namespace B4.Mope.Packaging
 				return Defaults[ext];
 
 			throw new Exception($"No known content type for {ext}");
+		}
+
+		public static bool IsXml(string contentType)
+		{
+			return string.Equals(contentType, "application/xml", StringComparison.OrdinalIgnoreCase)
+				|| contentType.EndsWith("+xml");
+		}
+
+		public static bool IsSupportedImageType(string contentType)
+		{
+			return m_imageContentTypes.Contains(contentType);
+		}
+
+		public static bool IsSupportedVideoType(string contentType)
+		{
+			return m_videoContentTypes.Contains(contentType);
+		}
+
+		public static bool IsSupportedAudioType(string contentType)
+		{
+			return m_audioContentTypes.Contains(contentType);
+		}
+
+		public static bool IsPdfType(string contentType)
+		{
+			return string.Equals(contentType, "application/pdf", StringComparison.Ordinal);
 		}
 	}
 }

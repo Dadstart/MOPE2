@@ -21,7 +21,6 @@
 
     <script>
         function getLanguageType(contentType) {
-            console.log(contentType);
             switch (contentType) {
                 case "application/javascript":
                     return "javascript";
@@ -33,9 +32,16 @@
                     return "css";
                 case "text/html":
                     return "html";
-                default:
+                case null:
                     return "text";
             }
+
+            // special case for xml with specialized content type
+            if (contentType.endsWith("+xml"))
+                return "xml";
+
+            // default to text
+            return "text";
         }
 
         const urlParams = new URLSearchParams(document.location.search);
