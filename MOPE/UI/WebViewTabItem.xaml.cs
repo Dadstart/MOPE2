@@ -34,16 +34,40 @@ namespace B4.Mope.UI
 			{
 				m_part = value;
 				string url;
+				string viewType;
 				if (m_part != null)
 				{
 					var data = (Data)Window.GetWindow(this).DataContext;
 					if (ContentTypes.IsXml(m_part.ContentType))
+					{
 						url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
-					else if (ContentTypes.IsSupportedAudioType(m_part.ContentType) || ContentTypes.IsSupportedImageType(m_part.ContentType) || ContentTypes.IsSupportedVideoType(m_part.ContentType))
+						viewType = "</>";
+					}
+					else if (ContentTypes.IsSupportedAudioType(m_part.ContentType))
+					{
 						url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+						viewType = "🎵";
+					}
+					else if (ContentTypes.IsSupportedImageType(m_part.ContentType))
+					{
+						url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+						viewType = "🎨";
+					}
+					else if (ContentTypes.IsSupportedVideoType(m_part.ContentType))
+					{
+						url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+						viewType = "🖥";
+					}
 					else
+					{
 						url = "about:blank";
-					((WebViewTabItemHeader)Header).Text = m_part.Uri;
+						viewType = "🧩";
+					}
+
+					var header = ((WebViewTabItemHeader)Header);
+					header.Text = $"{m_part.Uri}";
+					header.ViewType = viewType;
+
 				}
 				else
                 {

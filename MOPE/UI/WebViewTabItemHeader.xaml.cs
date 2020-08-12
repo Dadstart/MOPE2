@@ -32,6 +32,13 @@ namespace B4.Mope.UI
             set { SetValue(TextProperty, value); }
         }
 
+        public static readonly DependencyProperty ViewTypeProperty = DependencyProperty.Register("ViewType", typeof(string), typeof(WebViewTabItemHeader), new UIPropertyMetadata(string.Empty));
+        public string ViewType
+        {
+            get { return (string)GetValue(ViewTypeProperty); }
+            set { SetValue(ViewTypeProperty, value); }
+        }
+
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             var tabItem = (TabItem)Parent;

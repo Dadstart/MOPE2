@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800"
          ScrollViewer.CanContentScroll="False">
     <TabItem.Header>
-        <local:WebViewTabItemHeader Text="Test1" />
+        <local:WebViewTabItemHeader Text="Test1🔧🥨⛰🏛🚧⚡🧩🀄🖼🎨🔊🔈🔉🎵🖥⚙✖❌  " />
     </TabItem.Header>
     <DockPanel LastChildFill="True">
         <wv2:WebView2 x:Name="Browser">
