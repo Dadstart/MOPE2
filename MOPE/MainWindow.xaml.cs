@@ -79,7 +79,7 @@ namespace B4.Mope
 		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Data.Package?.Close();
-			Data.Package = new Package(@"C:\temp\lorem.docx", @"C:\temp\x");
+			Data.Package = new Package(@"C:\temp\lorem2.docx", @"C:\temp\x");
 			InitializeViews();
 		}
 

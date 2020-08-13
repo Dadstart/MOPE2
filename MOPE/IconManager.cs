@@ -25,6 +25,10 @@ namespace B4.Mope
 		readonly BitmapSourceCollection CodeIcon;
 		readonly BitmapSourceCollection XmlIcon;
 		readonly BitmapSourceCollection DocumentIcon;
+		private readonly BitmapSourceCollection WordIcon;
+		private readonly BitmapSourceCollection ExcelIcon;
+		private readonly BitmapSourceCollection PptIcon;
+		private readonly BitmapSourceCollection VisioIcon;
 
 		public IconManager()
 		{
@@ -39,6 +43,10 @@ namespace B4.Mope
 			CodeIcon = LoadKnownIcon("code");
 			XmlIcon = LoadKnownIcon("xml");
 			DocumentIcon = LoadKnownIcon("document");
+			WordIcon = LoadKnownIcon("word");
+			ExcelIcon = LoadKnownIcon("excel");
+			PptIcon = LoadKnownIcon("ppt");
+			VisioIcon = LoadKnownIcon("visio");
 		}
 
 		internal object GetFolderImage(int size)
