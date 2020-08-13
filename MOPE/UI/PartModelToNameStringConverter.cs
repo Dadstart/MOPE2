@@ -5,12 +5,16 @@ using System.Windows.Data;
 
 namespace B4.Mope.UI
 {
-	public class PartToSizeStringConverter : IValueConverter
+	public class PartModelToNameStringConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var part = value as Part;
-			return $"{SizeStringConverter.GetSizeString(part.Size)} ({SizeStringConverter.GetSizeString(part.CompressedSize)})";
+			var model = value as PartModel;
+			var part = model?.Part;
+			if (part == null)
+				return "???";
+
+			return part.Name;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

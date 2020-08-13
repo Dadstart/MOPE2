@@ -9,30 +9,31 @@ using System.Windows.Media.Imaging;
 
 namespace B4.Mope.UI
 {
-	public class PackageItemToBitmapSourceConverter : IValueConverter
+	public class PartModelToBitmapSourceConverter : IValueConverter
 	{
 		public IconManager IconManager { get; }
 
-		public PackageItemToBitmapSourceConverter()
+		public PartModelToBitmapSourceConverter()
 		{
 			IconManager = MainWindow.IconManager;
 		}
 
-		public PackageItemToBitmapSourceConverter(IconManager iconManager)
+		public PartModelToBitmapSourceConverter(IconManager iconManager)
 		{
 			IconManager = iconManager;
 		}
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var item = value as PackageItem;
+			var model = value as PartModel;
+
 			if (!int.TryParse(parameter as string, out int size))
 				size = 32;
 
-			if (item.IsFolder())
-				return IconManager.GetFolderImage(size);
-			else
-				return IconManager.GetImageForPart(item.Model.Part, size);
+			if (model == null)
+				return IconManager.UnknownIcon.Get(size);
+
+			return IconManager.GetImageForPart(model?.Part, size);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

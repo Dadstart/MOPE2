@@ -22,7 +22,7 @@ namespace B4.Mope.UI
         public CloseButtonTabHeader()
         {
             InitializeComponent();
-            this.DataContext = this;
+            DataContext = this;
         }
 
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(CloseButtonTabHeader), new UIPropertyMetadata(string.Empty));

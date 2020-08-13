@@ -12,41 +12,43 @@
         Title="MOPE: Office Package Editor" Height="720" Width="1200">
 	<Window.Resources>
 		<local:Data x:Key="appData" />
-		<localUI:PartToBitmapSourceConverter x:Key="partToBitmapSourceConverter" />
+		<localUI:PartModelToBitmapSourceConverter x:Key="partModelToBitmapSourceConverter" />
 		<localUI:PackageItemToBitmapSourceConverter x:Key="packageItemToBitmapSourceConverter" />
-		<localUI:PartToSizeStringConverter x:Key="partToSizeStringConverter" />
+		<localUI:PartModelToSizeStringConverter x:Key="partModelToSizeStringConverter" />
 		<localUI:SizeStringConverter x:Key="sizeStringConverter" />
+		<localUI:PartModelToNameStringConverter x:Key="partModelToNameStringConverter" />
+		<localUI:PackageItemToNameStringConverter x:Key="packageItemToNameStringConverter" />
+		<localUI:PartModelToContentTypeStringConverter x:Key="partModelToContentTypeStringConverter" />
 
 		<DataTemplate x:Key="tilesViewDataTemplate">
 			<DockPanel>
-				<Image DockPanel.Dock="Left" Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=64}" />
+				<Image DockPanel.Dock="Left" Source="{Binding Converter={StaticResource partModelToBitmapSourceConverter}, ConverterParameter=64}" />
 				<StackPanel Margin="1">
-					<TextBlock Text="{Binding Name}" FontSize="12" />
-					<TextBlock Text="{Binding ContentType}" FontSize="11" />
-					<TextBlock Text="{Binding Converter={StaticResource partToSizeStringConverter}}" FontSize="11" />
+					<TextBlock Text="{Binding Converter={StaticResource partModelToNameStringConverter}}" FontSize="12" />
+					<TextBlock Text="{Binding Converter={StaticResource partModelToContentTypeStringConverter}}" FontSize="11" />
+					<TextBlock Text="{Binding Converter={StaticResource partModelToSizeStringConverter}}" FontSize="11" />
 				</StackPanel>
 			</DockPanel>
 		</DataTemplate>
 
 		<DataTemplate x:Key="smallIconViewDataTemplate">
 			<StackPanel Orientation="Horizontal">
-				<Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
-				<TextBlock Text="{Binding Name}" FontSize="12" Margin="1"/>
+				<Image Source="{Binding Converter={StaticResource partModelToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+				<TextBlock Text="{Binding Converter={StaticResource partModelToNameStringConverter}}" FontSize="12" Margin="1"/>
 			</StackPanel>
 		</DataTemplate>
 
 		<DataTemplate x:Key="largeIconViewDataTemplate">
 			<StackPanel Orientation="Horizontal">
-				<Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=32}" Margin="1"/>
+				<Image Source="{Binding Converter={StaticResource partModelToBitmapSourceConverter}, ConverterParameter=32}" Margin="1"/>
 				<StackPanel Orientation="Vertical" Margin="1">
-					<TextBlock Text="{Binding Name}" FontSize="12" />
-					<TextBlock Text="{Binding ContentType}" FontSize="10"/>
+					<TextBlock Text="{Binding Converter={StaticResource partModelToNameStringConverter}}" FontSize="12" />
+					<TextBlock Text="{Binding Converter={StaticResource partModelToContentTypeStringConverter}}" FontSize="10"/>
 				</StackPanel>
 			</StackPanel>
 		</DataTemplate>
 
 		<localUI:IconCustomListView x:Key="iconCustomListViewTiles" ItemWidth="128" />
-
 	</Window.Resources>
 	<Window.CommandBindings>
 		<!--<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>-->
@@ -78,58 +80,56 @@
 			</Grid.ColumnDefinitions>
 			<Grid x:Name="gridContentViews" Grid.Column="0">
 				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
-				<StackPanel Grid.Row="0">
-					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1">
-						<TextBlock Text="Parts (Files)" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
-					</Border>
-					<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged">
-						<ListView.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
-								<MenuItem Header="Large Icons" Click="ListViewMenuLargeIconsClick" IsCheckable="True" x:Name="listViewMenuLargeIcons"/>
-								<MenuItem Header="Small Icons" Click="ListViewMenuSmallIconsClick" IsCheckable="True" x:Name="listViewMenuSmallIcons"/>
-								<MenuItem Header="Details" Click="ListViewDetailsClick" IsCheckable="True" IsChecked="True" x:Name="listViewMenuDetails" />
-							</ContextMenu>
-						</ListView.ContextMenu>
-						<ListView.View>
-							<GridView x:Name="listViewDefaultGridView">
-								<GridViewColumn Header="URI" Width="140">
-									<GridViewColumn.CellTemplate>
-										<DataTemplate>
-											<StackPanel Orientation="Horizontal">
-												<Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
-												<TextBlock Text="{Binding Name}" Margin="1"/>
-											</StackPanel>
-										</DataTemplate>
-									</GridViewColumn.CellTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Content Type" Width="120" DisplayMemberBinding="{Binding ContentType}"/>
-								<GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size, Converter={StaticResource sizeStringConverter}}" />
-							</GridView>
-						</ListView.View>
-					</ListView>
-				</StackPanel>
-				<StackPanel Grid.Row="1">
-					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1">
-						<TextBlock Text="Zip Archive Layout" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
-					</Border>
-					<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged">
-						<TreeView.ItemTemplate>
-							<HierarchicalDataTemplate DataType="{x:Type localPackaging:PackageItem}" ItemsSource="{Binding Children}">
-								<StackPanel Orientation="Horizontal">
-									<Image Source="{Binding Converter={StaticResource packageItemToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
-									<TextBlock Text="{Binding Name}" Margin="1" />
-								</StackPanel>
-							</HierarchicalDataTemplate>
-						</TreeView.ItemTemplate>
-					</TreeView>
-				</StackPanel>
+				<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1" Grid.Row="0">
+					<TextBlock Text="Parts (Files)" Background="LightGray" FontWeight="DemiBold" Padding="2" Grid.Row="1"/>
+				</Border>
+				<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
+					<ListView.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
+							<MenuItem Header="Large Icons" Click="ListViewMenuLargeIconsClick" IsCheckable="True" x:Name="listViewMenuLargeIcons"/>
+							<MenuItem Header="Small Icons" Click="ListViewMenuSmallIconsClick" IsCheckable="True" x:Name="listViewMenuSmallIcons"/>
+							<MenuItem Header="Details" Click="ListViewDetailsClick" IsCheckable="True" IsChecked="True" x:Name="listViewMenuDetails" />
+						</ContextMenu>
+					</ListView.ContextMenu>
+					<ListView.View>
+						<GridView x:Name="listViewDefaultGridView">
+							<GridViewColumn Header="URI" Width="140">
+								<GridViewColumn.CellTemplate>
+									<DataTemplate>
+										<StackPanel Orientation="Horizontal">
+											<Image Source="{Binding Converter={StaticResource partModelToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+											<TextBlock Text="{Binding Converter={StaticResource partModelToNameStringConverter}}" Margin="1"/>
+										</StackPanel>
+									</DataTemplate>
+								</GridViewColumn.CellTemplate>
+							</GridViewColumn>
+							<GridViewColumn Header="Content Type" Width="120" DisplayMemberBinding="{Binding Converter={StaticResource partModelToContentTypeStringConverter}}"/>
+							<GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size, Converter={StaticResource sizeStringConverter}}" />
+						</GridView>
+					</ListView.View>
+				</ListView>
+				<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1" Grid.Row="2">
+					<TextBlock Text="Zip Archive Layout" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
+				</Border>
+				<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged" Grid.Row="3">
+					<TreeView.ItemTemplate>
+						<HierarchicalDataTemplate DataType="{x:Type local:PackageItem}" ItemsSource="{Binding Children}">
+							<StackPanel Orientation="Horizontal" Margin="1">
+								<Image Source="{Binding Converter={StaticResource packageItemToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+								<TextBlock Text="{Binding Converter={StaticResource packageItemToNameStringConverter}}" Margin="1" />
+							</StackPanel>
+						</HierarchicalDataTemplate>
+					</TreeView.ItemTemplate>
+				</TreeView>
 			</Grid>
 			<GridSplitter Grid.Column="0" Width="5"/>
-			<TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" x:Name="partsTabControl">
+			<TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" x:Name="partsTabControl">
 			</TabControl>
 		</Grid>
 	</DockPanel>

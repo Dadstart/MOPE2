@@ -6,13 +6,18 @@ using System.Windows.Media.Imaging;
 
 namespace B4.Mope
 {
-	class BitmapSourceCollection
+	public class BitmapSourceCollection
 	{
 		Dictionary<int, BitmapSource> bitmaps = new Dictionary<int, BitmapSource>();
 
 		public void Add(BitmapSource bitmap, int size)
 		{
 			bitmaps.Add(size, bitmap);
+		}
+
+		public bool TryGetValue(int size, out BitmapSource source)
+		{
+			return bitmaps.TryGetValue(size, out source);
 		}
 
 		public BitmapSource Get(int size)
