@@ -63,12 +63,16 @@ namespace B4.Mope
 			var shellCommands = new List<ShellCommand>();
 
 			// load shell commands based on part's extension
-			var fileInfo = part.GetFileInfo();
-			OpenWith.LoadShellCommandsForExtension(fileInfo.Extension);
+			var extension = part.GetFileInfo().Extension;
 
+			// override if it's an xml file
+			if (ContentTypes.IsXmlType(part.ContentType))
+				extension = ".xml";
+
+			OpenWith.LoadShellCommandsForExtension(extension);
 
 			// iterate through apps list based on this part's extension
-			var partApps = OpenWith.ExtensionApplications.GetValues(fileInfo.Extension);
+			var partApps = OpenWith.ExtensionApplications.GetValues(extension);
 			if (partApps != null)
 			{
 				foreach (var app in partApps)
@@ -87,7 +91,7 @@ namespace B4.Mope
 			}
 
 			// iterate through prog ids registered for this part's extension
-			var progIds = OpenWith.ExtensionProgIds.GetValues(fileInfo.Extension);
+			var progIds = OpenWith.ExtensionProgIds.GetValues(extension);
 			if (progIds != null)
 			{
 				foreach (var progId in progIds)
