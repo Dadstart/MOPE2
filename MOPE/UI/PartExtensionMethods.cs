@@ -15,8 +15,8 @@ namespace B4.Mope.UI
 
 		public static bool CanViewInBrowser(this Part part)
 		{
-			var contentType = part.ContentType;
-			return ContentTypes.IsXml(contentType)
+			var contentType = part?.ContentType;
+			return ContentTypes.IsXmlType(contentType)
 				|| ContentTypes.IsSupportedAudioType(contentType)
 				|| ContentTypes.IsSupportedVideoType(contentType)
 				|| ContentTypes.IsSupportedImageType(contentType);

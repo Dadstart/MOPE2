@@ -153,10 +153,24 @@ namespace B4.Mope.Packaging
 			throw new Exception($"No known content type for {ext}");
 		}
 
-		public static bool IsXml(string contentType)
+		public static bool IsXmlType(string contentType)
 		{
 			return string.Equals(contentType, "application/xml", StringComparison.OrdinalIgnoreCase)
 				|| contentType.EndsWith("+xml");
+		}
+
+		public static bool IsCodeType(string contentType)
+		{
+			switch (contentType)
+			{
+				case "application/html":
+				case "application/javascript":
+				case "text/html":
+				case "text/css":
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		public static bool IsSupportedImageType(string contentType)

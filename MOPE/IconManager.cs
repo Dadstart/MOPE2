@@ -15,10 +15,16 @@ namespace B4.Mope
 {
 	public class IconManager
 	{
-		BitmapSourceCollection UnknownIcon;
-		BitmapSourceCollection RelsIcon;
-		BitmapSourceCollection ContentTypesIcon;
-		BitmapSourceCollection FolderIcon;
+		readonly BitmapSourceCollection UnknownIcon;
+		readonly BitmapSourceCollection RelsIcon;
+		readonly BitmapSourceCollection ContentTypesIcon;
+		readonly BitmapSourceCollection FolderIcon;
+		readonly BitmapSourceCollection AudioIcon;
+		readonly BitmapSourceCollection VideoIcon;
+		readonly BitmapSourceCollection ImageIcon;
+		readonly BitmapSourceCollection CodeIcon;
+		readonly BitmapSourceCollection XmlIcon;
+		readonly BitmapSourceCollection DocumentIcon;
 
 		public IconManager()
 		{
@@ -27,6 +33,12 @@ namespace B4.Mope
 			RelsIcon = LoadKnownIcon("rels");
 			ContentTypesIcon = LoadKnownIcon("magnifying glass");
 			FolderIcon = LoadKnownIcon("folder");
+			AudioIcon = LoadKnownIcon("audio");
+			VideoIcon = LoadKnownIcon("video");
+			ImageIcon = LoadKnownIcon("image");
+			CodeIcon = LoadKnownIcon("code");
+			XmlIcon = LoadKnownIcon("xml");
+			DocumentIcon = LoadKnownIcon("document");
 		}
 
 		internal object GetFolderImage(int size)
@@ -81,10 +93,31 @@ namespace B4.Mope
 		/// </summary>
 		public BitmapSource GetImageForContentType(string contentType, int size)
 		{
+			if (string.Equals(contentType, "application/vnd.openxmlformats-package.relationships+xml", StringComparison.Ordinal))
+				return RelsIcon.Get(size);
+
+			if (ContentTypes.IsSupportedAudioType(contentType))
+				return AudioIcon.Get(size);
+
+			if (ContentTypes.IsSupportedImageType(contentType))
+				return ImageIcon.Get(size);
+
+			if (ContentTypes.IsSupportedVideoType(contentType))
+				return VideoIcon.Get(size);
+
+			if (ContentTypes.IsXmlType(contentType))
+				return XmlIcon.Get(size);
+
+			if (ContentTypes.IsXmlType(contentType))
+				return CodeIcon.Get(size);
+
 			switch (contentType)
 			{
-				case "application/vnd.openxmlformats-package.relationships+xml":
-					return RelsIcon.Get(size);
+				case "application/rtf":
+				case "message/rfc822":
+					return DocumentIcon.Get(size);
+				case "application/vnd.openxmlformats-officedocument.vmlDrawing":
+					return CodeIcon.Get(size);
 				default:
 					return UnknownIcon.Get(size);
 			}

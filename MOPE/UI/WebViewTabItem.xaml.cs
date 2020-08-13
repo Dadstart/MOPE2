@@ -40,7 +40,7 @@ namespace B4.Mope.UI
 			if (m_part != null)
 			{
 				var data = (Data)Window.GetWindow(this).DataContext;
-				if (ContentTypes.IsXml(m_part.ContentType))
+				if (ContentTypes.IsXmlType(m_part.ContentType))
 				{
 					url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
 					viewType = "⚡";

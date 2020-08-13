@@ -97,7 +97,7 @@ namespace B4.Mope
 
 					using (var partStream = part.GetFileInfo().OpenRead())
 					{
-						if (ContentTypes.IsXml(part.ContentType))
+						if (ContentTypes.IsXmlType(part.ContentType))
 						{
 							var writerSettings = new XmlWriterSettings()
 							{

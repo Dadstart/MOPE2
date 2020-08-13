@@ -81,42 +81,42 @@
 					<RowDefinition Height="*" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
-					<StackPanel Grid.Row="0">
-						<Border BorderBrush="Black" BorderThickness="0,2,0,2">
-							<TextBlock Text="Parts (Files)" Background="LightGray" FontWeight="Bold" FontSize="10pt" Padding="2"/>
-						</Border>
-						<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" BorderThickness="0">
-							<ListView.ContextMenu>
-								<ContextMenu>
-									<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
-									<MenuItem Header="Large Icons" Click="ListViewMenuLargeIconsClick" IsCheckable="True" x:Name="listViewMenuLargeIcons"/>
-									<MenuItem Header="Small Icons" Click="ListViewMenuSmallIconsClick" IsCheckable="True" x:Name="listViewMenuSmallIcons"/>
-									<MenuItem Header="Details" Click="ListViewDetailsClick" IsCheckable="True" IsChecked="True" x:Name="listViewMenuDetails" />
-								</ContextMenu>
-							</ListView.ContextMenu>
-							<ListView.View>
-								<GridView x:Name="listViewDefaultGridView">
-									<GridViewColumn Header="URI" Width="140">
-										<GridViewColumn.CellTemplate>
-											<DataTemplate>
-												<StackPanel Orientation="Horizontal">
-													<Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
-													<TextBlock Text="{Binding Name}" Margin="1"/>
-												</StackPanel>
-											</DataTemplate>
-										</GridViewColumn.CellTemplate>
-									</GridViewColumn>
-									<GridViewColumn Header="Content Type" Width="120" DisplayMemberBinding="{Binding ContentType}"/>
-									<GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size, Converter={StaticResource sizeStringConverter}}" />
-								</GridView>
-							</ListView.View>
-						</ListView>
-					</StackPanel>
-				<StackPanel x:Name="expanderFilesView" Grid.Row="1">
-					<Border BorderBrush="Black" BorderThickness="0,2,0,2">
-						<TextBlock Text="Zip Archive Layout" Background="LightGray" FontWeight="Bold" FontSize="10pt" Padding="2"/>
+				<StackPanel Grid.Row="0">
+					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1">
+						<TextBlock Text="Parts (Files)" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
 					</Border>
-					<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged" BorderThickness="0">
+					<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged">
+						<ListView.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
+								<MenuItem Header="Large Icons" Click="ListViewMenuLargeIconsClick" IsCheckable="True" x:Name="listViewMenuLargeIcons"/>
+								<MenuItem Header="Small Icons" Click="ListViewMenuSmallIconsClick" IsCheckable="True" x:Name="listViewMenuSmallIcons"/>
+								<MenuItem Header="Details" Click="ListViewDetailsClick" IsCheckable="True" IsChecked="True" x:Name="listViewMenuDetails" />
+							</ContextMenu>
+						</ListView.ContextMenu>
+						<ListView.View>
+							<GridView x:Name="listViewDefaultGridView">
+								<GridViewColumn Header="URI" Width="140">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<StackPanel Orientation="Horizontal">
+												<Image Source="{Binding Converter={StaticResource partToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+												<TextBlock Text="{Binding Name}" Margin="1"/>
+											</StackPanel>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="Content Type" Width="120" DisplayMemberBinding="{Binding ContentType}"/>
+								<GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size, Converter={StaticResource sizeStringConverter}}" />
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</StackPanel>
+				<StackPanel Grid.Row="1">
+					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1">
+						<TextBlock Text="Zip Archive Layout" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
+					</Border>
+					<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged">
 						<TreeView.ItemTemplate>
 							<HierarchicalDataTemplate DataType="{x:Type localPackaging:PackageItem}" ItemsSource="{Binding Children}">
 								<StackPanel Orientation="Horizontal">
