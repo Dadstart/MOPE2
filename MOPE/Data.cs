@@ -1,6 +1,9 @@
 ﻿using B4.Mope.Packaging;
+using B4.Mope.Shell;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace B4.Mope
@@ -10,8 +13,96 @@ namespace B4.Mope
 	/// </summary>
 	public class Data
 	{
-		public Package Package { get; set; }
+		public Package Package { get; private set; }
 
-		public WebHost WebHost { get; set; }
+		public WebHost WebHost { get; private set; }
+
+		public IDictionary<string, PartModel> PartModels { get; private set; }
+
+		public OpenWith OpenWith { get; private set; } = new OpenWith();
+
+		public IList<string> Applications { get; private set; } = new List<string>();
+
+		public void Reset()
+		{
+			Package?.Close();
+			Package = null;
+			WebHost?.Stop();
+			PartModels = null;
+
+			// leave Shell related fields the same to use as cache for future opens
+		}
+
+		public void Init(Package package)
+		{
+			Package = package ?? throw new ArgumentNullException(nameof(package));
+			InitializeWebHost();
+			InitializePartModels();
+		}
+
+		private void InitializeWebHost()
+		{
+			if (WebHost == null)
+				WebHost = new WebHost(this);
+			WebHost.ListenOnThread();
+		}
+
+		private void InitializePartModels()
+		{
+			PartModels = new Dictionary<string, PartModel>(Package.Parts.Count);
+			foreach (Part part in Package.Parts.Values)
+			{
+				var shellCommands = LoadShellCommandsForPart(part);
+				var model = new PartModel(part, shellCommands);
+				PartModels.Add(part.Uri, model);
+			}
+		}
+
+		private IList<ShellCommand> LoadShellCommandsForPart(Part part)
+		{
+			var shellCommands = new List<ShellCommand>();
+
+			// load shell commands based on part's extension
+			var fileInfo = part.GetFileInfo();
+			OpenWith.LoadShellCommandsForExtension(fileInfo.Extension);
+
+
+			// iterate through apps list based on this part's extension
+			var partApps = OpenWith.ExtensionApplications.GetValues(fileInfo.Extension);
+			if (partApps != null)
+			{
+				foreach (var app in partApps)
+				{
+					if (string.IsNullOrEmpty(app))
+						continue;
+
+					if (!OpenWith.ApplicationFullPaths.TryGetValue(app, out string appFullPath) || string.IsNullOrEmpty(appFullPath))
+						continue;
+
+					if (!OpenWith.ApplicationCommands.TryGetValue(app, out ShellCommand commmand))
+						continue;
+
+					shellCommands.Add(commmand);
+				}
+			}
+
+			// iterate through prog ids registered for this part's extension
+			var progIds = OpenWith.ExtensionProgIds.GetValues(fileInfo.Extension);
+			if (progIds != null)
+			{
+				foreach (var progId in progIds)
+				{
+					if (string.IsNullOrEmpty(progId))
+						continue;
+
+					if (!OpenWith.ProgIdCommands.TryGetValue(progId, out ShellCommand command))
+						continue;
+
+					shellCommands.Add(command);
+				}
+			}
+
+			return shellCommands;
+		}
 	}
 }

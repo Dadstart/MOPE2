@@ -55,7 +55,7 @@ namespace B4.Mope.Shell
 
 			paths = Environment.GetEnvironmentVariable("path");
 
-			while ((paths != null) && !paths.Equals(String.Empty))
+			while ((paths != null) && !paths.Equals(string.Empty))
 			{
 				int i = paths.IndexOf(";");
 				if (i < 0)
@@ -78,7 +78,7 @@ namespace B4.Mope.Shell
 			}
 
 			// look in windows directory
-			if ((windowsDir != null) && !windowsDir.Equals(String.Empty))
+			if ((windowsDir != null) && !windowsDir.Equals(string.Empty))
 			{
 				application = FindFile(applicationName, windowsDir, true);
 				if ((application != null) && application.Exists)

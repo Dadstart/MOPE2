@@ -1,4 +1,5 @@
 ﻿using B4.Mope.Packaging;
+using B4.Mope.Shell;
 using B4.Mope.UI;
 using Microsoft.Web.WebView2.Wpf;
 using System;
@@ -42,14 +43,12 @@ namespace B4.Mope
 
 			Unloaded += MainWindow_Unloaded;
 			Data = new Data();
-			Data.WebHost = new WebHost(Data);
-			Data.WebHost.ListenOnThread();
 			DataContext = Data;
 		}
 
 		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
 		{
-			Data?.WebHost?.Stop();
+			Data?.Reset();
 		}
 
 		private string GetEmbeddedResourceAsText(string folder, string name)
@@ -78,8 +77,11 @@ namespace B4.Mope
 
 		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			Data.Package?.Close();
-			Data.Package = new Package(@"C:\temp\lorem2.docx", @"C:\temp\x");
+			Data.Reset();
+
+			var package = new Package(@"C:\temp\lorem2.docx", @"C:\temp\x");
+			Data.Init(package);
+
 			InitializeViews();
 		}
 
@@ -220,6 +222,11 @@ namespace B4.Mope
 		private void Exit_Click(object sender, RoutedEventArgs e)
 		{
 			Close();
+		}
+
+		private void OpenPartInShell(Part part, ShellCommand shellCommand, bool openWith)
+		{
+
 		}
     }
 }

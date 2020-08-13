@@ -99,7 +99,7 @@ namespace B4.Mope.Shell
 
         public static string ProgIdFromExtension(string extension)
         {
-            object val = ValueFromRegKey(Registry.ClassesRoot, extension, String.Empty);
+            object val = ValueFromRegKey(Registry.ClassesRoot, extension, string.Empty);
 
             if (val == null)
                 return null;

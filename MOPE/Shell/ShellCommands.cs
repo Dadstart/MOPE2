@@ -25,13 +25,13 @@ namespace B4.Mope.Shell
 				if (verbKey == null)
 					return null;
 
-				friendlyName = RegistryHelper.StringValueFromRegKey(verbKey, String.Empty);
+				friendlyName = RegistryHelper.StringValueFromRegKey(verbKey, string.Empty);
 
 				regKey = verbKey.OpenSubKey("command");
 				if (regKey == null)
 					return null;
 
-				command = RegistryHelper.StringValueFromRegKey(regKey, String.Empty);
+				command = RegistryHelper.StringValueFromRegKey(regKey, string.Empty);
 				regKey.Close();
 				regKey = null;
 
@@ -46,7 +46,7 @@ namespace B4.Mope.Shell
 				if (ddeKey != null)
 				{
 					// get DDE command
-					shellCommand.DDE = RegistryHelper.StringValueFromRegKey(ddeKey, String.Empty);
+					shellCommand.DDE = RegistryHelper.StringValueFromRegKey(ddeKey, string.Empty);
 
 					// get DDE application (if it exists)
 					shellCommand.DDEApplication = RegistryHelper.StringValueFromRegKey(ddeKey, @"\application");
