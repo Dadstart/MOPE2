@@ -120,7 +120,7 @@
 				<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged" Grid.Row="3">
 					<TreeView.ItemTemplate>
 						<HierarchicalDataTemplate DataType="{x:Type local:PackageItem}" ItemsSource="{Binding Children}">
-							<StackPanel Orientation="Horizontal">
+							<StackPanel Orientation="Horizontal" Margin="1">
 								<Image Source="{Binding Converter={StaticResource packageItemToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
 								<TextBlock Text="{Binding Converter={StaticResource packageItemToNameStringConverter}}" Margin="1" />
 							</StackPanel>
