@@ -2,8 +2,10 @@
 using B4.Mope.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +17,12 @@ namespace B4.Mope
 {
 	public class IconManager
 	{
+		[DllImport("shell32.dll", EntryPoint = "ExtractIconExW", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+		private static extern uint ExtractIconEx(string lpszFile, int nIconIndex, out IntPtr hiconLarge, out IntPtr hiconSmall, uint nIcons);
+
+		[DllImport("user32.dll", EntryPoint = "DestroyIcon", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+		private static extern bool DestroyIcon(IntPtr hicon);
+
 		readonly BitmapSourceCollection UnknownIcon;
 		readonly BitmapSourceCollection RelsIcon;
 		readonly BitmapSourceCollection ContentTypesIcon;
@@ -25,10 +33,11 @@ namespace B4.Mope
 		readonly BitmapSourceCollection CodeIcon;
 		readonly BitmapSourceCollection XmlIcon;
 		readonly BitmapSourceCollection DocumentIcon;
-		private readonly BitmapSourceCollection WordIcon;
-		private readonly BitmapSourceCollection ExcelIcon;
-		private readonly BitmapSourceCollection PptIcon;
-		private readonly BitmapSourceCollection VisioIcon;
+		readonly BitmapSourceCollection WordIcon;
+		readonly BitmapSourceCollection ExcelIcon;
+		readonly BitmapSourceCollection PptIcon;
+		readonly BitmapSourceCollection VisioIcon;
+		readonly IDictionary<string, BitmapSourceCollection> AppIcons = new Dictionary<string, BitmapSourceCollection>(StringComparer.OrdinalIgnoreCase);
 
 		public IconManager()
 		{
@@ -166,6 +175,83 @@ namespace B4.Mope
 				return ContentTypesIcon.Get(size);
 
 			return GetImageForContentType(part?.ContentType, size);
+		}
+
+		public BitmapSource GetImageFromApplicationName(string appFullPath)
+		{
+			const int iconSize = 16;
+
+			// normalize case and trim quotes
+			appFullPath = appFullPath.ToLowerInvariant().Trim('\"', '\'');
+
+			// expand environment variables
+			int i = 0;
+			while ((i = appFullPath.IndexOf('%', i)) >= 0)
+			{
+				int j = appFullPath.IndexOf('%', i + 1);
+
+				// uh-oh - registry may be corrupt
+				if (j <= i)
+					return UnknownIcon.Get(16);
+
+				var envVar = appFullPath.Substring(i + 1, j - 1);
+				var envVarValue = Environment.GetEnvironmentVariable(envVar);
+				appFullPath = appFullPath.Replace($"%{envVar}%", envVarValue);
+			}
+
+			// check cache
+			if (AppIcons.TryGetValue(appFullPath, out BitmapSourceCollection bitmaps))
+			{
+				if (bitmaps.TryGetValue(iconSize, out BitmapSource cached))
+					return cached;
+			}
+
+			// load from app (dll or exe)
+			var bitmapSource = GetBitmapSourceFromApp(appFullPath, small: true);
+			if (bitmapSource == null)
+				return UnknownIcon.Get(16);
+
+			if (bitmaps == null)
+			{
+				bitmaps = new BitmapSourceCollection();
+				AppIcons.Add(appFullPath, bitmaps);
+			}
+
+			// store in cache
+			bitmaps.Add(bitmapSource, iconSize);
+
+			return bitmapSource;
+		}
+
+		private BitmapSource GetBitmapSourceFromApp(string appFullPath, bool small)
+		{
+			IntPtr hiconSmall = IntPtr.Zero;
+			IntPtr hiconLarge = IntPtr.Zero;
+			Icon icon = null;
+			try
+			{
+				if (ExtractIconEx(appFullPath, 0, out hiconLarge, out hiconSmall, 1) == 0)
+					return null;
+
+				icon = Icon.FromHandle(small ? hiconSmall : hiconLarge);
+				int size = small ? 16 : 32;
+				return Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(size, size));
+			}
+			catch
+			{
+				// yes, we're swallowing exceptions. don't want to crash in this code path
+				if (Debugger.IsAttached)
+					Debugger.Break();
+				return null;
+			}
+			finally
+			{
+				if (hiconSmall != IntPtr.Zero)
+					DestroyIcon(hiconSmall);
+				if (hiconLarge != IntPtr.Zero)
+					DestroyIcon(hiconLarge);
+				icon?.Dispose();
+			}
 		}
 	}
 }

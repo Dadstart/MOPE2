@@ -15,6 +15,11 @@ namespace B4.Mope
 			bitmaps.Add(size, bitmap);
 		}
 
+		public bool TryGetValue(int size, out BitmapSource source)
+		{
+			return bitmaps.TryGetValue(size, out source);
+		}
+
 		public BitmapSource Get(int size)
 		{
 			if (!bitmaps.TryGetValue(size, out BitmapSource source))
