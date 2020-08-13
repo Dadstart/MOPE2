@@ -96,10 +96,10 @@ namespace B4.Mope
 		public BitmapSource GetImageForPart(Part part, int size)
 		{
 			// [Content Types].xml is special
-			if (string.Equals(part.Name, "[Content_Types].xml", StringComparison.Ordinal))
+			if (string.Equals(part?.Name, "[Content_Types].xml", StringComparison.Ordinal))
 				return ContentTypesIcon.Get(size);
 
-			return GetImageForContentType(part.ContentType, size);
+			return GetImageForContentType(part?.ContentType, size);
 		}
 	}
 }
