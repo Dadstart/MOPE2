@@ -28,7 +28,11 @@ namespace B4.Mope.Packaging
 			ZipFile = path;
 			TempDirectory = tempDirPath;
 
+			if (Directory.Exists(TempDirectory))
+				Directory.Delete(TempDirectory, true);
+
 			var tempDir = Directory.CreateDirectory(TempDirectory);
+			
 			var entries = ZipContainer.ExtractTo(ZipFile, TempDirectory, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
 			// read [Content_Types].xml

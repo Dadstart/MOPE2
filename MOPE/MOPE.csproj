@@ -21,8 +21,15 @@
       <None Remove="icons\audio.ico" />
       <None Remove="icons\code.ico" />
       <None Remove="icons\document.ico" />
+      <None Remove="icons\excel-ods.ico" />
+      <None Remove="icons\excel.ico" />
       <None Remove="icons\image.ico" />
+      <None Remove="icons\ppt-odp.ico" />
+      <None Remove="icons\ppt.ico" />
+      <None Remove="icons\project.ico" />
       <None Remove="icons\video.ico" />
+      <None Remove="icons\word-odt.ico" />
+      <None Remove="icons\word.ico" />
       <None Remove="icons\xml.ico" />
     </ItemGroup>
 
@@ -32,12 +39,19 @@
         <Resource Include="icons\code.ico" />
         <Resource Include="icons\Color.ico" />
         <Resource Include="icons\document.ico" />
+        <Resource Include="icons\excel-ods.ico" />
+        <Resource Include="icons\excel.ico" />
         <Resource Include="icons\folder.ico" />
         <Resource Include="icons\image.ico" />
         <Resource Include="icons\magnifying glass.ico" />
+        <Resource Include="icons\ppt-odp.ico" />
+        <Resource Include="icons\ppt.ico" />
+        <Resource Include="icons\project.ico" />
         <Resource Include="icons\rels.ico" />
         <Resource Include="icons\unknown.ico" />
         <Resource Include="icons\video.ico" />
+        <Resource Include="icons\word-odt.ico" />
+        <Resource Include="icons\word.ico" />
         <Resource Include="icons\xml.ico" />
         <Resource Include="monaco\editor.html" />
     </ItemGroup>

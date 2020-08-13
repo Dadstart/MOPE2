@@ -155,7 +155,8 @@ namespace B4.Mope.Packaging
 
 		public static bool IsXmlType(string contentType)
 		{
-			return string.Equals(contentType, "application/xml", StringComparison.OrdinalIgnoreCase)
+			return contentType != null
+				&& string.Equals(contentType, "application/xml", StringComparison.OrdinalIgnoreCase)
 				|| contentType.EndsWith("+xml");
 		}
 

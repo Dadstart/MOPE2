@@ -78,14 +78,15 @@
 			</Grid.ColumnDefinitions>
 			<Grid x:Name="gridContentViews" Grid.Column="0">
 				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
-				<StackPanel Grid.Row="0">
-					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1">
-						<TextBlock Text="Parts (Files)" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
+					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1" Grid.Row="0">
+						<TextBlock Text="Parts (Files)" Background="LightGray" FontWeight="DemiBold" Padding="2" Grid.Row="1"/>
 					</Border>
-					<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged">
+					<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
 						<ListView.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
@@ -111,12 +112,10 @@
 							</GridView>
 						</ListView.View>
 					</ListView>
-				</StackPanel>
-				<StackPanel Grid.Row="1">
-					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1">
+					<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1" Grid.Row="2">
 						<TextBlock Text="Zip Archive Layout" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
 					</Border>
-					<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged">
+					<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged" Grid.Row="3">
 						<TreeView.ItemTemplate>
 							<HierarchicalDataTemplate DataType="{x:Type localPackaging:PackageItem}" ItemsSource="{Binding Children}">
 								<StackPanel Orientation="Horizontal">
@@ -126,10 +125,9 @@
 							</HierarchicalDataTemplate>
 						</TreeView.ItemTemplate>
 					</TreeView>
-				</StackPanel>
 			</Grid>
 			<GridSplitter Grid.Column="0" Width="5"/>
-			<TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" x:Name="partsTabControl">
+			<TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" x:Name="partsTabControl">
 			</TabControl>
 		</Grid>
 	</DockPanel>
