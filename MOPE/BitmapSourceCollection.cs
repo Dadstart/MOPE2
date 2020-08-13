@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace B4.Mope
 {
-	class BitmapSourceCollection
+	public class BitmapSourceCollection
 	{
 		Dictionary<int, BitmapSource> bitmaps = new Dictionary<int, BitmapSource>();
 

@@ -101,33 +101,58 @@ namespace B4.Mope
 		/// </summary>
 		public BitmapSource GetImageForContentType(string contentType, int size)
 		{
+			return GetIconForContentType(contentType).Get(size);
+		}
+
+		public BitmapSourceCollection GetIconForContentType(string contentType)
+		{
 			if (string.Equals(contentType, "application/vnd.openxmlformats-package.relationships+xml", StringComparison.Ordinal))
-				return RelsIcon.Get(size);
+				return RelsIcon;
 
 			if (ContentTypes.IsSupportedAudioType(contentType))
-				return AudioIcon.Get(size);
+				return AudioIcon;
 
 			if (ContentTypes.IsSupportedImageType(contentType))
-				return ImageIcon.Get(size);
+				return ImageIcon;
 
 			if (ContentTypes.IsSupportedVideoType(contentType))
-				return VideoIcon.Get(size);
+				return VideoIcon;
 
 			if (ContentTypes.IsXmlType(contentType))
-				return XmlIcon.Get(size);
+				return XmlIcon;
 
 			if (ContentTypes.IsXmlType(contentType))
-				return CodeIcon.Get(size);
+				return CodeIcon;
 
 			switch (contentType)
 			{
 				case "application/rtf":
 				case "message/rfc822":
-					return DocumentIcon.Get(size);
+					return DocumentIcon;
 				case "application/vnd.openxmlformats-officedocument.vmlDrawing":
-					return CodeIcon.Get(size);
+					return CodeIcon;
+				case "application/msword":
+				case "application/vnd.ms-word.document.macroEnabled.12":
+				case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+					return WordIcon;
+				case "application/vnd.ms-powerpoint":
+				case "application/vnd.ms-powerpoint.presentation.macroEnabled.12":
+				case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+				case "application/vnd.openxmlformats-package.relationships+xml":
+				case "application/vnd.ms-powerpoint.slide.macroEnabled.12":
+				case "application/vnd.openxmlformats-officedocument.presentationml.slide":
+					return PptIcon;
+				case "application/vnd.visio":
+				case "application/vnd.ms-visio.drawing.macroEnabled":
+				case "application/vnd.ms-visio.drawing":
+					return VisioIcon;
+				case "application/vnd.ms-excel":
+				case "application/vnd.ms-excel.sheet.binary.macroEnabled.12":
+				case "application/vnd.ms-excel.sheet.macroEnabled.12":
+				case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+					return ExcelIcon;
 				default:
-					return UnknownIcon.Get(size);
+					return UnknownIcon;
 			}
 		}
 
