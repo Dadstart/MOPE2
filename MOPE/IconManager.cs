@@ -23,21 +23,21 @@ namespace B4.Mope
 		[DllImport("user32.dll", EntryPoint = "DestroyIcon", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
 		private static extern bool DestroyIcon(IntPtr hicon);
 
-		readonly BitmapSourceCollection UnknownIcon;
-		readonly BitmapSourceCollection RelsIcon;
-		readonly BitmapSourceCollection ContentTypesIcon;
-		readonly BitmapSourceCollection FolderIcon;
-		readonly BitmapSourceCollection AudioIcon;
-		readonly BitmapSourceCollection VideoIcon;
-		readonly BitmapSourceCollection ImageIcon;
-		readonly BitmapSourceCollection CodeIcon;
-		readonly BitmapSourceCollection XmlIcon;
-		readonly BitmapSourceCollection DocumentIcon;
-		readonly BitmapSourceCollection WordIcon;
-		readonly BitmapSourceCollection ExcelIcon;
-		readonly BitmapSourceCollection PptIcon;
-		readonly BitmapSourceCollection VisioIcon;
-		readonly IDictionary<string, BitmapSourceCollection> AppIcons = new Dictionary<string, BitmapSourceCollection>(StringComparer.OrdinalIgnoreCase);
+		public BitmapSourceCollection UnknownIcon { get; }
+		public BitmapSourceCollection RelsIcon { get; }
+		public BitmapSourceCollection ContentTypesIcon { get; }
+		public BitmapSourceCollection FolderIcon { get; }
+		public BitmapSourceCollection AudioIcon { get; }
+		public BitmapSourceCollection VideoIcon { get; }
+		public BitmapSourceCollection ImageIcon { get; }
+		public BitmapSourceCollection CodeIcon { get; }
+		public BitmapSourceCollection XmlIcon { get; }
+		public BitmapSourceCollection DocumentIcon { get; }
+		public BitmapSourceCollection WordIcon { get; }
+		public BitmapSourceCollection ExcelIcon { get; }
+		public BitmapSourceCollection PptIcon { get; }
+		public BitmapSourceCollection VisioIcon { get; }
+		public IDictionary<string, BitmapSourceCollection> AppIcons { get; } = new Dictionary<string, BitmapSourceCollection>(StringComparer.OrdinalIgnoreCase);
 
 		public IconManager()
 		{
@@ -177,7 +177,7 @@ namespace B4.Mope
 			return GetImageForContentType(part?.ContentType, size);
 		}
 
-		public BitmapSource GetImageFromApplicationName(string appFullPath)
+		public BitmapSource GetImageForApplicationName(string appFullPath)
 		{
 			const int iconSize = 16;
 

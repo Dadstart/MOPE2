@@ -124,12 +124,12 @@ namespace B4.Mope
 
 		private void InitializeZipFilesTreeView()
 		{
-			treeViewZipFiles.ItemsSource = Data.Package.Items;
+			treeViewZipFiles.ItemsSource = Data.Items;
 		}
 
 		private void InitializePartsListView()
 		{
-			listViewParts.ItemsSource = Data.Package.Parts.Values;
+			listViewParts.ItemsSource = Data.PartModels.Values;
 		}
 
 		private void ToggleMenuCheckedStates(MenuItem itemToCheck)
@@ -170,16 +170,19 @@ namespace B4.Mope
 		private void treeViewZipFiles_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var packageItem = (PackageItem)treeViewZipFiles.SelectedItem;
-			SetActivePart(packageItem.Part);
+			
+			if (!packageItem.IsFolder())
+				SetActivePart(packageItem.Model);
 		}
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			SetActivePart((Part)listViewParts.SelectedItem);
+			SetActivePart((PartModel)listViewParts.SelectedItem);
 		}
 
-		private void SetActivePart(Part part)
+		private void SetActivePart(PartModel model)
         {
+			var part = model.Part;
 			var tabItem = GetTabItemWithPart(part);
 			if (tabItem == null)
 			{

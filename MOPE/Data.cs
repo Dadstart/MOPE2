@@ -2,6 +2,7 @@
 using B4.Mope.Shell;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
@@ -22,6 +23,7 @@ namespace B4.Mope
 		public OpenWith OpenWith { get; private set; } = new OpenWith();
 
 		public IList<string> Applications { get; private set; } = new List<string>();
+		public List<PackageItem> Items { get; private set; }
 
 		public void Reset()
 		{
@@ -29,7 +31,7 @@ namespace B4.Mope
 			Package = null;
 			WebHost?.Stop();
 			PartModels = null;
-
+			Items = null;
 			// leave Shell related fields the same to use as cache for future opens
 		}
 
@@ -38,6 +40,7 @@ namespace B4.Mope
 			Package = package ?? throw new ArgumentNullException(nameof(package));
 			InitializeWebHost();
 			InitializePartModels();
+			InitializeHierarchyTree();
 		}
 
 		private void InitializeWebHost()
@@ -57,6 +60,46 @@ namespace B4.Mope
 				PartModels.Add(part.Uri, model);
 			}
 		}
+
+		private void InitializeHierarchyTree()
+		{
+			// generate items hierarchy tree
+			var rootItems = new SortedList<string, PackageItem>();
+			var tempDir = new DirectoryInfo(Package.TempDirectory);
+			foreach (var info in tempDir.GetFileSystemInfos())
+			{
+				var item = PackagePartFromFileSystemInfo(info);
+				rootItems.Add(item.Name, item);
+			}
+			Items = rootItems.Values.ToList();
+		}
+
+		private PackageItem PackagePartFromFileSystemInfo(FileSystemInfo info)
+		{
+			var relativePath = System.IO.Path.GetRelativePath(Package.TempDirectory, info.FullName);
+			relativePath = relativePath.Replace('\\', '/');
+
+			var dir = info as DirectoryInfo;
+
+			if (dir == null)
+			{
+				return new PackageItem(info.Name, info.FullName, PartModels[relativePath]);
+			}
+			else
+			{
+				var packageItem = new PackageItem(info.Name, info.FullName, null);
+				var childrenItems = new SortedList<string, PackageItem>();
+				foreach (var childInfo in dir.GetFileSystemInfos())
+				{
+					var childItem = PackagePartFromFileSystemInfo(childInfo);
+					childrenItems.Add(childItem.Name, childItem);
+				}
+
+				packageItem.Children = childrenItems.Values.ToList();
+				return packageItem;
+			}
+		}
+
 
 		private IList<ShellCommand> LoadShellCommandsForPart(Part part)
 		{
