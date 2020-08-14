@@ -1,6 +1,7 @@
 ﻿using B4.Mope.Shell;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,7 +42,22 @@ namespace B4.Mope.UI
 
 		private void ShellCommandMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			MessageBox.Show(Model.Command.Application);
+			var process = new Process();
+			var command = Model.Command;
+			var fileInfo = Model.PartModel.Part.GetFileInfo();
+
+			if (command.DDE != null)
+			{
+				process.StartInfo.FileName = command.GetApplication();
+				process.StartInfo.Arguments = String.Concat('"', fileInfo.FullName, '"');
+			}
+			else
+			{
+				process.StartInfo.FileName = command.GetApplication();
+				process.StartInfo.Arguments = String.Concat('"', fileInfo.FullName, '"');
+			}
+
+			process.Start();
 		}
 	}
 }

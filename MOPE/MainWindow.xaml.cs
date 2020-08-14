@@ -175,7 +175,17 @@ namespace B4.Mope
 		private void UpdateContextMenu(ContextMenu listViewContextMenu, PartModel model)
 		{
 			// remove all existing ShellCommandMenuItems
-			listViewOpenWithMenuItem.Items.Clear();
+			var itemsToRemove = new List<object>();
+			foreach (var item in listViewOpenWithMenuItem.Items)
+			{
+				if (item is ShellCommandMenuItem)
+					itemsToRemove.Add(item);
+			}
+
+			foreach (var item in itemsToRemove)
+			{
+				listViewOpenWithMenuItem.Items.Remove(item);
+			}
 
 			// add new ShellCommandMenuItems
 			foreach (var command in model.ShellCommands)
@@ -265,7 +275,16 @@ namespace B4.Mope
 
 		private void listViewOpenMenuItem_Click(object sender, RoutedEventArgs e)
 		{
+			OpenPart(listViewParts.SelectedItem as PartModel);
+		}
 
+		private void OpenPart(PartModel part)
+		{
+			if (part?.Part == null)
+				return;
+
+			var fileInfo = part.Part.GetFileInfo();
+			ShellCommand.ShellExecute(IntPtr.Zero, null, "rundll32.exe", string.Concat("shell32.dll,OpenAs_RunDLL ", fileInfo.FullName), null, 0);
 		}
 	}
 }
