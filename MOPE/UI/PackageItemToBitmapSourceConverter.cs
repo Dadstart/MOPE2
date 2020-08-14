@@ -1,11 +1,6 @@
-﻿using B4.Mope.Packaging;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
-using System.Text;
 using System.Windows.Data;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace B4.Mope.UI
 {

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 
 namespace B4.Mope.Packaging
 {

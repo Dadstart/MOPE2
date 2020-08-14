@@ -1,15 +1,13 @@
 ﻿<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:B4.Mope"
-        xmlns:localPackaging="clr-namespace:B4.Mope.Packaging"
-        xmlns:localUI="clr-namespace:B4.Mope.UI" xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Common"
-        xmlns:Drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" x:Class="B4.Mope.MainWindow"
-        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-        mc:Ignorable="d"
-        Title="MOPE: Office Package Editor" Height="720" Width="1200">
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:B4.Mope"
+		xmlns:localUI="clr-namespace:B4.Mope.UI"
+		x:Class="B4.Mope.MainWindow"
+		mc:Ignorable="d"
+		Title="MOPE: Office Package Editor" Height="720" Width="1200">
 	<Window.Resources>
 		<local:Data x:Key="appData" />
 		<localUI:PartModelToBitmapSourceConverter x:Key="partModelToBitmapSourceConverter" />

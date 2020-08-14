@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Collections;
-using System.Collections.Specialized;
 using Microsoft.Win32;
 
 namespace B4.Mope.Shell
@@ -71,7 +66,7 @@ namespace B4.Mope.Shell
 		public static ShellCommand ApplicationOpenCommand(string application)
 		{
 			// HKCR\Applications\[app.exe]\shell\open
-			ShellCommand  shellCommand = ShellCommandFromVerb(application, null, String.Concat(@"Applications\", application, @"\shell"), "open");
+			ShellCommand shellCommand = ShellCommandFromVerb(application, null, String.Concat(@"Applications\", application, @"\shell"), "open");
 			if (shellCommand != null)
 				return shellCommand;
 			// HKCR\Applications\[app.exe]\shell\edit

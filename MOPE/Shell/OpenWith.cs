@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using Microsoft.Win32;
-using System.Collections;
 using System.Collections.Specialized;
 
 namespace B4.Mope.Shell
