@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -168,15 +169,14 @@ namespace B4.Mope
 				}
 			}
 
-			// update context menu
-			UpdateContextMenu(listViewContextMenu, model);
+			UpdateContextMenu(listViewOpenWithMenuItem, model);
 		}
 
-		private void UpdateContextMenu(ContextMenu listViewContextMenu, PartModel model)
+		private void UpdateContextMenu(MenuItem parentMenuItem, PartModel model)
 		{
 			// remove all existing ShellCommandMenuItems
 			var itemsToRemove = new List<object>();
-			foreach (var item in listViewOpenWithMenuItem.Items)
+			foreach (var item in parentMenuItem.Items)
 			{
 				if (item is ShellCommandMenuItem)
 					itemsToRemove.Add(item);
@@ -184,14 +184,14 @@ namespace B4.Mope
 
 			foreach (var item in itemsToRemove)
 			{
-				listViewOpenWithMenuItem.Items.Remove(item);
+				parentMenuItem.Items.Remove(item);
 			}
 
 			// add new ShellCommandMenuItems
 			foreach (var command in model.ShellCommands)
 			{
 				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model, Data.OpenWith), IconManager);
-				listViewOpenWithMenuItem.Items.Add(menuItem);
+				parentMenuItem.Items.Add(menuItem);
 			}
 		}
 
@@ -273,7 +273,7 @@ namespace B4.Mope
 			}
 		}
 
-		private void listViewOpenMenuItem_Click(object sender, RoutedEventArgs e)
+		private void partOpenMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			OpenPart(listViewParts.SelectedItem as PartModel);
 		}
@@ -285,6 +285,39 @@ namespace B4.Mope
 
 			var fileInfo = part.Part.GetFileInfo();
 			ShellCommand.ShellExecute(IntPtr.Zero, null, "rundll32.exe", string.Concat("shell32.dll,OpenAs_RunDLL ", fileInfo.FullName), null, 0);
+		}
+
+		private void treeViewZipFiles_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			if (e.OriginalSource == null)
+				return;
+
+			PackageItem packageItem = null;
+
+			// search up the tree for the element with the data context
+			var elt = e.OriginalSource as FrameworkElement;
+			while (elt != null)
+			{
+				packageItem = elt.DataContext as PackageItem;
+				if (packageItem != null)
+					break;
+
+				elt = elt.Parent as FrameworkElement;
+			}
+
+			// setting IsSelected to true causes weird display issue so don't do that for now
+			//var treeViewItem = treeViewZipFiles.ContainerFromElement(elt) as TreeViewItem;
+			//if (treeViewItem != null)
+			//	treeViewItem.IsSelected = true;
+
+			if ((packageItem?.Model == null) || packageItem.IsFolder())
+				return;
+
+			// populate and show context menu
+			var contextMenu = (ContextMenu)FindResource("openWithContextMenu");
+			var menuItem = (MenuItem)LogicalTreeHelper.FindLogicalNode(contextMenu, "openWithMenuItem");
+			UpdateContextMenu(menuItem, packageItem.Model);
+			contextMenu.IsOpen = true;
 		}
 	}
 }
