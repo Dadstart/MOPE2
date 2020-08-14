@@ -170,7 +170,6 @@ namespace B4.Mope
 			}
 
 			UpdateContextMenu(listViewOpenWithMenuItem, model);
-			UpdateContextMenu(treeViewOpenWithMenuItem, model);
 		}
 
 		private void UpdateContextMenu(MenuItem parentMenuItem, PartModel model)
@@ -311,8 +310,7 @@ namespace B4.Mope
 			//if (treeViewItem != null)
 			//	treeViewItem.IsSelected = true;
 
-			if ((packageItem?.Model == null) || packageItem.IsFolder())
-				return;
+			e.Handled = true;
 
 			// populate and show context menu
 			ShowTreeViewContextMenu(packageItem);
@@ -320,10 +318,22 @@ namespace B4.Mope
 
 		private void ShowTreeViewContextMenu(PackageItem packageItem)
 		{
+			if ((packageItem == null) || packageItem.IsFolder())
+				return;
+
 			var contextMenu = (ContextMenu)FindResource("openWithContextMenu");
 			var menuItem = (MenuItem)LogicalTreeHelper.FindLogicalNode(contextMenu, "openWithMenuItem");
 			UpdateContextMenu(menuItem, packageItem.Model);
 			contextMenu.IsOpen = true;
+		}
+
+		private void treeViewZipFiles_KeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Apps)
+			{
+				ShowTreeViewContextMenu(treeViewZipFiles.SelectedItem as PackageItem);
+				e.Handled = true;
+			}
 		}
 	}
 }
