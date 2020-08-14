@@ -6,23 +6,23 @@ using System.Windows.Media.Imaging;
 
 namespace B4.Mope
 {
-	public class BitmapSourceCollection
+	public class BitmapCollection<T>
 	{
-		Dictionary<int, BitmapSource> bitmaps = new Dictionary<int, BitmapSource>();
+		Dictionary<int, T> bitmaps = new Dictionary<int, T>();
 
-		public void Add(BitmapSource bitmap, int size)
+		public void Add(T bitmap, int size)
 		{
 			bitmaps.Add(size, bitmap);
 		}
 
-		public bool TryGetValue(int size, out BitmapSource source)
+		public bool TryGetValue(int size, out T source)
 		{
 			return bitmaps.TryGetValue(size, out source);
 		}
 
-		public BitmapSource Get(int size)
+		public T Get(int size)
 		{
-			if (!bitmaps.TryGetValue(size, out BitmapSource source))
+			if (!bitmaps.TryGetValue(size, out T source))
 			{
 				// fallback to something, but throw if there's no bitmap at all
 				source = bitmaps.Values.First();

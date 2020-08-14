@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -23,21 +24,21 @@ namespace B4.Mope
 		[DllImport("user32.dll", EntryPoint = "DestroyIcon", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
 		private static extern bool DestroyIcon(IntPtr hicon);
 
-		public BitmapSourceCollection UnknownIcon { get; }
-		public BitmapSourceCollection RelsIcon { get; }
-		public BitmapSourceCollection ContentTypesIcon { get; }
-		public BitmapSourceCollection FolderIcon { get; }
-		public BitmapSourceCollection AudioIcon { get; }
-		public BitmapSourceCollection VideoIcon { get; }
-		public BitmapSourceCollection ImageIcon { get; }
-		public BitmapSourceCollection CodeIcon { get; }
-		public BitmapSourceCollection XmlIcon { get; }
-		public BitmapSourceCollection DocumentIcon { get; }
-		public BitmapSourceCollection WordIcon { get; }
-		public BitmapSourceCollection ExcelIcon { get; }
-		public BitmapSourceCollection PptIcon { get; }
-		public BitmapSourceCollection VisioIcon { get; }
-		public IDictionary<string, BitmapSourceCollection> AppIcons { get; } = new Dictionary<string, BitmapSourceCollection>(StringComparer.OrdinalIgnoreCase);
+		public BitmapCollection<BitmapSource> UnknownIcon { get; }
+		public BitmapCollection<BitmapSource> RelsIcon { get; }
+		public BitmapCollection<BitmapSource> ContentTypesIcon { get; }
+		public BitmapCollection<BitmapSource> FolderIcon { get; }
+		public BitmapCollection<BitmapSource> AudioIcon { get; }
+		public BitmapCollection<BitmapSource> VideoIcon { get; }
+		public BitmapCollection<BitmapSource> ImageIcon { get; }
+		public BitmapCollection<BitmapSource> CodeIcon { get; }
+		public BitmapCollection<BitmapSource> XmlIcon { get; }
+		public BitmapCollection<BitmapSource> DocumentIcon { get; }
+		public BitmapCollection<BitmapSource> WordIcon { get; }
+		public BitmapCollection<BitmapSource> ExcelIcon { get; }
+		public BitmapCollection<BitmapSource> PptIcon { get; }
+		public BitmapCollection<BitmapSource> VisioIcon { get; }
+		public IDictionary<string, BitmapCollection<BitmapSource>> AppIcons { get; } = new Dictionary<string, BitmapCollection<BitmapSource>>(StringComparer.OrdinalIgnoreCase);
 
 		public IconManager()
 		{
@@ -66,13 +67,13 @@ namespace B4.Mope
 		/// <summary>
 		/// Loads a known icon from the app resources
 		/// </summary>
-		private BitmapSourceCollection LoadKnownIcon(string id)
+		private BitmapCollection<BitmapSource> LoadKnownIcon(string id)
 		{
 			using (var stream = Application.GetResourceStream(new Uri($"pack://application:,,,/MOPE;component/icons/{id}.ico")).Stream)
 			{
 
 				// load 16, 32, and 256 sizes
-				var collection = new BitmapSourceCollection();
+				var collection = new BitmapCollection<BitmapSource>();
 
 				collection.Add(GetBitmapSourceFromIconStream(stream, 16), 16);
 				stream.Seek(0, SeekOrigin.Begin);
@@ -113,7 +114,7 @@ namespace B4.Mope
 			return GetIconForContentType(contentType).Get(size);
 		}
 
-		public BitmapSourceCollection GetIconForContentType(string contentType)
+		public BitmapCollection<BitmapSource> GetIconForContentType(string contentType)
 		{
 			if (string.Equals(contentType, "application/vnd.openxmlformats-package.relationships+xml", StringComparison.Ordinal))
 				return RelsIcon;
@@ -192,7 +193,7 @@ namespace B4.Mope
 
 				// uh-oh - registry may be corrupt
 				if (j <= i)
-					return UnknownIcon.Get(16);
+					return null;
 
 				var envVar = appFullPath.Substring(i + 1, j - 1);
 				var envVarValue = Environment.GetEnvironmentVariable(envVar);
@@ -200,30 +201,30 @@ namespace B4.Mope
 			}
 
 			// check cache
-			if (AppIcons.TryGetValue(appFullPath, out BitmapSourceCollection bitmaps))
+			if (AppIcons.TryGetValue(appFullPath, out BitmapCollection<BitmapSource> bitmaps))
 			{
 				if (bitmaps.TryGetValue(iconSize, out BitmapSource cached))
 					return cached;
 			}
 
 			// load from app (dll or exe)
-			var bitmapSource = GetBitmapSourceFromApp(appFullPath, small: true);
-			if (bitmapSource == null)
-				return UnknownIcon.Get(16);
+			var bitmapImage = GetBitmapImageFromApp(appFullPath, small: true);
+			if (bitmapImage == null)
+				return null;
 
 			if (bitmaps == null)
 			{
-				bitmaps = new BitmapSourceCollection();
+				bitmaps = new BitmapCollection<BitmapSource>();
 				AppIcons.Add(appFullPath, bitmaps);
 			}
 
 			// store in cache
-			bitmaps.Add(bitmapSource, iconSize);
+			bitmaps.Add(bitmapImage, iconSize);
 
-			return bitmapSource;
+			return bitmapImage;
 		}
 
-		private BitmapSource GetBitmapSourceFromApp(string appFullPath, bool small)
+		private BitmapSource GetBitmapImageFromApp(string appFullPath, bool small)
 		{
 			IntPtr hiconSmall = IntPtr.Zero;
 			IntPtr hiconLarge = IntPtr.Zero;
@@ -233,11 +234,18 @@ namespace B4.Mope
 				if (ExtractIconEx(appFullPath, 0, out hiconLarge, out hiconSmall, 1) == 0)
 					return null;
 
-				icon = Icon.FromHandle(small ? hiconSmall : hiconLarge);
+				var hicon = small ? hiconSmall : hiconLarge;
+				if (hicon == IntPtr.Zero)
+					return null;
+
+				icon = Icon.FromHandle(hicon);
 				int size = small ? 16 : 32;
-				return Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(size, size));
+				var bitmapSource = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(size, size));
+				return bitmapSource;
 			}
-			catch
+#pragma warning disable CS0168 // Variable is declared but never used
+			catch (Exception exc)
+#pragma warning restore CS0168 // Variable is declared but never used
 			{
 				// yes, we're swallowing exceptions. don't want to crash in this code path
 				if (Debugger.IsAttached)

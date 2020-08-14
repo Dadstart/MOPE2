@@ -105,7 +105,7 @@ namespace B4.Mope.Shell
 			return null;
 		}
 
-		public static string DisplayNameForApplication(string application)
+		public static string DisplayNameForApplication(string application, string appFullPath)
 		{
 			try
 			{
@@ -114,10 +114,10 @@ namespace B4.Mope.Shell
 				if (name != null)
 					return name;
 
-				FileInfo fi = new FileInfo(application);
+				FileInfo fi = new FileInfo(appFullPath);
 				if (fi.Exists)
 				{
-					System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(application);
+					System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(appFullPath);
 					return fvi.FileDescription;
 				}
 				else

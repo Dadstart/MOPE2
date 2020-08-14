@@ -148,10 +148,16 @@
       <Compile Update="UI\BinaryViewTabItem.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="UI\ShellCommandMenuItem.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
       <Page Update="UI\BinaryViewTabItem.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="UI\ShellCommandMenuItem.xaml">
         <SubType>Designer</SubType>
       </Page>
     </ItemGroup>

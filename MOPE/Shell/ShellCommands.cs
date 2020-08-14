@@ -19,13 +19,11 @@ namespace B4.Mope.Shell
 
 			try
 			{
-				string command, friendlyName;
+				string command;
 
 				verbKey = Registry.ClassesRoot.OpenSubKey(String.Concat(shellRegKeyPath, '\\', verb));
 				if (verbKey == null)
 					return null;
-
-				friendlyName = RegistryHelper.StringValueFromRegKey(verbKey, string.Empty);
 
 				regKey = verbKey.OpenSubKey("command");
 				if (regKey == null)
@@ -38,7 +36,7 @@ namespace B4.Mope.Shell
 				if (command == null)
 					return null;
 
-				shellCommand = new ShellCommand(application, progId, verb, friendlyName, command, null, null, null);
+				shellCommand = new ShellCommand(application, progId, verb, null, command, null, null, null);
 
 				// get DDE (if it exists)
 				ddeKey = verbKey.OpenSubKey(@"ddeexec");

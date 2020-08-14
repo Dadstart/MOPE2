@@ -167,6 +167,31 @@ namespace B4.Mope
 					partsTabControl.SelectedItem = binaryItem;
 				}
 			}
+
+			// update context menu
+			UpdateContextMenu(listViewContextMenu, model);
+		}
+
+		private void UpdateContextMenu(ContextMenu listViewContextMenu, PartModel model)
+		{
+			var itemsToRemove = new List<object>();
+			// remove all existing ShellCommandMenuItems
+			foreach (var item in listViewContextMenu.Items)
+			{
+				if (item is ShellCommandMenuItem)
+					itemsToRemove.Add(item);
+			}
+			foreach (var item in itemsToRemove)
+			{
+				listViewContextMenu.Items.Remove(item);
+			}
+
+			// add new ShellCommandMenuItems
+			foreach (var command in model.ShellCommands)
+			{
+				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model, Data.OpenWith), IconManager);
+				listViewContextMenu.Items.Add(menuItem);
+			}
 		}
 
 		private TabItem GetTabItemWithPart(Part part)
@@ -191,11 +216,6 @@ namespace B4.Mope
 		private void Exit_Click(object sender, RoutedEventArgs e)
 		{
 			Close();
-		}
-
-		private void OpenPartInShell(Part part, ShellCommand shellCommand, bool openWith)
-		{
-
 		}
 
 		private void ListViewStateMenuItem_Click(object sender, RoutedEventArgs e)

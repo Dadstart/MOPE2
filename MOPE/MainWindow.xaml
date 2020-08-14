@@ -95,7 +95,7 @@
 				</Border>
 				<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
 					<ListView.ContextMenu>
-						<ContextMenu>
+						<ContextMenu x:Name="listViewContextMenu">
 							<MenuItem Header="View" x:Name="listViewViewMenuItem">
 								<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
 								<localUI:ListViewStateMenuItem Header="Large Icons" IsChecked="True" ViewState="LargeIcons" Click="ListViewStateMenuItem_Click"/>
