@@ -1,17 +1,12 @@
 ﻿using B4.Mope.Packaging;
-using B4.Mope.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
-using System.Windows.Automation.Provider;
-using System.Windows.Controls;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace B4.Mope

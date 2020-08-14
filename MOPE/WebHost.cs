@@ -1,11 +1,7 @@
 ﻿using B4.Mope.Packaging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Resources;
-using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 

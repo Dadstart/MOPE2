@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Xml;
 
 namespace B4.Mope.Packaging
 {
@@ -31,7 +27,7 @@ namespace B4.Mope.Packaging
 				Directory.Delete(TempDirectory, true);
 
 			var tempDir = Directory.CreateDirectory(TempDirectory);
-			
+
 			var entries = ZipContainer.ExtractTo(ZipFile, TempDirectory, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
 			// read [Content_Types].xml

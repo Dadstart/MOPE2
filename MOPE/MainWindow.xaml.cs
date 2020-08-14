@@ -1,28 +1,12 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.Shell;
 using B4.Mope.UI;
-using Microsoft.Web.WebView2.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Resources;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using System.Web;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using WpfHexaEditor;
 
 namespace B4.Mope
 {
@@ -55,7 +39,7 @@ namespace B4.Mope
 
 		private string GetEmbeddedResourceAsText(string folder, string name)
 		{
-			
+
 			using (var stream = Application.GetResourceStream(new Uri($"pack://application:,,,/MOPE;component/{folder}/{name}")).Stream)
 			using (var reader = new StreamReader(stream))
 			{
@@ -137,7 +121,7 @@ namespace B4.Mope
 		private void treeViewZipFiles_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var packageItem = (PackageItem)treeViewZipFiles.SelectedItem;
-			
+
 			if (!packageItem.IsFolder())
 				SetActivePart(packageItem.Model);
 		}
@@ -148,7 +132,7 @@ namespace B4.Mope
 		}
 
 		private void SetActivePart(PartModel model)
-        {
+		{
 			var part = model.Part;
 			var tabItem = GetTabItemWithPart(part);
 			if (tabItem == null)
@@ -196,12 +180,12 @@ namespace B4.Mope
 		}
 
 		private TabItem GetTabItemWithPart(Part part)
-        {
+		{
 			if (part == null)
 				return null;
 
 			foreach (TabItem item in partsTabControl.Items)
-            {
+			{
 				var bItem = item as BinaryViewTabItem;
 				if ((bItem != null) && (bItem.Part == part))
 					return item;
@@ -212,7 +196,7 @@ namespace B4.Mope
 			}
 
 			return null;
-        }
+		}
 
 		private void Exit_Click(object sender, RoutedEventArgs e)
 		{

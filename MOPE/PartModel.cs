@@ -1,10 +1,8 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.Shell;
-using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace B4.Mope
 {
