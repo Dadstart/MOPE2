@@ -139,7 +139,7 @@
 				<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged" Grid.Row="3" MouseRightButtonUp="treeViewZipFiles_MouseRightButtonUp">
 					<TreeView.ContextMenu>
 						<ContextMenu>
-							<MenuItem Header="Open With" x:Name="treeViewOpenWithMenuItem1">
+							<MenuItem Header="Open With" x:Name="treeViewOpenWithMenuItem">
 								<MenuItem Header="Other" Click="partOpenMenuItem_Click" />
 								<Separator />
 							</MenuItem>

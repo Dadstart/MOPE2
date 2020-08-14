@@ -170,6 +170,7 @@ namespace B4.Mope
 			}
 
 			UpdateContextMenu(listViewOpenWithMenuItem, model);
+			UpdateContextMenu(treeViewOpenWithMenuItem, model);
 		}
 
 		private void UpdateContextMenu(MenuItem parentMenuItem, PartModel model)
@@ -314,6 +315,11 @@ namespace B4.Mope
 				return;
 
 			// populate and show context menu
+			ShowTreeViewContextMenu(packageItem);
+		}
+
+		private void ShowTreeViewContextMenu(PackageItem packageItem)
+		{
 			var contextMenu = (ContextMenu)FindResource("openWithContextMenu");
 			var menuItem = (MenuItem)LogicalTreeHelper.FindLogicalNode(contextMenu, "openWithMenuItem");
 			UpdateContextMenu(menuItem, packageItem.Model);
