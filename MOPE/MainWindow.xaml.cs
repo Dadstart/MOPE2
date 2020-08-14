@@ -133,41 +133,6 @@ namespace B4.Mope
 			listViewParts.ItemsSource = Data.PartModels.Values;
 		}
 
-		private void ToggleMenuCheckedStates(MenuItem itemToCheck)
-		{
-			foreach (MenuItem mi in listViewParts.ContextMenu.Items)
-			{
-				mi.IsChecked = itemToCheck == mi;
-			}
-		}
-
-		private void ListViewMenuTilesClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates((MenuItem)sender);
-			listViewParts.View = null;
-			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("tilesViewDataTemplate");
-		}
-
-		private void ListViewMenuLargeIconsClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates((MenuItem)sender);
-			listViewParts.View = null;
-			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("largeIconViewDataTemplate");
-		}
-
-		private void ListViewMenuSmallIconsClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates((MenuItem)sender);
-			listViewParts.View = null;
-			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("smallIconViewDataTemplate");
-		}
-
-		private void ListViewDetailsClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates((MenuItem)sender);
-			listViewParts.View = (ViewBase)listViewParts.FindName("listViewDefaultGridView");
-		}
-
 		private void treeViewZipFiles_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var packageItem = (PackageItem)treeViewZipFiles.SelectedItem;
@@ -285,11 +250,6 @@ namespace B4.Mope
 
 				viewStateMenuItem.IsChecked = viewStateMenuItem.ViewState == viewState;
 			}
-		}
-
-		private void UpdateListViewState()
-		{
-
 		}
 	}
 }
