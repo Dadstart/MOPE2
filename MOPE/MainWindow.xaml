@@ -49,6 +49,14 @@
 		</DataTemplate>
 
 		<localUI:IconCustomListView x:Key="iconCustomListViewTiles" ItemWidth="128" />
+
+		<ContextMenu x:Key="openWithContextMenu">
+			<MenuItem Header="Open With" x:Name="openWithMenuItem">
+				<MenuItem Header="Other" Click="partOpenMenuItem_Click" />
+				<Separator />
+			</MenuItem>
+		</ContextMenu>
+
 	</Window.Resources>
 	<Window.CommandBindings>
 		<!--<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>-->
@@ -96,6 +104,11 @@
 				<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
 					<ListView.ContextMenu>
 						<ContextMenu>
+							<MenuItem Header="Open With" x:Name="listViewOpenWithMenuItem">
+								<MenuItem Header="Other" Click="partOpenMenuItem_Click" />
+								<Separator />
+							</MenuItem>
+							<Separator />
 							<MenuItem Header="View" x:Name="listViewViewMenuItem">
 								<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
 								<localUI:ListViewStateMenuItem Header="Large Icons" IsChecked="True" ViewState="LargeIcons" Click="ListViewStateMenuItem_Click"/>
@@ -124,7 +137,7 @@
 				<Border BorderBrush="DarkGray" BorderThickness="0,1,0,1" Grid.Row="2">
 					<TextBlock Text="Zip Archive Layout" Background="LightGray" FontWeight="DemiBold" Padding="2"/>
 				</Border>
-				<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged" Grid.Row="3">
+				<TreeView x:Name="treeViewZipFiles" SelectedItemChanged="treeViewZipFiles_SelectedItemChanged" Grid.Row="3" MouseRightButtonUp="treeViewZipFiles_MouseRightButtonUp" KeyUp="treeViewZipFiles_KeyUp">
 					<TreeView.ItemTemplate>
 						<HierarchicalDataTemplate DataType="{x:Type local:PackageItem}" ItemsSource="{Binding Children}">
 							<StackPanel Orientation="Horizontal" Margin="1">

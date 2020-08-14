@@ -105,7 +105,7 @@ namespace B4.Mope.Shell
 
 		private void LoadApplicationShellCommands(string extension)
 		{
-			List<string> apps = new List<string>();
+			var apps = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Concat(@"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\", extension, @"\OpenWithList"));
 
@@ -129,9 +129,10 @@ namespace B4.Mope.Shell
 			}
 
 			string[] subKeys = RegistryHelper.GetSubKeyList(Registry.ClassesRoot, string.Concat(extension, @"\OpenWithList"));
-			if ((subKeys != null) && (subKeys.Length > 0))
+			if (subKeys != null)
 			{
-				apps.AddRange(subKeys);
+				foreach (var subKey in subKeys)
+					apps.Add(subKey);
 			}
 
 			if (apps.Count == 0)

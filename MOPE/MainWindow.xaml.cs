@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -167,6 +168,31 @@ namespace B4.Mope
 					partsTabControl.SelectedItem = binaryItem;
 				}
 			}
+
+			UpdateContextMenu(listViewOpenWithMenuItem, model);
+		}
+
+		private void UpdateContextMenu(MenuItem parentMenuItem, PartModel model)
+		{
+			// remove all existing ShellCommandMenuItems
+			var itemsToRemove = new List<object>();
+			foreach (var item in parentMenuItem.Items)
+			{
+				if (item is ShellCommandMenuItem)
+					itemsToRemove.Add(item);
+			}
+
+			foreach (var item in itemsToRemove)
+			{
+				parentMenuItem.Items.Remove(item);
+			}
+
+			// add new ShellCommandMenuItems
+			foreach (var command in model.ShellCommands)
+			{
+				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model, Data.OpenWith), IconManager);
+				parentMenuItem.Items.Add(menuItem);
+			}
 		}
 
 		private TabItem GetTabItemWithPart(Part part)
@@ -191,11 +217,6 @@ namespace B4.Mope
 		private void Exit_Click(object sender, RoutedEventArgs e)
 		{
 			Close();
-		}
-
-		private void OpenPartInShell(Part part, ShellCommand shellCommand, bool openWith)
-		{
-
 		}
 
 		private void ListViewStateMenuItem_Click(object sender, RoutedEventArgs e)
@@ -249,6 +270,69 @@ namespace B4.Mope
 					continue;
 
 				viewStateMenuItem.IsChecked = viewStateMenuItem.ViewState == viewState;
+			}
+		}
+
+		private void partOpenMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			OpenPart(listViewParts.SelectedItem as PartModel);
+		}
+
+		private void OpenPart(PartModel part)
+		{
+			if (part?.Part == null)
+				return;
+
+			var fileInfo = part.Part.GetFileInfo();
+			ShellCommand.ShellExecute(IntPtr.Zero, null, "rundll32.exe", string.Concat("shell32.dll,OpenAs_RunDLL ", fileInfo.FullName), null, 0);
+		}
+
+		private void treeViewZipFiles_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			if (e.OriginalSource == null)
+				return;
+
+			PackageItem packageItem = null;
+
+			// search up the tree for the element with the data context
+			var elt = e.OriginalSource as FrameworkElement;
+			while (elt != null)
+			{
+				packageItem = elt.DataContext as PackageItem;
+				if (packageItem != null)
+					break;
+
+				elt = elt.Parent as FrameworkElement;
+			}
+
+			// setting IsSelected to true causes weird display issue so don't do that for now
+			//var treeViewItem = treeViewZipFiles.ContainerFromElement(elt) as TreeViewItem;
+			//if (treeViewItem != null)
+			//	treeViewItem.IsSelected = true;
+
+			e.Handled = true;
+
+			// populate and show context menu
+			ShowTreeViewContextMenu(packageItem);
+		}
+
+		private void ShowTreeViewContextMenu(PackageItem packageItem)
+		{
+			if ((packageItem == null) || packageItem.IsFolder())
+				return;
+
+			var contextMenu = (ContextMenu)FindResource("openWithContextMenu");
+			var menuItem = (MenuItem)LogicalTreeHelper.FindLogicalNode(contextMenu, "openWithMenuItem");
+			UpdateContextMenu(menuItem, packageItem.Model);
+			contextMenu.IsOpen = true;
+		}
+
+		private void treeViewZipFiles_KeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Apps)
+			{
+				ShowTreeViewContextMenu(treeViewZipFiles.SelectedItem as PackageItem);
+				e.Handled = true;
 			}
 		}
 	}
