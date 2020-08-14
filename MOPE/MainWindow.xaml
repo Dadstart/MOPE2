@@ -96,6 +96,9 @@
 				<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
 					<ListView.ContextMenu>
 						<ContextMenu x:Name="listViewContextMenu">
+							<MenuItem Header="Open" x:Name="listViewOpenMenuItem" Click="listViewOpenMenuItem_Click" />
+							<MenuItem Header="Open With" x:Name="listViewOpenWithMenuItem" />
+							<Separator />
 							<MenuItem Header="View" x:Name="listViewViewMenuItem">
 								<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
 								<localUI:ListViewStateMenuItem Header="Large Icons" IsChecked="True" ViewState="LargeIcons" Click="ListViewStateMenuItem_Click"/>

@@ -174,23 +174,14 @@ namespace B4.Mope
 
 		private void UpdateContextMenu(ContextMenu listViewContextMenu, PartModel model)
 		{
-			var itemsToRemove = new List<object>();
 			// remove all existing ShellCommandMenuItems
-			foreach (var item in listViewContextMenu.Items)
-			{
-				if (item is ShellCommandMenuItem)
-					itemsToRemove.Add(item);
-			}
-			foreach (var item in itemsToRemove)
-			{
-				listViewContextMenu.Items.Remove(item);
-			}
+			listViewOpenWithMenuItem.Items.Clear();
 
 			// add new ShellCommandMenuItems
 			foreach (var command in model.ShellCommands)
 			{
 				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model, Data.OpenWith), IconManager);
-				listViewContextMenu.Items.Add(menuItem);
+				listViewOpenWithMenuItem.Items.Add(menuItem);
 			}
 		}
 
@@ -270,6 +261,11 @@ namespace B4.Mope
 
 				viewStateMenuItem.IsChecked = viewStateMenuItem.ViewState == viewState;
 			}
+		}
+
+		private void listViewOpenMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }
