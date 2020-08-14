@@ -64,7 +64,12 @@
 				<Separator />
 				<MenuItem Header="E_xit" Click="Exit_Click" />
 			</MenuItem>
-			<MenuItem Header="_View" />
+			<MenuItem Header="_View" x:Name="toolbarViewMenu">
+				<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
+				<localUI:ListViewStateMenuItem Header="Large Icons" IsChecked="True" ViewState="LargeIcons" Click="ListViewStateMenuItem_Click"/>
+				<localUI:ListViewStateMenuItem Header="Small Icons" ViewState="SmallIcons" Click="ListViewStateMenuItem_Click"/>
+				<localUI:ListViewStateMenuItem Header="Details" ViewState="Details" Click="ListViewStateMenuItem_Click"/>
+			</MenuItem>
 			<MenuItem Header="_Tools">
 				<MenuItem Header="_Options" Icon="⛭"/>
 			</MenuItem>
@@ -91,10 +96,12 @@
 				<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
 					<ListView.ContextMenu>
 						<ContextMenu>
-							<MenuItem Header="Tiles" Click="ListViewMenuTilesClick" IsCheckable="True" x:Name="listViewMenuTiles" />
-							<MenuItem Header="Large Icons" Click="ListViewMenuLargeIconsClick" IsCheckable="True" x:Name="listViewMenuLargeIcons"/>
-							<MenuItem Header="Small Icons" Click="ListViewMenuSmallIconsClick" IsCheckable="True" x:Name="listViewMenuSmallIcons"/>
-							<MenuItem Header="Details" Click="ListViewDetailsClick" IsCheckable="True" IsChecked="True" x:Name="listViewMenuDetails" />
+							<MenuItem Header="View" x:Name="listViewViewMenuItem">
+								<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
+								<localUI:ListViewStateMenuItem Header="Large Icons" IsChecked="True" ViewState="LargeIcons" Click="ListViewStateMenuItem_Click"/>
+								<localUI:ListViewStateMenuItem Header="Small Icons" ViewState="SmallIcons" Click="ListViewStateMenuItem_Click"/>
+								<localUI:ListViewStateMenuItem Header="Details" ViewState="Details" Click="ListViewStateMenuItem_Click"/>
+							</MenuItem>
 						</ContextMenu>
 					</ListView.ContextMenu>
 					<ListView.View>

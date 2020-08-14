@@ -39,6 +39,7 @@ namespace B4.Mope
 		public MainWindow()
 		{
 			InitializeComponent();
+			UpdateListViewAndMenus(ListViewState.Default);
 			IconManager = new IconManager();
 
 			Unloaded += MainWindow_Unloaded;
@@ -132,41 +133,6 @@ namespace B4.Mope
 			listViewParts.ItemsSource = Data.PartModels.Values;
 		}
 
-		private void ToggleMenuCheckedStates(MenuItem itemToCheck)
-		{
-			foreach (MenuItem mi in listViewParts.ContextMenu.Items)
-			{
-				mi.IsChecked = itemToCheck == mi;
-			}
-		}
-
-		private void ListViewMenuTilesClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates(listViewMenuTiles);
-			listViewParts.View = null;
-			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("tilesViewDataTemplate");
-		}
-
-		private void ListViewMenuLargeIconsClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates(listViewMenuLargeIcons);
-			listViewParts.View = null;
-			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("largeIconViewDataTemplate");
-		}
-
-		private void ListViewMenuSmallIconsClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates(listViewMenuSmallIcons);
-			listViewParts.View = null;
-			listViewParts.ItemTemplate = (DataTemplate)listViewParts.FindResource("smallIconViewDataTemplate");
-		}
-
-		private void ListViewDetailsClick(object sender, RoutedEventArgs e)
-		{
-			ToggleMenuCheckedStates(listViewMenuDetails);
-			listViewParts.View = (ViewBase)listViewParts.FindName("listViewDefaultGridView");
-		}
-
 		private void treeViewZipFiles_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var packageItem = (PackageItem)treeViewZipFiles.SelectedItem;
@@ -231,5 +197,59 @@ namespace B4.Mope
 		{
 
 		}
-    }
+
+		private void ListViewStateMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var menuItem = sender as ListViewStateMenuItem;
+
+			// unclear how this could happen but if it does just no-op
+			if (menuItem == null)
+				return;
+
+			UpdateListViewAndMenus(menuItem.ViewState);
+		}
+
+		private void UpdateListViewAndMenus(ListViewState viewState)
+		{
+			UpdateListViewStateMenuItems(toolbarViewMenu, viewState);
+			UpdateListViewStateMenuItems(listViewViewMenuItem, viewState);
+			UpdateListView(listViewParts, viewState);
+		}
+
+		private void UpdateListView(ListView listView, ListViewState viewState)
+		{
+			switch (viewState)
+			{
+				case ListViewState.Details:
+					listView.View = (ViewBase)listView.FindName("listViewDefaultGridView");
+					break;
+				case ListViewState.LargeIcons:
+					listView.View = null;
+					listView.ItemTemplate = (DataTemplate)listView.FindResource("largeIconViewDataTemplate");
+					break;
+				case ListViewState.SmallIcons:
+					listView.View = null;
+					listView.ItemTemplate = (DataTemplate)listView.FindResource("smallIconViewDataTemplate");
+					break;
+				case ListViewState.Tiles:
+					listView.View = null;
+					listView.ItemTemplate = (DataTemplate)listView.FindResource("tilesViewDataTemplate");
+					break;
+			}
+
+		}
+
+		private void UpdateListViewStateMenuItems(MenuItem parent, ListViewState viewState)
+		{
+			foreach (var menuItem in parent.Items)
+			{
+				// we only care about other ListViewStateMenuItem
+				var viewStateMenuItem = menuItem as ListViewStateMenuItem;
+				if (viewStateMenuItem == null)
+					continue;
+
+				viewStateMenuItem.IsChecked = viewStateMenuItem.ViewState == viewState;
+			}
+		}
+	}
 }
