@@ -147,12 +147,24 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Update="AppSettings.Designer.cs">
+        <DesignTimeSharedInput>True</DesignTimeSharedInput>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AppSettings.settings</DependentUpon>
+      </Compile>
       <Compile Update="UI\BinaryViewTabItem.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
       <Compile Update="UI\ShellCommandMenuItem.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="AppSettings.settings">
+        <Generator>SettingsSingleFileGenerator</Generator>
+        <LastGenOutput>AppSettings.Designer.cs</LastGenOutput>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

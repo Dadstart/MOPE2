@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -74,46 +75,18 @@ namespace B4.Mope
 
 		}
 
-
-
-		private static void ListenerCallback(IAsyncResult result)
+		private void HandleRequest(HttpListenerContext context)
 		{
-			var webHost = (WebHost)result.AsyncState;
-			var context = webHost.HttpListener.EndGetContext(result);
-
 			try
 			{
 				var url = context.Request.Url;
 				if (url.LocalPath.StartsWith("/part/"))
 				{
-					var partUri = url.LocalPath.Substring(6);
-					var part = webHost.Data.Package.Parts[partUri];
-
-					context.Response.ContentType = part.ContentType;
-
-					using (var partStream = part.GetFileInfo().OpenRead())
-					{
-						if (ContentTypes.IsXmlType(part.ContentType))
-						{
-							var writerSettings = new XmlWriterSettings()
-							{
-								Indent = true,
-							};
-
-							using (var textReader = new StreamReader(partStream))
-							using (var xmlWriter = XmlWriter.Create(context.Response.OutputStream, writerSettings))
-							{
-								var elt = XElement.Parse(textReader.ReadToEnd());
-								elt.Save(xmlWriter);
-							}
-						}
-						else
-						{
-							partStream.CopyTo(context.Response.OutputStream);
-						}
-
-						context.Response.OutputStream.Close();
-					}
+					SetResponseToPart(context, url);
+				}
+				else if (url.LocalPath.StartsWith("/post/"))
+				{
+					ReadPartFromRequest(context, url);
 				}
 				else
 				{
@@ -136,13 +109,20 @@ namespace B4.Mope
 				// if app is being shutdown stop
 				if (exc.HResult == -2146233079)
 				{
-					webHost.m_stopped = true;
+					m_stopped = true;
 				}
 				else
 				{
 					throw;
 				}
 			}
+		}
+
+		private static void ListenerCallback(IAsyncResult result)
+		{
+			var webHost = (WebHost)result.AsyncState;
+			var context = webHost.HttpListener.EndGetContext(result);
+			webHost.HandleRequest(context);
 
 			if (!webHost.m_stopped)
 			{
@@ -151,6 +131,50 @@ namespace B4.Mope
 			else
 			{
 				webHost.HttpListener.Stop();
+			}
+		}
+
+		private void ReadPartFromRequest(HttpListenerContext context, Uri url)
+		{
+			var partUri = url.LocalPath.Substring(6);
+
+			var partModel = Data.PartModels[partUri];
+			using (var stream = partModel.Part.GetFileInfo().OpenWrite())
+			using (var writer = new StreamWriter(stream))
+			{
+				context.Request.InputStream.CopyTo(stream);
+			}
+		}
+
+		private void SetResponseToPart(HttpListenerContext context, Uri url)
+		{
+			var partUri = url.LocalPath.Substring(6);
+			var part = Data.Package.Parts[partUri];
+
+			context.Response.ContentType = part.ContentType;
+
+			using (var partStream = part.GetFileInfo().OpenRead())
+			{
+				if (ContentTypes.IsXmlType(part.ContentType))
+				{
+					var writerSettings = new XmlWriterSettings()
+					{
+						Indent = true,
+					};
+
+					using (var textReader = new StreamReader(partStream))
+					using (var xmlWriter = XmlWriter.Create(context.Response.OutputStream, writerSettings))
+					{
+						var elt = XElement.Parse(textReader.ReadToEnd());
+						elt.Save(xmlWriter);
+					}
+				}
+				else
+				{
+					partStream.CopyTo(context.Response.OutputStream);
+				}
+
+				context.Response.OutputStream.Close();
 			}
 		}
 

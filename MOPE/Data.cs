@@ -22,6 +22,7 @@ namespace B4.Mope
 
 		public IList<string> Applications { get; private set; } = new List<string>();
 		public List<PackageItem> Items { get; private set; }
+		internal AppSettings Settings { get; } = new AppSettings();
 
 		public void Reset()
 		{

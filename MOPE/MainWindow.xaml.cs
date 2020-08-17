@@ -31,6 +31,8 @@ namespace B4.Mope
 			Data = new Data();
 			DataContext = Data;
 
+
+			darkModeMenuItem.IsChecked = Data.Settings.UseDarkMode;
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
 #endif
@@ -146,7 +148,7 @@ namespace B4.Mope
 			{
 				if (part.CanViewInBrowser())
 				{
-					var webItem = new WebViewTabItem();
+					var webItem = new WebViewTabItem(Data);
 					partsTabControl.Items.Add(webItem);
 					webItem.Part = part;
 					partsTabControl.SelectedItem = webItem;
@@ -335,6 +337,25 @@ namespace B4.Mope
 
 			
 			currentWebView.Browser.ExecuteScriptAsync("window.alert('hello')");
+		}
+
+		private void darkModeMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			Data.Settings.UseDarkMode = darkModeMenuItem.IsChecked;
+			Data.Settings.Save();
+
+			// update all open browsers
+			foreach (var partView in partsTabControl.Items)
+			{
+				var webView = partView as WebViewTabItem;
+				if (webView == null)
+					continue;
+
+				var param = Data.Settings.UseDarkMode ? "true" : "false";
+				webView.Browser.ExecuteScriptAsync($"updateTheme({param})");
+			}
+
+			e.Handled = true;
 		}
 	}
 }

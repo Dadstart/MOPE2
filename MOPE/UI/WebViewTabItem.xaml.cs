@@ -21,9 +21,12 @@ namespace B4.Mope.UI
 	/// </summary>
 	public partial class WebViewTabItem : TabItem
 	{
-		public WebViewTabItem()
+		public Data Data { get; }
+
+		public WebViewTabItem(Data data)
 		{
 			InitializeComponent();
+			Data = data;
 		}
 
 		private Part m_part;
@@ -35,49 +38,50 @@ namespace B4.Mope.UI
 
 		void UpdatePartView()
 		{
-			string url;
+			var uri = new UriBuilder();
 			string viewType;
 			if (m_part != null)
 			{
-				var data = (Data)Window.GetWindow(this).DataContext;
 				if (ContentTypes.IsXmlType(m_part.ContentType))
 				{
-					url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
+					uri = new UriBuilder(Data.WebHost.GetUrl(m_part.GetMonacoUrl()));
 					viewType = "⚡";
 				}
 				else if (ContentTypes.IsSupportedAudioType(m_part.ContentType))
 				{
-					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+					uri = new UriBuilder(Data.WebHost.GetUrl($"part/{m_part.Uri}"));
 					viewType = "🎵";
 				}
 				else if (ContentTypes.IsSupportedImageType(m_part.ContentType))
 				{
-					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+					uri = new UriBuilder(Data.WebHost.GetUrl($"part/{m_part.Uri}"));
 					viewType = "🎨";
 				}
 				else if (ContentTypes.IsSupportedVideoType(m_part.ContentType))
 				{
-					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
+					uri = new UriBuilder(Data.WebHost.GetUrl($"part/{m_part.Uri}"));
 					viewType = "🖥";
 				}
 				else
 				{
-					url = "about:blank";
+					uri = new UriBuilder("about:blank");
 					viewType = "?";
 				}
+
+				if (Data.Settings.UseDarkMode)
+					uri.Query += "&theme=dark";
 
 				var header = ((CloseButtonTabHeader)Header);
 				header.Text = $"{m_part.Uri}";
 				header.ViewType = viewType;
-
 			}
 			else
 			{
 				((CloseButtonTabHeader)Header).Text = "???";
-				url = "about:blank";
+				uri = new UriBuilder("about:blank");
 			}
 
-			Browser.Source = new Uri(url);
+			Browser.Source = uri.Uri;
 		}
 	}
 }
