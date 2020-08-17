@@ -30,6 +30,10 @@ namespace B4.Mope
 			Unloaded += MainWindow_Unloaded;
 			Data = new Data();
 			DataContext = Data;
+
+#if DEBUG
+			menuMain.Items.Add(FindResource("debugMenu"));
+#endif
 		}
 
 		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
@@ -133,6 +137,9 @@ namespace B4.Mope
 
 		private void SetActivePart(PartModel model)
 		{
+			if (model == null)
+				return;
+
 			var part = model.Part;
 			var tabItem = GetTabItemWithPart(part);
 			if (tabItem == null)
@@ -318,6 +325,16 @@ namespace B4.Mope
 				ShowTreeViewContextMenu(treeViewZipFiles.SelectedItem as PackageItem);
 				e.Handled = true;
 			}
+		}
+
+		private void debugInjectJsMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var currentWebView = partsTabControl.SelectedItem as WebViewTabItem;
+			if (currentWebView == null)
+				return;
+
+			
+			currentWebView.Browser.ExecuteScriptAsync("window.alert('hello')");
 		}
 	}
 }

@@ -55,6 +55,10 @@
 			</MenuItem>
 		</ContextMenu>
 
+		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
+			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
+		</MenuItem>
+
 	</Window.Resources>
 	<Window.CommandBindings>
 		<!--<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>-->
