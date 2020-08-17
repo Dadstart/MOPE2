@@ -28,6 +28,7 @@
       <None Remove="icons\visio.ico" />
       <None Remove="icons\word.ico" />
       <None Remove="icons\xml.ico" />
+      <None Remove="monaco\editor.js" />
     </ItemGroup>
 
     <ItemGroup>
@@ -134,6 +135,7 @@
         <Resource Include="monaco-editor/min/vs/language/typescript/tsMode.js" />
         <Resource Include="monaco-editor/min/vs/language/typescript/tsWorker.js" />
         <Resource Include="monaco-editor/min/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf" />
+        <Resource Include="monaco\editor.js" />
 
     </ItemGroup>
 
