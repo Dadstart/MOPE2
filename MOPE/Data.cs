@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace B4.Mope
 {
 	/// <summary>
 	/// Data holder for app
 	/// </summary>
-	public class Data
+	public class Data : DependencyObject
 	{
 		public Package Package { get; private set; }
 
@@ -23,6 +24,50 @@ namespace B4.Mope
 		public IList<string> Applications { get; private set; } = new List<string>();
 		public List<PackageItem> Items { get; private set; }
 		internal AppSettings Settings { get; } = new AppSettings();
+
+		public delegate void BooleanPropertyChangedEventHandler(object sender, BooleanPropertyChangedEventArgs e);
+
+		public event BooleanPropertyChangedEventHandler EditorReadOnlyModeChanged;
+		private static readonly DependencyProperty EditorReadOnlyModeProperty = DependencyProperty.Register("EditorReadOnlyMode", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorReadOnlyPropertyChanged));
+		public bool EditorReadOnlyMode
+		{
+			get { return (bool)GetValue(EditorReadOnlyModeProperty); }
+			set { SetValue(EditorReadOnlyModeProperty, value); }
+		}
+
+		private static void EditorReadOnlyPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			var data = (Data)obj;
+			data.Settings.EditorReadOnlyMode = (bool)e.NewValue;
+			data.Settings.Save();
+			data.EditorReadOnlyModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
+		}
+
+		public event BooleanPropertyChangedEventHandler EditorDarkModeChanged;
+		private static readonly DependencyProperty EditorDarkModeProperty = DependencyProperty.Register("EditorDarkMode", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorDarkPropertyChanged));
+		public bool EditorDarkMode
+		{
+			get { return (bool)GetValue(EditorDarkModeProperty); }
+			set { SetValue(EditorDarkModeProperty, value); }
+		}
+
+		private static void EditorDarkPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			var data = (Data)obj;
+			data.Settings.EditorUseDarkMode = (bool)e.NewValue;
+			data.Settings.Save();
+			data.EditorDarkModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
+		}
+
+		public Data()
+		{
+			EditorReadOnlyMode = Settings.EditorReadOnlyMode;
+		}
+
+		public void OnReadOnlyModeChanged()
+		{
+
+		}
 
 		public void Reset()
 		{

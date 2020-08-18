@@ -9,7 +9,6 @@
 		mc:Ignorable="d"
 		Title="MOPE: Office Package Editor" Height="720" Width="1200">
 	<Window.Resources>
-		<local:Data x:Key="appData" />
 		<localUI:PartModelToBitmapSourceConverter x:Key="partModelToBitmapSourceConverter" />
 		<localUI:PackageItemToBitmapSourceConverter x:Key="packageItemToBitmapSourceConverter" />
 		<localUI:PartModelToSizeStringConverter x:Key="partModelToSizeStringConverter" />
@@ -56,6 +55,7 @@
 		</ContextMenu>
 
 		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
+			<MenuItem Header="Break" Click="debugBreak_Click" />
 			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
 		</MenuItem>
 
@@ -76,8 +76,8 @@
 			</MenuItem>
 			<MenuItem Header="_View" x:Name="toolbarViewMenu">
 				<MenuItem Header="Code Editor">
-					<MenuItem Header="Dark Mode" x:Name="editorDarkModeMenuItem" IsCheckable="True" Checked="editorDarkModeMenuItem_Change" Unchecked="editorDarkModeMenuItem_Change"/>
-					<MenuItem Header="Read Only" x:Name="editorReadOnlyModeMenuItem" IsCheckable="True" Checked="editorReadOnlyModeMenuItem_Change" Unchecked="editorReadOnlyModeMenuItem_Change"/>
+					<MenuItem Header="Dark Mode" x:Name="editorDarkModeMenuItem" IsCheckable="True" IsChecked="{Binding EditorDarkMode, Mode=TwoWay}"/>
+					<MenuItem Header="Read Only" x:Name="editorReadOnlyModeMenuItem" IsCheckable="True" IsChecked="{Binding EditorReadOnlyMode, Mode=TwoWay}"/>
 				</MenuItem>
 				<Separator />
 				<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>

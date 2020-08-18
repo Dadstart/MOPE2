@@ -3,6 +3,7 @@ using B4.Mope.Shell;
 using B4.Mope.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,7 @@ namespace B4.Mope
 		/// App data
 		/// </summary>
 		public Data Data { get; }
+
 		public static IconManager IconManager { get; private set; } //TODO: remove static
 
 		public MainWindow()
@@ -31,9 +33,9 @@ namespace B4.Mope
 			Data = new Data();
 			DataContext = Data;
 
+			Data.EditorReadOnlyModeChanged += Data_EditorReadOnlyModeChanged;
+			Data.EditorDarkModeChanged += Data_EditorDarkModeChanged;
 
-			editorDarkModeMenuItem.IsChecked = Data.Settings.EditorUseDarkMode;
-			editorReadOnlyModeMenuItem.IsChecked = Data.Settings.EditorReadOnlyMode;
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
 #endif
@@ -158,9 +160,8 @@ namespace B4.Mope
 				}
 				else
 				{
-					var binaryItem = new BinaryViewTabItem();
+					var binaryItem = new BinaryViewTabItem(Data, model);
 					partsTabControl.Items.Add(binaryItem);
-					binaryItem.Part = part;
 					partsTabControl.SelectedItem = binaryItem;
 				}
 			}
@@ -199,7 +200,7 @@ namespace B4.Mope
 			foreach (TabItem item in partsTabControl.Items)
 			{
 				var bItem = item as BinaryViewTabItem;
-				if ((bItem != null) && (bItem.Part == part))
+				if ((bItem != null) && (bItem.PartModel.Part == part))
 					return item;
 
 				var webItem = item as WebViewTabItem;
@@ -342,10 +343,18 @@ namespace B4.Mope
 			currentWebView.Browser.ExecuteScriptAsync("window.alert('hello')");
 		}
 
-		private void editorDarkModeMenuItem_Change(object sender, RoutedEventArgs e)
+		private void debugBreak_Click(object sender, RoutedEventArgs e)
 		{
-			Data.Settings.EditorUseDarkMode = editorDarkModeMenuItem.IsChecked;
-			Data.Settings.Save();
+			Debugger.Break();
+		}
+
+		private void Data_EditorDarkModeChanged(object sender, BooleanPropertyChangedEventArgs e)
+		{
+			if (partsTabControl == null)
+			{
+				// this can happen on init
+				return;
+			}
 
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
@@ -354,15 +363,18 @@ namespace B4.Mope
 				if (webView == null)
 					continue;
 
-				var param = Data.Settings.EditorUseDarkMode ? "true" : "false";
+				var param = e.NewValue ? "true" : "false";
 				webView.Browser.ExecuteScriptAsync($"updateTheme({param})");
 			}
 		}
 
-		private void editorReadOnlyModeMenuItem_Change(object sender, RoutedEventArgs e)
+		private void Data_EditorReadOnlyModeChanged(object sender, BooleanPropertyChangedEventArgs e)
 		{
-			Data.Settings.EditorReadOnlyMode = editorReadOnlyModeMenuItem.IsChecked;
-			Data.Settings.Save();
+			if (partsTabControl == null)
+			{
+				// this can happen on init
+				return;
+			}
 
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
@@ -371,7 +383,7 @@ namespace B4.Mope
 				if (webView == null)
 					continue;
 
-				var param = Data.Settings.EditorReadOnlyMode ? "true" : "false";
+				var param = e.NewValue ? "true" : "false";
 				webView.Browser.ExecuteScriptAsync($"setReadOnly({param})");
 			}
 		}

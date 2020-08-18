@@ -21,37 +21,23 @@ namespace B4.Mope.UI
 	/// </summary>
 	public partial class BinaryViewTabItem : TabItem
 	{
-		public BinaryViewTabItem()
+		public BinaryViewTabItem(Data data, PartModel partModel)
 		{
 			InitializeComponent();
+			Data = data ?? throw new ArgumentNullException(nameof(data));
+			PartModel = partModel ?? throw new ArgumentNullException(nameof(partModel));
+			UpdatePartView();
 		}
 
-		private Part m_part;
-		public Part Part
+		private void UpdatePartView()
 		{
-			get { return m_part; }
-			set
-			{
-				m_part = value;
-				if (m_part != null)
-				{
-					var data = (Data)Window.GetWindow(this).DataContext;
-					var header = ((CloseButtonTabHeader)Header);
-					header.Text = $"{m_part.Uri}";
-					header.ViewType = "🧩";
-					Editor.FileName = m_part.GetFileInfo().FullName;
-				}
-				else
-				{
-					((CloseButtonTabHeader)Header).Text = "???";
-					Content = new TextBlock()
-					{
-						Text = "Error: null part"
-					};
-				}
-			}
+			var header = ((CloseButtonTabHeader)Header);
+			header.Text = $"{PartModel.Part.Uri}";
+			header.ViewType = "🧩";
+			Editor.FileName = PartModel.Part.GetFileInfo().FullName;
 		}
 
-
+		public Data Data { get; }
+		public PartModel PartModel { get; }
 	}
 }

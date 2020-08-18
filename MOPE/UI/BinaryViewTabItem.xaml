@@ -13,6 +13,6 @@
 		<local:CloseButtonTabHeader Text="Test1⚡🧩🎨🎵🖥✖❌  " />
 	</TabItem.Header>
 	<DockPanel LastChildFill="True">
-		<hex:HexEditor x:Name="Editor"/>
+		<hex:HexEditor x:Name="Editor" ReadOnlyMode="{Binding Path=EditorReadOnlyMode}" />
 	</DockPanel>
 </TabItem>
