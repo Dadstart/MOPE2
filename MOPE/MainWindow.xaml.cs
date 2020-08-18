@@ -85,7 +85,10 @@ namespace B4.Mope
 
 		private void CommandBinding_SaveExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-
+			// save current part
+			var webView = partsTabControl.SelectedItem as WebViewTabItem;
+			if ((webView != null) && (webView.PartModel.IsDirty))
+				webView.Browser.ExecuteScriptAsync($"postFile()");
 		}
 
 		private void CommandBinding_SaveAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -148,9 +151,8 @@ namespace B4.Mope
 			{
 				if (part.CanViewInBrowser())
 				{
-					var webItem = new WebViewTabItem(Data);
+					var webItem = new WebViewTabItem(Data, model);
 					partsTabControl.Items.Add(webItem);
-					webItem.Part = part;
 					partsTabControl.SelectedItem = webItem;
 				}
 				else
@@ -200,7 +202,7 @@ namespace B4.Mope
 					return item;
 
 				var webItem = item as WebViewTabItem;
-				if ((webItem != null) && (webItem.Part == part))
+				if ((webItem != null) && (webItem.PartModel.Part == part))
 					return item;
 			}
 

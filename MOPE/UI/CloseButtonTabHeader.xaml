@@ -6,8 +6,12 @@
              xmlns:local="clr-namespace:B4.Mope.UI"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="60">
+	<UserControl.Resources>
+		<local:BoolToAsteriskConverter x:Key="boolToAsteriskConverter" />
+	</UserControl.Resources>
     <StackPanel Orientation="Horizontal">
-        <TextBlock Text="{Binding Text}" FontWeight="DemiBold" />
+		<TextBlock Text="{Binding Text}" FontWeight="DemiBold" />
+		<TextBlock Text="{Binding Path=IsDirty, Converter={StaticResource boolToAsteriskConverter}}" FontWeight="Bold" FontSize="12" Margin="2,0,0,0"/>
         <TextBlock Text="{Binding ViewType}" Margin="2,0,0,0" />
         <Button Margin="3,0,0,0" Padding="5,0" FontWeight="Bold" Background="Transparent" BorderThickness="0" Click="Close_Click">✖</Button>
     </StackPanel>

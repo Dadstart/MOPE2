@@ -44,9 +44,30 @@ function updateTheme(darkMode) {
 
 }
 
+function onKeyUp(e) {
+    // handle save
+    if (e.ctrlKey && e.code === 's' && isDirty)
+        postFile();
+}
+
+let isDirty = false;
+
+function onContentChanged(e) {
+    if (!isDirty) {
+        isDirty = true;
+        var request = new Request(getFetchUri("dirty/" + getPartUri()), {
+            method: "POST"
+        });
+
+        fetch(request).catch(reason => window.alert("Error setting dirty state: " + reason));
+    }
+}
+
 function loadEditor() {
     const urlParams = new URLSearchParams(document.location.search);
     updateTheme(urlParams.get("theme") === "dark");
+
+    document.addEventListener("keyup", onKeyUp);
 
     const partUri = getPartUri();
     const fetchUri = getFetchUri("part/" + partUri);
@@ -70,6 +91,8 @@ function loadEditor() {
                     }
                 });
 
+                monaco.editor.getModels()[0].onDidChangeContent(onContentChanged);
+
             });
 
         }).catch(error => {
@@ -79,12 +102,16 @@ function loadEditor() {
 }
 
 function postFile() {
-    var request = new Request(getFetchUri("post/" + getPartUri()), {
-        body: editor.getModel().getValue(),
-        method: "POST"
-    });
+    if (!isDirty)
+        return;
 
-    fetch(request).catch(reason => window.alert("Error saving: " + reason));
-    request.body = editor.getModel().getValue();
+    fetch(getFetchUri("post/" + getPartUri()), {
+        body: monaco.editor.getModels()[0].getValue(),
+        method: "POST"
+    }).then(() => {
+        isDirty = false;
+    }).catch((reason) => {
+        window.alert("Error saving: " + reason);
+    });
 }
 

@@ -88,6 +88,10 @@ namespace B4.Mope
 				{
 					ReadPartFromRequest(context, url);
 				}
+				else if (url.LocalPath.StartsWith("/dirty/"))
+				{
+					HandleDirtyRequest(context, url);
+				}
 				else
 				{
 					using (var resourceStream = System.Windows.Application.GetResourceStream(new Uri($"pack://application:,,,/MOPE;component/{url.LocalPath}")).Stream)
@@ -118,6 +122,16 @@ namespace B4.Mope
 			}
 		}
 
+		private void HandleDirtyRequest(HttpListenerContext context, Uri url)
+		{
+			var partUri = url.LocalPath.Substring(7);
+			var partModel = Data.PartModels[partUri];
+
+			partModel.SetDirty(true);
+			context.Response.StatusCode = 200;
+			context.Response.OutputStream.Close();
+		}
+
 		private static void ListenerCallback(IAsyncResult result)
 		{
 			var webHost = (WebHost)result.AsyncState;
@@ -139,11 +153,24 @@ namespace B4.Mope
 			var partUri = url.LocalPath.Substring(6);
 
 			var partModel = Data.PartModels[partUri];
-			using (var stream = partModel.Part.GetFileInfo().OpenWrite())
-			using (var writer = new StreamWriter(stream))
-			{
-				context.Request.InputStream.CopyTo(stream);
-			}
+			var file = partModel.Part.GetFileInfo();
+			// okay so I'm obviously doing something dumb, but just writing to the filestream results in weird behavior,
+			// so delete and then recreate the file
+			file.Delete();
+			using (var stream = new FileStream(file.FullName, FileMode.Create))
+			//using (var writer = new StreamWriter(stream))
+			//{
+			//	using (var reader = new StreamReader(context.Request.InputStream))
+			//	{
+			//		var contents = reader.ReadToEnd();
+			//		writer.Write(contents);
+					context.Request.InputStream.CopyTo(stream);
+			//	}
+			//}
+
+			partModel.SetDirty(false);
+			context.Response.StatusCode = 200;
+			context.Response.OutputStream.Close();
 		}
 
 		private void SetResponseToPart(HttpListenerContext context, Uri url)
@@ -174,6 +201,7 @@ namespace B4.Mope
 					partStream.CopyTo(context.Response.OutputStream);
 				}
 
+				context.Response.StatusCode = 200;
 				context.Response.OutputStream.Close();
 			}
 		}
