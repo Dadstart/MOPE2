@@ -51,6 +51,8 @@ namespace B4.Mope
 			set { SetValue(EditorDarkModeProperty, value); }
 		}
 
+		public bool IsPackageDirty { get; internal set; }
+
 		private static void EditorDarkPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
 		{
 			var data = (Data)obj;

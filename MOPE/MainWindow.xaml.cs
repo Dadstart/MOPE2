@@ -96,11 +96,20 @@ namespace B4.Mope
 
 		private void CommandBinding_SaveAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			// TODO: Check for open file
-			e.CanExecute = true;
+			e.CanExecute = (Data.Package != null) && (partsTabControl.SelectedItem != null);
 		}
 
 		private void CommandBinding_SaveAsExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+
+		}
+
+		private void CommandBinding_SavePackageCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = (Data.Package != null) && Data.IsPackageDirty;
+		}
+
+		private void CommandBinding_SavePackageExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 
 		}

@@ -168,6 +168,7 @@ namespace B4.Mope
 			//	}
 			//}
 
+			Data.IsPackageDirty = true;
 			partModel.SetDirty(false);
 			context.Response.StatusCode = 200;
 			context.Response.OutputStream.Close();
