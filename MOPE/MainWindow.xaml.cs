@@ -33,7 +33,6 @@ namespace B4.Mope
 
 
 			editorDarkModeMenuItem.IsChecked = Data.Settings.UseDarkMode;
-			editorCodeLensMenuItem.IsChecked = Data.Settings.ShowCodeLens;
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
 #endif
