@@ -75,7 +75,9 @@
 				<MenuItem Header="E_xit" Click="Exit_Click" />
 			</MenuItem>
 			<MenuItem Header="_View" x:Name="toolbarViewMenu">
-				<MenuItem Header="Code Editor Dark Mode" x:Name="darkModeMenuItem" IsCheckable="True" Checked="darkModeMenuItem_Click" Unchecked="darkModeMenuItem_Click"/>
+				<MenuItem Header="Code Editor">
+					<MenuItem Header="Dark Mode" x:Name="editorDarkModeMenuItem" IsCheckable="True" Checked="editorDarkModeMenuItem_Change" Unchecked="editorDarkModeMenuItem_Change"/>
+				</MenuItem>
 				<Separator />
 				<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
 				<localUI:ListViewStateMenuItem Header="Large Icons" IsChecked="True" ViewState="LargeIcons" Click="ListViewStateMenuItem_Click"/>

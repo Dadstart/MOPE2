@@ -22,11 +22,6 @@
     return "text";
 }
 
-function isDarkMode() {
-    const urlParams = new URLSearchParams(document.location.search);
-    return urlParams.get("theme") === "dark";
-}
-
 
 function getFetchUri(path) {
     return "http://" + document.location.host + "/" + path;
@@ -50,13 +45,8 @@ function updateTheme(darkMode) {
 }
 
 function loadEditor() {
-    //const darkMode = isDarkMode();
-
-    //if (darkMode) {
-    //    document.body.style.background = "rgb(30,30,30)";
-    //}
-
-    updateTheme(isDarkMode());
+    const urlParams = new URLSearchParams(document.location.search);
+    updateTheme(urlParams.get("theme") === "dark");
 
     const partUri = getPartUri();
     const fetchUri = getFetchUri("part/" + partUri);
@@ -72,9 +62,7 @@ function loadEditor() {
                     value: text,
                     language: getLanguageType(response.headers.get("Content-Type")),
                     automaticLayout: true,
-                    //theme: darkMode ? "vs-dark" : "vs",
                     options: {
-                        codeLens: false,
                         scrollbar: {
                             horizontal: "visible",
                             vertical: "visible"
@@ -99,3 +87,4 @@ function postFile() {
     fetch(request).catch(reason => window.alert("Error saving: " + reason));
     request.body = editor.getModel().getValue();
 }
+

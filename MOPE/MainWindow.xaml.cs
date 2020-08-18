@@ -32,7 +32,8 @@ namespace B4.Mope
 			DataContext = Data;
 
 
-			darkModeMenuItem.IsChecked = Data.Settings.UseDarkMode;
+			editorDarkModeMenuItem.IsChecked = Data.Settings.UseDarkMode;
+			editorCodeLensMenuItem.IsChecked = Data.Settings.ShowCodeLens;
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
 #endif
@@ -339,9 +340,9 @@ namespace B4.Mope
 			currentWebView.Browser.ExecuteScriptAsync("window.alert('hello')");
 		}
 
-		private void darkModeMenuItem_Click(object sender, RoutedEventArgs e)
+		private void editorDarkModeMenuItem_Change(object sender, RoutedEventArgs e)
 		{
-			Data.Settings.UseDarkMode = darkModeMenuItem.IsChecked;
+			Data.Settings.UseDarkMode = editorDarkModeMenuItem.IsChecked;
 			Data.Settings.Save();
 
 			// update all open browsers
@@ -354,8 +355,23 @@ namespace B4.Mope
 				var param = Data.Settings.UseDarkMode ? "true" : "false";
 				webView.Browser.ExecuteScriptAsync($"updateTheme({param})");
 			}
+		}
 
-			e.Handled = true;
+		private void editorCodeLensMenuItem_Change(object sender, RoutedEventArgs e)
+		{
+			Data.Settings.ShowCodeLens = editorCodeLensMenuItem.IsChecked;
+			Data.Settings.Save();
+
+			// update all open browsers
+			foreach (var partView in partsTabControl.Items)
+			{
+				var webView = partView as WebViewTabItem;
+				if (webView == null)
+					continue;
+
+				var param = Data.Settings.ShowCodeLens ? "true" : "false";
+				webView.Browser.ExecuteScriptAsync($"showCodeLens({param})");
+			}
 		}
 	}
 }

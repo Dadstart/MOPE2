@@ -46,6 +46,9 @@ namespace B4.Mope.UI
 				{
 					uri = new UriBuilder(Data.WebHost.GetUrl(m_part.GetMonacoUrl()));
 					viewType = "⚡";
+
+					if (Data.Settings.UseDarkMode)
+						uri.Query += "&theme=dark";
 				}
 				else if (ContentTypes.IsSupportedAudioType(m_part.ContentType))
 				{
@@ -67,9 +70,6 @@ namespace B4.Mope.UI
 					uri = new UriBuilder("about:blank");
 					viewType = "?";
 				}
-
-				if (Data.Settings.UseDarkMode)
-					uri.Query += "&theme=dark";
 
 				var header = ((CloseButtonTabHeader)Header);
 				header.Text = $"{m_part.Uri}";
