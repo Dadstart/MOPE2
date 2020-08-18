@@ -32,7 +32,8 @@ namespace B4.Mope
 			DataContext = Data;
 
 
-			editorDarkModeMenuItem.IsChecked = Data.Settings.UseDarkMode;
+			editorDarkModeMenuItem.IsChecked = Data.Settings.EditorUseDarkMode;
+			editorReadOnlyModeMenuItem.IsChecked = Data.Settings.EditorReadOnlyMode;
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
 #endif
@@ -80,7 +81,7 @@ namespace B4.Mope
 		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			// TODO: Check dirty state
-			e.CanExecute = true;
+			e.CanExecute = !Data.Settings.EditorReadOnlyMode;
 		}
 
 		private void CommandBinding_SaveExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -343,7 +344,7 @@ namespace B4.Mope
 
 		private void editorDarkModeMenuItem_Change(object sender, RoutedEventArgs e)
 		{
-			Data.Settings.UseDarkMode = editorDarkModeMenuItem.IsChecked;
+			Data.Settings.EditorUseDarkMode = editorDarkModeMenuItem.IsChecked;
 			Data.Settings.Save();
 
 			// update all open browsers
@@ -353,8 +354,25 @@ namespace B4.Mope
 				if (webView == null)
 					continue;
 
-				var param = Data.Settings.UseDarkMode ? "true" : "false";
+				var param = Data.Settings.EditorUseDarkMode ? "true" : "false";
 				webView.Browser.ExecuteScriptAsync($"updateTheme({param})");
+			}
+		}
+
+		private void editorReadOnlyModeMenuItem_Change(object sender, RoutedEventArgs e)
+		{
+			Data.Settings.EditorReadOnlyMode = editorReadOnlyModeMenuItem.IsChecked;
+			Data.Settings.Save();
+
+			// update all open browsers
+			foreach (var partView in partsTabControl.Items)
+			{
+				var webView = partView as WebViewTabItem;
+				if (webView == null)
+					continue;
+
+				var param = Data.Settings.EditorReadOnlyMode ? "true" : "false";
+				webView.Browser.ExecuteScriptAsync($"setReadOnly({param})");
 			}
 		}
 	}

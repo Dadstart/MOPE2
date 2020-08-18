@@ -2,8 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="B4.Mope" GeneratedClassName="AppSettings">
   <Profiles />
   <Settings>
-    <Setting Name="UseDarkMode" Type="System.Boolean" Scope="User">
+    <Setting Name="EditorUseDarkMode" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="EditorReadOnlyMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>
