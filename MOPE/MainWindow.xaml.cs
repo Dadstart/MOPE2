@@ -30,6 +30,12 @@ namespace B4.Mope
 			Unloaded += MainWindow_Unloaded;
 			Data = new Data();
 			DataContext = Data;
+
+
+			editorDarkModeMenuItem.IsChecked = Data.Settings.UseDarkMode;
+#if DEBUG
+			menuMain.Items.Add(FindResource("debugMenu"));
+#endif
 		}
 
 		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
@@ -79,7 +85,10 @@ namespace B4.Mope
 
 		private void CommandBinding_SaveExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-
+			// save current part
+			var webView = partsTabControl.SelectedItem as WebViewTabItem;
+			if ((webView != null) && (webView.PartModel.IsDirty))
+				webView.Browser.ExecuteScriptAsync($"postFile()");
 		}
 
 		private void CommandBinding_SaveAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -133,15 +142,17 @@ namespace B4.Mope
 
 		private void SetActivePart(PartModel model)
 		{
+			if (model == null)
+				return;
+
 			var part = model.Part;
 			var tabItem = GetTabItemWithPart(part);
 			if (tabItem == null)
 			{
 				if (part.CanViewInBrowser())
 				{
-					var webItem = new WebViewTabItem();
+					var webItem = new WebViewTabItem(Data, model);
 					partsTabControl.Items.Add(webItem);
-					webItem.Part = part;
 					partsTabControl.SelectedItem = webItem;
 				}
 				else
@@ -191,7 +202,7 @@ namespace B4.Mope
 					return item;
 
 				var webItem = item as WebViewTabItem;
-				if ((webItem != null) && (webItem.Part == part))
+				if ((webItem != null) && (webItem.PartModel.Part == part))
 					return item;
 			}
 
@@ -317,6 +328,33 @@ namespace B4.Mope
 			{
 				ShowTreeViewContextMenu(treeViewZipFiles.SelectedItem as PackageItem);
 				e.Handled = true;
+			}
+		}
+
+		private void debugInjectJsMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var currentWebView = partsTabControl.SelectedItem as WebViewTabItem;
+			if (currentWebView == null)
+				return;
+
+			
+			currentWebView.Browser.ExecuteScriptAsync("window.alert('hello')");
+		}
+
+		private void editorDarkModeMenuItem_Change(object sender, RoutedEventArgs e)
+		{
+			Data.Settings.UseDarkMode = editorDarkModeMenuItem.IsChecked;
+			Data.Settings.Save();
+
+			// update all open browsers
+			foreach (var partView in partsTabControl.Items)
+			{
+				var webView = partView as WebViewTabItem;
+				if (webView == null)
+					continue;
+
+				var param = Data.Settings.UseDarkMode ? "true" : "false";
+				webView.Browser.ExecuteScriptAsync($"updateTheme({param})");
 			}
 		}
 	}

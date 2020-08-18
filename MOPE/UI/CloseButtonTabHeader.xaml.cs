@@ -39,6 +39,13 @@ namespace B4.Mope.UI
             set { SetValue(ViewTypeProperty, value); }
         }
 
+        public static readonly DependencyProperty IsDirtyProperty = DependencyProperty.Register("IsDirty", typeof(bool), typeof(CloseButtonTabHeader), new UIPropertyMetadata(false));
+        public bool IsDirty
+		{
+            get { return (bool)GetValue(IsDirtyProperty); }
+            set { SetValue(IsDirtyProperty, value); }
+		}
+
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             var tabItem = (TabItem)Parent;

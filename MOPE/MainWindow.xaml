@@ -55,6 +55,10 @@
 			</MenuItem>
 		</ContextMenu>
 
+		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
+			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
+		</MenuItem>
+
 	</Window.Resources>
 	<Window.CommandBindings>
 		<!--<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>-->
@@ -71,6 +75,10 @@
 				<MenuItem Header="E_xit" Click="Exit_Click" />
 			</MenuItem>
 			<MenuItem Header="_View" x:Name="toolbarViewMenu">
+				<MenuItem Header="Code Editor">
+					<MenuItem Header="Dark Mode" x:Name="editorDarkModeMenuItem" IsCheckable="True" Checked="editorDarkModeMenuItem_Change" Unchecked="editorDarkModeMenuItem_Change"/>
+				</MenuItem>
+				<Separator />
 				<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
 				<localUI:ListViewStateMenuItem Header="Large Icons" IsChecked="True" ViewState="LargeIcons" Click="ListViewStateMenuItem_Click"/>
 				<localUI:ListViewStateMenuItem Header="Small Icons" ViewState="SmallIcons" Click="ListViewStateMenuItem_Click"/>

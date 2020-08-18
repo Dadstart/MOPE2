@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -21,63 +22,63 @@ namespace B4.Mope.UI
 	/// </summary>
 	public partial class WebViewTabItem : TabItem
 	{
-		public WebViewTabItem()
+		public Data Data { get; }
+
+		public WebViewTabItem(Data data, PartModel model)
 		{
 			InitializeComponent();
+			Data = data ?? throw new ArgumentNullException(nameof(data));
+			PartModel = model ?? throw new ArgumentNullException(nameof(model));
+			UpdatePartView();
 		}
 
-		private Part m_part;
-		public Part Part
-		{
-			get { return m_part; }
-			set { m_part = value; UpdatePartView(); }
-		}
+		public PartModel PartModel { get; }
 
 		void UpdatePartView()
 		{
-			string url;
+			var uri = new UriBuilder();
 			string viewType;
-			if (m_part != null)
+			PartModel.DirtyChanged += PartModel_DirtyChanged;
+			var part = PartModel.Part;
+			if (ContentTypes.IsXmlType(part.ContentType))
 			{
-				var data = (Data)Window.GetWindow(this).DataContext;
-				if (ContentTypes.IsXmlType(m_part.ContentType))
-				{
-					url = data.WebHost.GetUrl(m_part.GetMonacoUrl());
-					viewType = "⚡";
-				}
-				else if (ContentTypes.IsSupportedAudioType(m_part.ContentType))
-				{
-					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
-					viewType = "🎵";
-				}
-				else if (ContentTypes.IsSupportedImageType(m_part.ContentType))
-				{
-					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
-					viewType = "🎨";
-				}
-				else if (ContentTypes.IsSupportedVideoType(m_part.ContentType))
-				{
-					url = data.WebHost.GetUrl($"part/{m_part.Uri}");
-					viewType = "🖥";
-				}
-				else
-				{
-					url = "about:blank";
-					viewType = "?";
-				}
+				uri = new UriBuilder(Data.WebHost.GetUrl(part.GetMonacoUrl()));
+				viewType = "⚡";
 
-				var header = ((CloseButtonTabHeader)Header);
-				header.Text = $"{m_part.Uri}";
-				header.ViewType = viewType;
-
+				if (Data.Settings.UseDarkMode)
+					uri.Query += "&theme=dark";
+			}
+			else if (ContentTypes.IsSupportedAudioType(part.ContentType))
+			{
+				uri = new UriBuilder(Data.WebHost.GetUrl($"part/{part.Uri}"));
+				viewType = "🎵";
+			}
+			else if (ContentTypes.IsSupportedImageType(part.ContentType))
+			{
+				uri = new UriBuilder(Data.WebHost.GetUrl($"part/{part.Uri}"));
+				viewType = "🎨";
+			}
+			else if (ContentTypes.IsSupportedVideoType(part.ContentType))
+			{
+				uri = new UriBuilder(Data.WebHost.GetUrl($"part/{part.Uri}"));
+				viewType = "🖥";
 			}
 			else
 			{
-				((CloseButtonTabHeader)Header).Text = "???";
-				url = "about:blank";
+				uri = new UriBuilder("about:blank");
+				viewType = "?";
 			}
 
-			Browser.Source = new Uri(url);
+			var header = ((CloseButtonTabHeader)Header);
+			header.Text = $"{part.Uri}";
+			header.ViewType = viewType;
+
+			Browser.Source = uri.Uri;
+		}
+
+		private void PartModel_DirtyChanged(object sender, EventArgs e)
+		{
+			Dispatcher.BeginInvoke(new ThreadStart(() => ((CloseButtonTabHeader)Header).IsDirty = PartModel.IsDirty));
 		}
 	}
 }
