@@ -355,22 +355,5 @@ namespace B4.Mope
 				webView.Browser.ExecuteScriptAsync($"updateTheme({param})");
 			}
 		}
-
-		private void editorCodeLensMenuItem_Change(object sender, RoutedEventArgs e)
-		{
-			Data.Settings.ShowCodeLens = editorCodeLensMenuItem.IsChecked;
-			Data.Settings.Save();
-
-			// update all open browsers
-			foreach (var partView in partsTabControl.Items)
-			{
-				var webView = partView as WebViewTabItem;
-				if (webView == null)
-					continue;
-
-				var param = Data.Settings.ShowCodeLens ? "true" : "false";
-				webView.Browser.ExecuteScriptAsync($"showCodeLens({param})");
-			}
-		}
 	}
 }
