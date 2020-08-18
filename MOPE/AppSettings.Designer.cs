@@ -26,12 +26,24 @@ namespace B4.Mope {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UseDarkMode {
+        public bool EditorUseDarkMode {
             get {
-                return ((bool)(this["UseDarkMode"]));
+                return ((bool)(this["EditorUseDarkMode"]));
             }
             set {
-                this["UseDarkMode"] = value;
+                this["EditorUseDarkMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EditorReadOnlyMode {
+            get {
+                return ((bool)(this["EditorReadOnlyMode"]));
+            }
+            set {
+                this["EditorReadOnlyMode"] = value;
             }
         }
     }

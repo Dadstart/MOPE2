@@ -51,6 +51,7 @@ function onKeyUp(e) {
 }
 
 let isDirty = false;
+let codeEditor;
 
 function onContentChanged(e) {
     if (!isDirty) {
@@ -79,7 +80,7 @@ function loadEditor() {
                 return;
             }
             response.text().then(text => {
-                var editor = monaco.editor.create(document.getElementById('container'), {
+                codeEditor = monaco.editor.create(document.getElementById('container'), {
                     value: text,
                     language: getLanguageType(response.headers.get("Content-Type")),
                     automaticLayout: true,
@@ -93,6 +94,10 @@ function loadEditor() {
 
                 monaco.editor.getModels()[0].onDidChangeContent(onContentChanged);
 
+                // for some reason setting this option when calling monaco.editor.create isn't working
+                isReadOnly = urlParams.get("readonly") === "true";
+                setReadOnly(isReadOnly);
+
             });
 
         }).catch(error => {
@@ -102,7 +107,7 @@ function loadEditor() {
 }
 
 function postFile() {
-    if (!isDirty)
+    if (!isDirty || isReadOnly)
         return;
 
     fetch(getFetchUri("post/" + getPartUri()), {
@@ -115,3 +120,8 @@ function postFile() {
     });
 }
 
+let isReadOnly = false;
+function setReadOnly(val) {
+    isReadOnly = val;
+    codeEditor.updateOptions({ readOnly: val });
+}
