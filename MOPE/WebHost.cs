@@ -130,6 +130,8 @@ namespace B4.Mope
 			partModel.SetDirty(true);
 			context.Response.StatusCode = 200;
 			context.Response.OutputStream.Close();
+
+			Data.IsPackageDirty = true;
 		}
 
 		private static void ListenerCallback(IAsyncResult result)
@@ -168,6 +170,7 @@ namespace B4.Mope
 			//	}
 			//}
 
+			Data.IsPackageDirty = true;
 			partModel.SetDirty(false);
 			context.Response.StatusCode = 200;
 			context.Response.OutputStream.Close();

@@ -1,0 +1,23 @@
+﻿<Window x:Class="B4.Mope.UI.ConfirmOverwritePackageDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:B4.Mope.UI"
+        mc:Ignorable="d"
+        Title="ConfirmOverwritePackageDialog" Height="114" Width="399"
+		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+	<StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+		<Label>Are you sure you want to overwrite the existing package?</Label>
+		<CheckBox x:Name="dontShowThisCheckbox">
+			<CheckBox.LayoutTransform>
+				<ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
+			</CheckBox.LayoutTransform>
+			D_on't show this dialog again
+		</CheckBox>
+		<StackPanel Orientation="Horizontal" Margin="10">
+			<Button x:Name="buttonYes" Margin="0,0,10,0" Click="buttonYes_Click">_Yes</Button>
+			<Button x:Name="buttonNo" Click="buttonNo_Click">_No</Button>
+		</StackPanel>
+	</StackPanel>
+</Window>

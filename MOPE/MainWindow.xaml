@@ -9,7 +9,6 @@
 		mc:Ignorable="d"
 		Title="MOPE: Office Package Editor" Height="720" Width="1200">
 	<Window.Resources>
-		<local:Data x:Key="appData" />
 		<localUI:PartModelToBitmapSourceConverter x:Key="partModelToBitmapSourceConverter" />
 		<localUI:PackageItemToBitmapSourceConverter x:Key="packageItemToBitmapSourceConverter" />
 		<localUI:PartModelToSizeStringConverter x:Key="partModelToSizeStringConverter" />
@@ -56,6 +55,7 @@
 		</ContextMenu>
 
 		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
+			<MenuItem Header="Break" Click="debugBreak_Click" />
 			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
 		</MenuItem>
 
@@ -64,20 +64,28 @@
 		<!--<CommandBinding Command="Help" CanExecute="CommandBinding_HelpCanExecute" Executed="CommandBinding_HelpExecuted"/>-->
 		<CommandBinding Command="Open" CanExecute="CommandBinding_OpenCanExecute" Executed="CommandBinding_OpenExecuted"/>
 		<CommandBinding Command="Save" CanExecute="CommandBinding_SaveCanExecute" Executed="CommandBinding_SaveExecuted"/>
+		<CommandBinding Command="localUI:CustomCommands.SaveAs" CanExecute="CommandBinding_SaveAsCanExecute" Executed="CommandBinding_SaveAsExecuted"/>
+		<CommandBinding Command="localUI:CustomCommands.SavePackage" CanExecute="CommandBinding_SavePackageCanExecute" Executed="CommandBinding_SavePackageExecuted"/>
+		<CommandBinding Command="localUI:CustomCommands.SavePackageAs" CanExecute="CommandBinding_SavePackageAsCanExecute" Executed="CommandBinding_SavePackageAsExecuted"/>
 	</Window.CommandBindings>
 	<DockPanel>
 		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
 			<MenuItem Header="_File">
 				<MenuItem Header="_Open" Icon="📂" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open"/>
-				<MenuItem Header="_Save" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
-				<MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs"/>
+				<MenuItem Header="_Save Part" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
+				<MenuItem Header="Save Part _As" Command="localUI:CustomCommands.SaveAs"/>
+				<Separator />
+				<MenuItem Header="Save _Package" Icon="💾" InputGestureText="Ctrl+Shift+S" Command="localUI:CustomCommands.SavePackage" />
+				<MenuItem Header="Save Package As" Icon="💾" InputGestureText="Ctrl+Shift+F12" Command="localUI:CustomCommands.SavePackageAs" />
 				<Separator />
 				<MenuItem Header="E_xit" Click="Exit_Click" />
+				<Separator />
+				<MenuItem Header="Confirm Overwrite Package" IsCheckable="True" IsChecked="{Binding ConfirmOverwritePackage, Mode=TwoWay}"/>
 			</MenuItem>
 			<MenuItem Header="_View" x:Name="toolbarViewMenu">
 				<MenuItem Header="Code Editor">
-					<MenuItem Header="Dark Mode" x:Name="editorDarkModeMenuItem" IsCheckable="True" Checked="editorDarkModeMenuItem_Change" Unchecked="editorDarkModeMenuItem_Change"/>
-					<MenuItem Header="Read Only" x:Name="editorReadOnlyModeMenuItem" IsCheckable="True" Checked="editorReadOnlyModeMenuItem_Change" Unchecked="editorReadOnlyModeMenuItem_Change"/>
+					<MenuItem Header="Dark Mode" x:Name="editorDarkModeMenuItem" IsCheckable="True" IsChecked="{Binding EditorDarkMode, Mode=TwoWay}"/>
+					<MenuItem Header="Read Only" x:Name="editorReadOnlyModeMenuItem" IsCheckable="True" IsChecked="{Binding EditorReadOnlyMode, Mode=TwoWay}"/>
 				</MenuItem>
 				<Separator />
 				<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>

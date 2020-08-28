@@ -1,9 +1,12 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.Shell;
 using B4.Mope.UI;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,6 +22,7 @@ namespace B4.Mope
 		/// App data
 		/// </summary>
 		public Data Data { get; }
+
 		public static IconManager IconManager { get; private set; } //TODO: remove static
 
 		public MainWindow()
@@ -31,9 +35,9 @@ namespace B4.Mope
 			Data = new Data();
 			DataContext = Data;
 
+			Data.EditorReadOnlyModeChanged += Data_EditorReadOnlyModeChanged;
+			Data.EditorDarkModeChanged += Data_EditorDarkModeChanged;
 
-			editorDarkModeMenuItem.IsChecked = Data.Settings.EditorUseDarkMode;
-			editorReadOnlyModeMenuItem.IsChecked = Data.Settings.EditorReadOnlyMode;
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
 #endif
@@ -71,10 +75,10 @@ namespace B4.Mope
 		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Data.Reset();
+			partsTabControl.Items.Clear();
 
 			var package = new Package(@"C:\temp\lorem2.docx", @"C:\temp\x");
 			Data.Init(package);
-
 			InitializeViews();
 		}
 
@@ -94,13 +98,117 @@ namespace B4.Mope
 
 		private void CommandBinding_SaveAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			// TODO: Check for open file
-			e.CanExecute = true;
+			e.CanExecute = (Data.Package != null) && (partsTabControl.SelectedItem != null);
 		}
 
 		private void CommandBinding_SaveAsExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			if ((Data.Package == null) || (partsTabControl.SelectedItem == null))
+				return;
 
+			var partModel = GetPartModelFromTabView(partsTabControl.SelectedItem);
+
+			var dlg = new SaveFileDialog()
+			{
+				FileName = partModel.Part.GetFileInfo().FullName
+			};
+
+			dlg.ShowDialog();
+		}
+
+		private void CommandBinding_SavePackageCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = (Data.Package != null) && Data.IsPackageDirty;
+		}
+
+		private void CommandBinding_SavePackageExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			// confirm
+			if (Data.Settings.ConfirmOverwritePackage)
+			{
+				var confirmDialog = new ConfirmOverwritePackageDialog();
+				confirmDialog.ShowDialog();
+
+				if (confirmDialog.Result != MessageBoxResult.Yes)
+					return;
+
+				if (confirmDialog.DontShowDialogAgain)
+				{
+					Data.Settings.ConfirmOverwritePackage = true;
+					Data.Settings.Save();
+				}
+			}
+
+
+			SavePackageAs(Data.Package.ZipFile);
+			Data.IsPackageDirty = false;
+		}
+
+		private void SaveDirtyParts()
+		{
+			// save any dirty parts
+			foreach (var tabViewItem in partsTabControl.Items)
+			{
+				var webView = tabViewItem as WebViewTabItem;
+				if ((webView != null) && (webView.PartModel.IsDirty))
+					webView.Browser.ExecuteScriptAsync($"postFile()");
+			}
+		}
+
+		private Stream CreateZipArchiveStream()
+		{
+			var stream = new MemoryStream();
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
+			{
+				foreach (var part in Data.Package.Parts.Values)
+				{
+					zipArchive.CreateEntryFromFile(part.GetFileInfo().FullName, part.Uri.Replace('/', '\\'));
+				}
+			}
+
+			stream.Seek(0, SeekOrigin.Begin);
+			return stream;
+		}
+
+		private void SavePackageAs(string filename)
+		{
+			SaveDirtyParts();
+
+			// create the archive and overwrite the file
+			using (var zipStream = CreateZipArchiveStream())
+			using (var file = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+			{
+				zipStream.CopyTo(file);
+			}
+		}
+
+		private void CommandBinding_SavePackageAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = Data.Package != null;
+		}
+
+		private void CommandBinding_SavePackageAsExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog()
+			{
+				FileName = Data.Package.ZipFile
+			};
+
+			if (saveFileDialog.ShowDialog() == true)
+				SavePackageAs(saveFileDialog.FileName);
+		}
+
+		private PartModel GetPartModelFromTabView(object tabViewItem)
+		{
+			var webView = tabViewItem as WebViewTabItem;
+			if (webView != null)
+				return webView.PartModel;
+
+			var binView = tabViewItem as BinaryViewTabItem;
+			if (binView != null)
+				return binView.PartModel;
+
+			return null;
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -158,9 +266,8 @@ namespace B4.Mope
 				}
 				else
 				{
-					var binaryItem = new BinaryViewTabItem();
+					var binaryItem = new BinaryViewTabItem(Data, model);
 					partsTabControl.Items.Add(binaryItem);
-					binaryItem.Part = part;
 					partsTabControl.SelectedItem = binaryItem;
 				}
 			}
@@ -198,12 +305,8 @@ namespace B4.Mope
 
 			foreach (TabItem item in partsTabControl.Items)
 			{
-				var bItem = item as BinaryViewTabItem;
-				if ((bItem != null) && (bItem.Part == part))
-					return item;
-
-				var webItem = item as WebViewTabItem;
-				if ((webItem != null) && (webItem.PartModel.Part == part))
+				var partModel = GetPartModelFromTabView(item);
+				if (partModel.Part == part)
 					return item;
 			}
 
@@ -342,10 +445,18 @@ namespace B4.Mope
 			currentWebView.Browser.ExecuteScriptAsync("window.alert('hello')");
 		}
 
-		private void editorDarkModeMenuItem_Change(object sender, RoutedEventArgs e)
+		private void debugBreak_Click(object sender, RoutedEventArgs e)
 		{
-			Data.Settings.EditorUseDarkMode = editorDarkModeMenuItem.IsChecked;
-			Data.Settings.Save();
+			Debugger.Break();
+		}
+
+		private void Data_EditorDarkModeChanged(object sender, BooleanPropertyChangedEventArgs e)
+		{
+			if (partsTabControl == null)
+			{
+				// this can happen on init
+				return;
+			}
 
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
@@ -354,15 +465,18 @@ namespace B4.Mope
 				if (webView == null)
 					continue;
 
-				var param = Data.Settings.EditorUseDarkMode ? "true" : "false";
+				var param = e.NewValue ? "true" : "false";
 				webView.Browser.ExecuteScriptAsync($"updateTheme({param})");
 			}
 		}
 
-		private void editorReadOnlyModeMenuItem_Change(object sender, RoutedEventArgs e)
+		private void Data_EditorReadOnlyModeChanged(object sender, BooleanPropertyChangedEventArgs e)
 		{
-			Data.Settings.EditorReadOnlyMode = editorReadOnlyModeMenuItem.IsChecked;
-			Data.Settings.Save();
+			if (partsTabControl == null)
+			{
+				// this can happen on init
+				return;
+			}
 
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
@@ -371,7 +485,7 @@ namespace B4.Mope
 				if (webView == null)
 					continue;
 
-				var param = Data.Settings.EditorReadOnlyMode ? "true" : "false";
+				var param = e.NewValue ? "true" : "false";
 				webView.Browser.ExecuteScriptAsync($"setReadOnly({param})");
 			}
 		}

@@ -37,7 +37,7 @@ namespace B4.Mope.Packaging
 			foreach (var entry in entries)
 			{
 				var part = new Part(this, entry.Name, entry.FullName, ContentTypes.GetContentType(entry.FullName), entry.Crc32, entry.Length, entry.CompressedLength);
-				Parts.Add(part.Uri, part);
+				Parts.Add(part.Uri.Replace('\\','/'), part);
 			}
 
 			Relationships = LoadRelationships();
@@ -81,7 +81,7 @@ namespace B4.Mope.Packaging
 			foreach (var part in Parts.Values.Where(p => p.Name.EndsWith(".rels")))
 			{
 				Relationships rels;
-				string source = Relationships.GetRelationshipPartOwner(part.Uri);
+				string source = Relationships.GetRelationshipPartOwner(part.Uri.Replace('\\', '/'));
 				using (var stream = part.GetFileInfo().OpenRead())
 				{
 					rels = Relationships.Load(this, source, stream);
