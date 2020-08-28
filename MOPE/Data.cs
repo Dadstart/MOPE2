@@ -58,7 +58,6 @@ namespace B4.Mope
 			data.EditorDarkModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
 		}
 
-
 		private static readonly DependencyProperty ConfirmOverwritePackageProperty = DependencyProperty.Register("ConfirmOverwritePackage", typeof(bool), typeof(Data), new PropertyMetadata(false, ConfirmOverwritePackagePropertyChanged));
 		public bool ConfirmOverwritePackage
 		{
@@ -72,6 +71,19 @@ namespace B4.Mope
 			data.Settings.Save();
 		}
 
+		private static readonly DependencyProperty EditorFormatXmlOnLoadProperty = DependencyProperty.Register("EditorFormatXmlOnLoad", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorFormatXmlOnLoadPropertyChanged));
+		public bool EditorFormatXmlOnLoad
+		{
+			get { return (bool)GetValue(EditorFormatXmlOnLoadProperty); }
+			set { SetValue(EditorFormatXmlOnLoadProperty, value); }
+		}
+		private static void EditorFormatXmlOnLoadPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			var data = (Data)obj;
+			data.Settings.EditorFormatXmlOnLoad = (bool)e.NewValue;
+			data.Settings.Save();
+		}
+
 		public bool IsPackageDirty { get; internal set; }
 
 		public Data()
@@ -79,6 +91,7 @@ namespace B4.Mope
 			EditorReadOnlyMode = Settings.EditorReadOnlyMode;
 			EditorDarkMode = Settings.EditorUseDarkMode;
 			ConfirmOverwritePackage = Settings.ConfirmOverwritePackage;
+			EditorFormatXmlOnLoad = Settings.EditorFormatXmlOnLoad;
 		}
 
 		public void OnReadOnlyModeChanged()
