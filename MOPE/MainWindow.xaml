@@ -66,17 +66,21 @@
 		<CommandBinding Command="Save" CanExecute="CommandBinding_SaveCanExecute" Executed="CommandBinding_SaveExecuted"/>
 		<CommandBinding Command="localUI:CustomCommands.SaveAs" CanExecute="CommandBinding_SaveAsCanExecute" Executed="CommandBinding_SaveAsExecuted"/>
 		<CommandBinding Command="localUI:CustomCommands.SavePackage" CanExecute="CommandBinding_SavePackageCanExecute" Executed="CommandBinding_SavePackageExecuted"/>
+		<CommandBinding Command="localUI:CustomCommands.SavePackageAs" CanExecute="CommandBinding_SavePackageAsCanExecute" Executed="CommandBinding_SavePackageAsExecuted"/>
 	</Window.CommandBindings>
 	<DockPanel>
 		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
 			<MenuItem Header="_File">
 				<MenuItem Header="_Open" Icon="📂" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open"/>
 				<MenuItem Header="_Save Part" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
-				<MenuItem Header="Save Part _As" Command="ApplicationCommands.SaveAs"/>
+				<MenuItem Header="Save Part _As" Command="localUI:CustomCommands.SaveAs"/>
 				<Separator />
-				<MenuItem Header="_Save Package" Icon="💾" InputGestureText="Ctrl+Shift+S" />
+				<MenuItem Header="Save _Package" Icon="💾" InputGestureText="Ctrl+Shift+S" Command="localUI:CustomCommands.SavePackage" />
+				<MenuItem Header="Save Package As" Icon="💾" InputGestureText="Ctrl+Shift+F12" Command="localUI:CustomCommands.SavePackageAs" />
 				<Separator />
 				<MenuItem Header="E_xit" Click="Exit_Click" />
+				<Separator />
+				<MenuItem Header="Confirm Overwrite Package" IsCheckable="True" IsChecked="{Binding ConfirmOverwritePackage, Mode=TwoWay}"/>
 			</MenuItem>
 			<MenuItem Header="_View" x:Name="toolbarViewMenu">
 				<MenuItem Header="Code Editor">

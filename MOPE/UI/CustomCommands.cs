@@ -10,12 +10,19 @@ namespace B4.Mope.UI
 		public static readonly RoutedUICommand SaveAs = new RoutedUICommand(
 			"Save As",
 			"SaveAs",
-			typeof(CustomCommands));
+			typeof(CustomCommands),
+			new InputGestureCollection() { new KeyGesture(Key.F12) });
 
 		public static readonly RoutedUICommand SavePackage = new RoutedUICommand(
 			"Save Package",
 			"SavePackage",
 			typeof(CustomCommands),
 			new InputGestureCollection() { new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift) });
+
+		public static readonly RoutedUICommand SavePackageAs = new RoutedUICommand(
+			"Save Package As",
+			"SavePackageAs",
+			typeof(CustomCommands),
+			new InputGestureCollection() { new KeyGesture(Key.F12, ModifierKeys.Control | ModifierKeys.Shift) });
 	}
 }

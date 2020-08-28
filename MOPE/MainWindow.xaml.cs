@@ -1,10 +1,12 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.Shell;
 using B4.Mope.UI;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -73,10 +75,10 @@ namespace B4.Mope
 		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Data.Reset();
+			partsTabControl.Items.Clear();
 
 			var package = new Package(@"C:\temp\lorem2.docx", @"C:\temp\x");
 			Data.Init(package);
-
 			InitializeViews();
 		}
 
@@ -101,7 +103,17 @@ namespace B4.Mope
 
 		private void CommandBinding_SaveAsExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			if ((Data.Package == null) || (partsTabControl.SelectedItem == null))
+				return;
 
+			var partModel = GetPartModelFromTabView(partsTabControl.SelectedItem);
+
+			var dlg = new SaveFileDialog()
+			{
+				FileName = partModel.Part.GetFileInfo().FullName
+			};
+
+			dlg.ShowDialog();
 		}
 
 		private void CommandBinding_SavePackageCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -111,7 +123,92 @@ namespace B4.Mope
 
 		private void CommandBinding_SavePackageExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			// confirm
+			if (Data.Settings.ConfirmOverwritePackage)
+			{
+				var confirmDialog = new ConfirmOverwritePackageDialog();
+				confirmDialog.ShowDialog();
 
+				if (confirmDialog.Result != MessageBoxResult.Yes)
+					return;
+
+				if (confirmDialog.DontShowDialogAgain)
+				{
+					Data.Settings.ConfirmOverwritePackage = true;
+					Data.Settings.Save();
+				}
+			}
+
+
+			SavePackageAs(Data.Package.ZipFile);
+			Data.IsPackageDirty = false;
+		}
+
+		private void SaveDirtyParts()
+		{
+			// save any dirty parts
+			foreach (var tabViewItem in partsTabControl.Items)
+			{
+				var webView = tabViewItem as WebViewTabItem;
+				if ((webView != null) && (webView.PartModel.IsDirty))
+					webView.Browser.ExecuteScriptAsync($"postFile()");
+			}
+		}
+
+		private Stream CreateZipArchiveStream()
+		{
+			var stream = new MemoryStream();
+			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
+			{
+				foreach (var part in Data.Package.Parts.Values)
+				{
+					zipArchive.CreateEntryFromFile(part.GetFileInfo().FullName, part.Uri.Replace('/', '\\'));
+				}
+			}
+
+			stream.Seek(0, SeekOrigin.Begin);
+			return stream;
+		}
+
+		private void SavePackageAs(string filename)
+		{
+			SaveDirtyParts();
+
+			// create the archive and overwrite the file
+			using (var zipStream = CreateZipArchiveStream())
+			using (var file = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+			{
+				zipStream.CopyTo(file);
+			}
+		}
+
+		private void CommandBinding_SavePackageAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = Data.Package != null;
+		}
+
+		private void CommandBinding_SavePackageAsExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog()
+			{
+				FileName = Data.Package.ZipFile
+			};
+
+			if (saveFileDialog.ShowDialog() == true)
+				SavePackageAs(saveFileDialog.FileName);
+		}
+
+		private PartModel GetPartModelFromTabView(object tabViewItem)
+		{
+			var webView = tabViewItem as WebViewTabItem;
+			if (webView != null)
+				return webView.PartModel;
+
+			var binView = tabViewItem as BinaryViewTabItem;
+			if (binView != null)
+				return binView.PartModel;
+
+			return null;
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -208,12 +305,8 @@ namespace B4.Mope
 
 			foreach (TabItem item in partsTabControl.Items)
 			{
-				var bItem = item as BinaryViewTabItem;
-				if ((bItem != null) && (bItem.PartModel.Part == part))
-					return item;
-
-				var webItem = item as WebViewTabItem;
-				if ((webItem != null) && (webItem.PartModel.Part == part))
+				var partModel = GetPartModelFromTabView(item);
+				if (partModel.Part == part)
 					return item;
 			}
 

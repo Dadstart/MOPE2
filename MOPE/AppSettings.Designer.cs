@@ -46,5 +46,17 @@ namespace B4.Mope {
                 this["EditorReadOnlyMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ConfirmOverwritePackage {
+            get {
+                return ((bool)(this["ConfirmOverwritePackage"]));
+            }
+            set {
+                this["ConfirmOverwritePackage"] = value;
+            }
+        }
     }
 }

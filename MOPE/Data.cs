@@ -50,9 +50,6 @@ namespace B4.Mope
 			get { return (bool)GetValue(EditorDarkModeProperty); }
 			set { SetValue(EditorDarkModeProperty, value); }
 		}
-
-		public bool IsPackageDirty { get; internal set; }
-
 		private static void EditorDarkPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
 		{
 			var data = (Data)obj;
@@ -61,9 +58,27 @@ namespace B4.Mope
 			data.EditorDarkModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
 		}
 
+
+		private static readonly DependencyProperty ConfirmOverwritePackageProperty = DependencyProperty.Register("ConfirmOverwritePackage", typeof(bool), typeof(Data), new PropertyMetadata(false, ConfirmOverwritePackagePropertyChanged));
+		public bool ConfirmOverwritePackage
+		{
+			get { return (bool)GetValue(ConfirmOverwritePackageProperty); }
+			set { SetValue(ConfirmOverwritePackageProperty, value); }
+		}
+		private static void ConfirmOverwritePackagePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			var data = (Data)obj;
+			data.Settings.ConfirmOverwritePackage = (bool)e.NewValue;
+			data.Settings.Save();
+		}
+
+		public bool IsPackageDirty { get; internal set; }
+
 		public Data()
 		{
 			EditorReadOnlyMode = Settings.EditorReadOnlyMode;
+			EditorDarkMode = Settings.EditorUseDarkMode;
+			ConfirmOverwritePackage = Settings.ConfirmOverwritePackage;
 		}
 
 		public void OnReadOnlyModeChanged()
@@ -103,7 +118,7 @@ namespace B4.Mope
 			{
 				var shellCommands = LoadShellCommandsForPart(part);
 				var model = new PartModel(part, shellCommands);
-				PartModels.Add(part.Uri, model);
+				PartModels.Add(part.Uri.Replace('\\','/'), model);
 			}
 		}
 
