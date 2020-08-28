@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
-        Title="ConfirmOverwritePackageDialog" Height="114" Width="399"
+        Title="Overwrite the original file?" Height="114" Width="399"
 		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 	<StackPanel Orientation="Vertical" HorizontalAlignment="Center">
 		<Label>Are you sure you want to overwrite the existing package?</Label>

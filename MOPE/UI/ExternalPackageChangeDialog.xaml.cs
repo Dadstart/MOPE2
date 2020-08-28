@@ -15,25 +15,29 @@ namespace B4.Mope.UI
 	/// <summary>
 	/// Interaction logic for ConfirmOverwritePackageDialog.xaml
 	/// </summary>
-	public partial class ConfirmOverwritePackageDialog : Window
+	public partial class ExternalPackageChangeDialog : Window
 	{
 		public MessageBoxResult Result { get; private set; }
-		public ConfirmOverwritePackageDialog()
+		public bool DontShowDialogAgain
+		{
+			get { return dontShowThisCheckbox.IsChecked == true; }
+		}
+
+		public ExternalPackageChangeDialog()
 		{
 			InitializeComponent();
 		}
 
-		private void buttonIgnore_Click(object sender, RoutedEventArgs e)
+		private void buttonYes_Click(object sender, RoutedEventArgs e)
 		{
+			Result = MessageBoxResult.Yes;
+			Close();
 		}
 
-		private void buttonDiscard_Click(object sender, RoutedEventArgs e)
+		private void buttonNo_Click(object sender, RoutedEventArgs e)
 		{
-		}
-
-		private void buttonDiff_Click(object sender, RoutedEventArgs e)
-		{
-
+			Result = MessageBoxResult.No;
+			Close();
 		}
 	}
 }
