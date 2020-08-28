@@ -11,19 +11,19 @@ namespace B4.Mope
 	/// <summary>
 	/// Data holder for app
 	/// </summary>
-	public class Data : DependencyObject
+	public class Data : DependencyObject, IDisposable
 	{
 		public Package Package { get; private set; }
-
+		public FileSystemWatcher PackageWatcher { get; private set; }
 		public WebHost WebHost { get; private set; }
 
 		public IDictionary<string, PartModel> PartModels { get; private set; }
 
 		public OpenWith OpenWith { get; private set; } = new OpenWith();
-
 		public IList<string> Applications { get; private set; } = new List<string>();
 		public List<PackageItem> Items { get; private set; }
 		internal AppSettings Settings { get; } = new AppSettings();
+		public string TempDirectory { get; private set; }
 
 		public delegate void BooleanPropertyChangedEventHandler(object sender, BooleanPropertyChangedEventArgs e);
 
@@ -72,6 +72,8 @@ namespace B4.Mope
 		}
 
 		private static readonly DependencyProperty EditorFormatXmlOnLoadProperty = DependencyProperty.Register("EditorFormatXmlOnLoad", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorFormatXmlOnLoadPropertyChanged));
+		private bool m_isDisposed;
+
 		public bool EditorFormatXmlOnLoad
 		{
 			get { return (bool)GetValue(EditorFormatXmlOnLoadProperty); }
@@ -109,12 +111,37 @@ namespace B4.Mope
 			// leave Shell related fields the same to use as cache for future opens
 		}
 
-		public void Init(Package package)
+		private string GetTempDir()
 		{
-			Package = package ?? throw new ArgumentNullException(nameof(package));
+			var tempDir = Path.Combine(Path.GetTempPath(), "MOPE2", Guid.NewGuid().ToString());
+			if (!Directory.Exists(tempDir))
+				Directory.CreateDirectory(tempDir);
+			return tempDir;
+		}
+
+		public void Init(string path)
+		{
+			TempDirectory = GetTempDir();
+			Package = new Package(path, TempDirectory);
+
+			// create a copy for possible diffing later
+			var fileInfo = new FileInfo(path);
+			File.Copy(path, Path.Combine(TempDirectory, fileInfo.Name));
+
+			InitializePackageWatcher();
 			InitializeWebHost();
 			InitializePartModels();
 			InitializeHierarchyTree();
+		}
+
+		private void InitializePackageWatcher()
+		{
+			var fileInfo = new FileInfo(Package.ZipFile);
+			PackageWatcher = new FileSystemWatcher(fileInfo.DirectoryName, fileInfo.Name)
+			{
+				NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.CreationTime,
+				EnableRaisingEvents = true,
+			};
 		}
 
 		private void InitializeWebHost()
@@ -224,6 +251,40 @@ namespace B4.Mope
 			}
 
 			return shellCommands;
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!m_isDisposed)
+			{
+				if (disposing)
+				{
+					// TODO: dispose managed state (managed objects)
+					if (!string.IsNullOrEmpty(TempDirectory) && Directory.Exists(TempDirectory))
+					{
+						TempDirectory = null;
+						Directory.Delete(TempDirectory, recursive: true);
+					}
+				}
+
+				// TODO: free unmanaged resources (unmanaged objects) and override finalizer
+				// TODO: set large fields to null
+				m_isDisposed = true;
+			}
+		}
+
+		// // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+		// ~Data()
+		// {
+		//     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		//     Dispose(disposing: false);
+		// }
+
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }

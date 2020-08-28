@@ -77,9 +77,24 @@ namespace B4.Mope
 			Data.Reset();
 			partsTabControl.Items.Clear();
 
-			var package = new Package(@"C:\temp\lorem2.docx", @"C:\temp\x");
-			Data.Init(package);
+			var dlg = new OpenFileDialog()
+			{
+				CheckFileExists = true,
+				CheckPathExists = true,
+				Filter = "Office Files|*.docx;*.docm;*.dotx;*.dotm;*.xlsx;*.xlsm;*.pptx;*.pptm;*.odt;*.ods;*.odp|All Files|*.*",
+			};
+
+			if (dlg.ShowDialog(this) != true)
+				return;
+
+			Data.Init(dlg.FileName);
+			Data.PackageWatcher.Changed += PackageWatcher_Changed;
 			InitializeViews();
+		}
+
+		private void PackageWatcher_Changed(object sender, FileSystemEventArgs e)
+		{
+			MessageBox.Show(e.ChangeType.ToString());
 		}
 
 		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)
