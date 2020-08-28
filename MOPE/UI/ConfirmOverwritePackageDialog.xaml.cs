@@ -18,22 +18,26 @@ namespace B4.Mope.UI
 	public partial class ConfirmOverwritePackageDialog : Window
 	{
 		public MessageBoxResult Result { get; private set; }
+		public bool DontShowDialogAgain
+		{
+			get { return dontShowThisCheckbox.IsChecked == true; }
+		}
+
 		public ConfirmOverwritePackageDialog()
 		{
 			InitializeComponent();
 		}
 
-		private void buttonIgnore_Click(object sender, RoutedEventArgs e)
+		private void buttonYes_Click(object sender, RoutedEventArgs e)
 		{
+			Result = MessageBoxResult.Yes;
+			Close();
 		}
 
-		private void buttonDiscard_Click(object sender, RoutedEventArgs e)
+		private void buttonNo_Click(object sender, RoutedEventArgs e)
 		{
-		}
-
-		private void buttonDiff_Click(object sender, RoutedEventArgs e)
-		{
-
+			Result = MessageBoxResult.No;
+			Close();
 		}
 	}
 }

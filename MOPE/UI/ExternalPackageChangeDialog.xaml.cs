@@ -17,27 +17,22 @@ namespace B4.Mope.UI
 	/// </summary>
 	public partial class ExternalPackageChangeDialog : Window
 	{
-		public MessageBoxResult Result { get; private set; }
-		public bool DontShowDialogAgain
-		{
-			get { return dontShowThisCheckbox.IsChecked == true; }
-		}
-
 		public ExternalPackageChangeDialog()
 		{
 			InitializeComponent();
 		}
 
-		private void buttonYes_Click(object sender, RoutedEventArgs e)
+		private void buttonIgnore_Click(object sender, RoutedEventArgs e)
 		{
-			Result = MessageBoxResult.Yes;
-			Close();
 		}
 
-		private void buttonNo_Click(object sender, RoutedEventArgs e)
+		private void buttonDiscard_Click(object sender, RoutedEventArgs e)
 		{
-			Result = MessageBoxResult.No;
-			Close();
+		}
+
+		private void buttonDiff_Click(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }
