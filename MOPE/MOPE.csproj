@@ -28,6 +28,7 @@
       <None Remove="icons\visio.ico" />
       <None Remove="icons\word.ico" />
       <None Remove="icons\xml.ico" />
+      <None Remove="monaco\differ.html" />
       <None Remove="monaco\editor.js" />
     </ItemGroup>
 
@@ -48,6 +49,7 @@
         <Resource Include="icons\visio.ico" />
         <Resource Include="icons\word.ico" />
         <Resource Include="icons\xml.ico" />
+        <Resource Include="monaco\differ.html" />
         <Resource Include="monaco\editor.html" />
     </ItemGroup>
 
