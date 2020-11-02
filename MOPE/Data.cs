@@ -88,6 +88,8 @@ namespace B4.Mope
 
 		public bool IsPackageDirty { get; internal set; }
 
+		public bool IgnoringChanges { get; set; }
+
 		public Data()
 		{
 			EditorReadOnlyMode = Settings.EditorReadOnlyMode;
@@ -105,9 +107,12 @@ namespace B4.Mope
 		{
 			Package?.Close();
 			Package = null;
-			WebHost?.Stop();
+			WebHost?.Pause();
 			PartModels = null;
 			Items = null;
+			PackageWatcher?.Dispose();
+			PackageWatcher = null;
+			IgnoringChanges = false;
 			// leave Shell related fields the same to use as cache for future opens
 		}
 
@@ -147,8 +152,14 @@ namespace B4.Mope
 		private void InitializeWebHost()
 		{
 			if (WebHost == null)
+			{
 				WebHost = new WebHost(this);
-			WebHost.ListenOnThread();
+				WebHost.ListenOnThread();
+			}
+			else
+			{
+				WebHost.Resume();
+			}
 		}
 
 		private void InitializePartModels()

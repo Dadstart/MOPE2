@@ -87,15 +87,41 @@ namespace B4.Mope
 			if (dlg.ShowDialog(this) != true)
 				return;
 
-			Data.Init(dlg.FileName);
+			OpenPackage(dlg.FileName);
+		}
+
+		private void OpenPackage(string fileName)
+		{
+			Data.Init(fileName);
 			Data.PackageWatcher.Changed += PackageWatcher_Changed;
 			InitializeViews();
 		}
 
 		private void PackageWatcher_Changed(object sender, FileSystemEventArgs e)
 		{
+			if (Data.IgnoringChanges)
+				return;
+
 			var result = ExternalPackageChangeDialog.ShowModal(this);
 
+			switch (result)
+			{
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.Unknown:
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.IgnoreChanges:
+					Data.IgnoringChanges = true;
+					break;
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiscardAndReload:
+					var file = Data.Package.ZipFile;
+					Data.Reset();
+					OpenPackage(file);
+					break;
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiffChanges:
+					// TODO
+					break;
+
+
+
+			}
 			MessageBox.Show($"{result}");
 		}
 
@@ -236,11 +262,14 @@ namespace B4.Mope
 
 		private void InitializeViews()
 		{
-			using (Dispatcher.DisableProcessing())
+			Dispatcher.Invoke(() =>
 			{
-				InitializePartsListView();
-				InitializeZipFilesTreeView();
-			}
+				using (Dispatcher.DisableProcessing())
+				{
+					InitializePartsListView();
+					InitializeZipFilesTreeView();
+				}
+			});
 		}
 
 		private void InitializeZipFilesTreeView()

@@ -1,5 +1,6 @@
 ﻿using B4.Mope.Packaging;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Windows;
@@ -22,6 +23,7 @@ namespace B4.Mope
 		}
 
 		private bool m_isDisposed;
+		private bool m_paused;
 
 		public WebHost(Data data, int? port = null)
 		{
@@ -77,6 +79,12 @@ namespace B4.Mope
 
 		private void HandleRequest(HttpListenerContext context)
 		{
+			if (m_paused)
+			{
+				context.Response.StatusCode = 500;
+				return;
+			}
+
 			try
 			{
 				var url = context.Request.Url;
@@ -136,17 +144,25 @@ namespace B4.Mope
 
 		private static void ListenerCallback(IAsyncResult result)
 		{
-			var webHost = (WebHost)result.AsyncState;
-			var context = webHost.HttpListener.EndGetContext(result);
-			webHost.HandleRequest(context);
+			try
+			{
+				var webHost = (WebHost)result.AsyncState;
+				var context = webHost.HttpListener.EndGetContext(result);
+				webHost.HandleRequest(context);
 
-			if (!webHost.m_stopped)
-			{
-				var asyncResult = webHost.HttpListener.BeginGetContext(new AsyncCallback(ListenerCallback), webHost);
+				if (!webHost.m_stopped)
+				{
+					var asyncResult = webHost.HttpListener.BeginGetContext(new AsyncCallback(ListenerCallback), webHost);
+				}
+				else
+				{
+					webHost.HttpListener.Stop();
+				}
 			}
-			else
+			catch (HttpListenerException)
 			{
-				webHost.HttpListener.Stop();
+				if (Debugger.IsAttached)
+					Debugger.Break();
 			}
 		}
 
@@ -239,6 +255,16 @@ namespace B4.Mope
 			m_stopped = true;
 			Dispose(disposing: true);
 			GC.SuppressFinalize(this);
+		}
+
+		public void Pause()
+		{
+			m_paused = true;
+		}
+
+		public void Resume()
+		{
+			m_paused = false;
 		}
 
 		public void Stop()
