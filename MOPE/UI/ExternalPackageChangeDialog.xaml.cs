@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,16 @@ namespace B4.Mope.UI
 	/// </summary>
 	public partial class ExternalPackageChangeDialog : Window
 	{
+		public enum PackageChangeDialogResult
+		{
+			Unknown,
+			IgnoreChanges,
+			DiscardAndReload,
+			DiffChanges,
+		}
+
+		public PackageChangeDialogResult Result { get; private set; } = PackageChangeDialogResult.Unknown;
+
 		public ExternalPackageChangeDialog()
 		{
 			InitializeComponent();
@@ -24,15 +35,45 @@ namespace B4.Mope.UI
 
 		private void buttonIgnore_Click(object sender, RoutedEventArgs e)
 		{
+			Result = PackageChangeDialogResult.IgnoreChanges;
+			Close();
 		}
 
 		private void buttonDiscard_Click(object sender, RoutedEventArgs e)
 		{
+			Result = PackageChangeDialogResult.DiscardAndReload;
+			Close();
 		}
 
 		private void buttonDiff_Click(object sender, RoutedEventArgs e)
 		{
+			Result = PackageChangeDialogResult.DiffChanges;
+			Close();
+		}
 
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+
+			// user must choose an action
+			if (Result == PackageChangeDialogResult.Unknown)
+			{
+				e.Cancel = true;
+			}
+		}
+
+		public static PackageChangeDialogResult ShowModal(Window owner)
+		{
+			var result = PackageChangeDialogResult.Unknown;
+			owner.Dispatcher.Invoke(() =>
+			{
+				var dlg = new ExternalPackageChangeDialog();
+				dlg.Owner = owner;
+				dlg.ShowDialog();
+				result = dlg.Result;
+			});
+
+			return result;
 		}
 	}
 }

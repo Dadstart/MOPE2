@@ -94,7 +94,9 @@ namespace B4.Mope
 
 		private void PackageWatcher_Changed(object sender, FileSystemEventArgs e)
 		{
-			MessageBox.Show(e.ChangeType.ToString());
+			var result = ExternalPackageChangeDialog.ShowModal(this);
+
+			MessageBox.Show($"{result}");
 		}
 
 		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)

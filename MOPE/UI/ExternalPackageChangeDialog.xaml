@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
         Title="Original file changed" Height="136" Width="399"
-		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
 	<StackPanel Orientation="Vertical" HorizontalAlignment="Center">
 		<Label>The original package has changed. What do you want to do?</Label>
 		<Button x:Name="buttonIgnore" Margin="5,5" Click="buttonIgnore_Click">_Ignore and keep original package in the editor</Button>
