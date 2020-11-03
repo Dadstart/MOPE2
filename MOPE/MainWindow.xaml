@@ -70,6 +70,11 @@
 	</Window.CommandBindings>
 	<DockPanel>
 		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
+			<Menu.ItemsPanel>
+				<ItemsPanelTemplate>
+					<DockPanel HorizontalAlignment="Stretch" />
+				</ItemsPanelTemplate>
+			</Menu.ItemsPanel>
 			<MenuItem Header="_File">
 				<MenuItem Header="_Open" Icon="📂" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open"/>
 				<MenuItem Header="_Save Part" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
