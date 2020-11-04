@@ -35,8 +35,8 @@ namespace B4.Mope
 			Data = new Data();
 			DataContext = Data;
 
-			Data.EditorReadOnlyModeChanged += Data_EditorReadOnlyModeChanged;
-			Data.EditorDarkModeChanged += Data_EditorDarkModeChanged;
+			Data.Settings.EditorReadOnlyModeChanged += Data_EditorReadOnlyModeChanged;
+			Data.Settings.EditorDarkModeChanged += Data_EditorDarkModeChanged;
 
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
@@ -178,7 +178,6 @@ namespace B4.Mope
 				if (confirmDialog.DontShowDialogAgain)
 				{
 					Data.Settings.ConfirmOverwritePackage = true;
-					Data.Settings.Save();
 				}
 			}
 

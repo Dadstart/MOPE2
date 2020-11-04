@@ -85,10 +85,10 @@
 				<Separator />
 				<MenuItem Header="E_xit" Click="Exit_Click" />
 				<Separator />
-				<MenuItem Header="Confirm Overwrite Package" IsCheckable="True" IsChecked="{Binding ConfirmOverwritePackage, Mode=TwoWay}"/>
+				<MenuItem Header="Confirm Overwrite Package" IsCheckable="True" DataContext="{Binding Path=Settings}" IsChecked="{Binding ConfirmOverwritePackage, Mode=TwoWay}"/>
 			</MenuItem>
 			<MenuItem Header="_View" x:Name="toolbarViewMenu">
-				<MenuItem Header="Code Editor">
+				<MenuItem Header="Code Editor" DataContext="{Binding Path=Settings}">
 					<MenuItem Header="Dark Mode" IsCheckable="True" IsChecked="{Binding EditorDarkMode, Mode=TwoWay}"/>
 					<MenuItem Header="Read Only" IsCheckable="True" IsChecked="{Binding EditorReadOnlyMode, Mode=TwoWay}"/>
 					<MenuItem Header="Format XML on Load" IsCheckable="True" IsChecked="{Binding EditorFormatXmlOnLoad, Mode=TwoWay}"/>

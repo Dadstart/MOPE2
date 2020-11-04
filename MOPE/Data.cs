@@ -13,6 +13,8 @@ namespace B4.Mope
 	/// </summary>
 	public class Data : DependencyObject, IDisposable
 	{
+		private bool m_isDisposed;
+
 		public Package Package { get; private set; }
 		public FileSystemWatcher PackageWatcher { get; private set; }
 		public WebHost WebHost { get; private set; }
@@ -22,69 +24,9 @@ namespace B4.Mope
 		public OpenWith OpenWith { get; private set; } = new OpenWith();
 		public IList<string> Applications { get; private set; } = new List<string>();
 		public List<PackageItem> Items { get; private set; }
-		internal AppSettings Settings { get; } = new AppSettings();
+		public Settings Settings { get; } = new Settings();
 		public string TempDirectory { get; private set; }
 
-		public delegate void BooleanPropertyChangedEventHandler(object sender, BooleanPropertyChangedEventArgs e);
-
-		public event BooleanPropertyChangedEventHandler EditorReadOnlyModeChanged;
-		private static readonly DependencyProperty EditorReadOnlyModeProperty = DependencyProperty.Register("EditorReadOnlyMode", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorReadOnlyPropertyChanged));
-		public bool EditorReadOnlyMode
-		{
-			get { return (bool)GetValue(EditorReadOnlyModeProperty); }
-			set { SetValue(EditorReadOnlyModeProperty, value); }
-		}
-
-		private static void EditorReadOnlyPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var data = (Data)obj;
-			data.Settings.EditorReadOnlyMode = (bool)e.NewValue;
-			data.Settings.Save();
-			data.EditorReadOnlyModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
-		}
-
-		public event BooleanPropertyChangedEventHandler EditorDarkModeChanged;
-		private static readonly DependencyProperty EditorDarkModeProperty = DependencyProperty.Register("EditorDarkMode", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorDarkPropertyChanged));
-		public bool EditorDarkMode
-		{
-			get { return (bool)GetValue(EditorDarkModeProperty); }
-			set { SetValue(EditorDarkModeProperty, value); }
-		}
-		private static void EditorDarkPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var data = (Data)obj;
-			data.Settings.EditorUseDarkMode = (bool)e.NewValue;
-			data.Settings.Save();
-			data.EditorDarkModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
-		}
-
-		private static readonly DependencyProperty ConfirmOverwritePackageProperty = DependencyProperty.Register("ConfirmOverwritePackage", typeof(bool), typeof(Data), new PropertyMetadata(false, ConfirmOverwritePackagePropertyChanged));
-		public bool ConfirmOverwritePackage
-		{
-			get { return (bool)GetValue(ConfirmOverwritePackageProperty); }
-			set { SetValue(ConfirmOverwritePackageProperty, value); }
-		}
-		private static void ConfirmOverwritePackagePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var data = (Data)obj;
-			data.Settings.ConfirmOverwritePackage = (bool)e.NewValue;
-			data.Settings.Save();
-		}
-
-		private static readonly DependencyProperty EditorFormatXmlOnLoadProperty = DependencyProperty.Register("EditorFormatXmlOnLoad", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorFormatXmlOnLoadPropertyChanged));
-		private bool m_isDisposed;
-
-		public bool EditorFormatXmlOnLoad
-		{
-			get { return (bool)GetValue(EditorFormatXmlOnLoadProperty); }
-			set { SetValue(EditorFormatXmlOnLoadProperty, value); }
-		}
-		private static void EditorFormatXmlOnLoadPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var data = (Data)obj;
-			data.Settings.EditorFormatXmlOnLoad = (bool)e.NewValue;
-			data.Settings.Save();
-		}
 
 		public bool IsPackageDirty { get; internal set; }
 
@@ -92,10 +34,6 @@ namespace B4.Mope
 
 		public Data()
 		{
-			EditorReadOnlyMode = Settings.EditorReadOnlyMode;
-			EditorDarkMode = Settings.EditorUseDarkMode;
-			ConfirmOverwritePackage = Settings.ConfirmOverwritePackage;
-			EditorFormatXmlOnLoad = Settings.EditorFormatXmlOnLoad;
 		}
 
 		public void OnReadOnlyModeChanged()

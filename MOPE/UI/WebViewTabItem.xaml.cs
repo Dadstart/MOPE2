@@ -45,7 +45,7 @@ namespace B4.Mope.UI
 				uri = new UriBuilder(Data.WebHost.GetUrl(part.GetMonacoUrl()));
 				viewType = "⚡";
 
-				if (Data.Settings.EditorUseDarkMode)
+				if (Data.Settings.EditorDarkMode)
 					uri.Query += "&theme=dark";
 
 				if (Data.Settings.EditorReadOnlyMode)
