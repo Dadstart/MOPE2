@@ -54,11 +54,13 @@
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0">
-						<Button FontSize="36" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenLeftButton_Click" x:Name="bigOpenLeftButton">Open Left Package</Button>
+						<Label FontSize="36" FontWeight="Bold" Content="Left" HorizontalAlignment="Center" />
+						<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenLeftButton_Click" x:Name="bigOpenLeftButton">Open Left Package</Button>
 						<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigLeftLabel" />
 					</StackPanel>
 					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1">
-						<Button FontSize="36" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenRightButton_Click" x:Name="bigOpenRightButton">Open Right Package</Button>
+						<Label FontSize="36" FontWeight="Bold" Content="Right" HorizontalAlignment="Center" />
+						<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenRightButton_Click" x:Name="bigOpenRightButton">Open Right Package</Button>
 						<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigRightLabel" />
 					</StackPanel>
 				</Grid>
