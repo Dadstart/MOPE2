@@ -39,31 +39,33 @@
 			<TreeView x:Name="treeViewFolders" SelectedItemChanged="treeViewFolders_SelectedItemChanged" Grid.Column="0" MouseRightButtonUp="treeViewFolders_MouseRightButtonUp" KeyUp="treeViewFolders_KeyUp">
 				<TreeView.ItemTemplate>
 					<HierarchicalDataTemplate DataType="{x:Type local:DiffPackageItem}" ItemsSource="{Binding Children}">
-						<StackPanel Orientation="Horizontal" Margin="1">
+						<StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
 							<Image Source="{Binding Converter={StaticResource diffPackageItemToBitmapSourceConverter}, ConverterParameter=32}" Margin="1"/>
-							<TextBlock Text="{Binding Converter={StaticResource diffPackageItemToNameStringConverter}}" Margin="1" />
+							<TextBlock Text="{Binding Converter={StaticResource diffPackageItemToNameStringConverter}}" Margin="1" VerticalAlignment="Center" />
 						</StackPanel>
 					</HierarchicalDataTemplate>
 				</TreeView.ItemTemplate>
 			</TreeView>
 			<GridSplitter Grid.Column="0" Width="5"/>
 			<TabControl Background="LightGray" Grid.Column="1" x:Name="partsTabControl">
-				<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
-					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0">
-						<Label FontSize="36" FontWeight="Bold" Content="Left" HorizontalAlignment="Center" />
-						<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenLeftButton_Click" x:Name="bigOpenLeftButton">Open Left Package</Button>
-						<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigLeftLabel" />
-					</StackPanel>
-					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1">
-						<Label FontSize="36" FontWeight="Bold" Content="Right" HorizontalAlignment="Center" />
-						<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenRightButton_Click" x:Name="bigOpenRightButton">Open Right Package</Button>
-						<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigRightLabel" />
-					</StackPanel>
-				</Grid>
+				<TabItem>
+					<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0">
+							<Label FontSize="36" FontWeight="Bold" Content="Left" HorizontalAlignment="Center" />
+							<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenLeftButton_Click" x:Name="bigOpenLeftButton">Open Left Package</Button>
+							<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigLeftLabel" />
+						</StackPanel>
+						<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1">
+							<Label FontSize="36" FontWeight="Bold" Content="Right" HorizontalAlignment="Center" />
+							<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenRightButton_Click" x:Name="bigOpenRightButton">Open Right Package</Button>
+							<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigRightLabel" />
+						</StackPanel>
+					</Grid>
+				</TabItem>
 			</TabControl>
 
 		</Grid>

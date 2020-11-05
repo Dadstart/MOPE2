@@ -72,10 +72,9 @@ namespace B4.Mope
 				{
 					folder = new DiffPackageItem(this, folderPath, null);
 					Folders.Add(folderPath, folder);
-					folder.Children = new List<DiffPackageItem>();
 				}
 
-				folder.Children.Add(new DiffPackageItem(this, partPath, diffPart));
+				folder.AddItem(new DiffPackageItem(this, partPath, diffPart));
 			}
 		}
 	}
