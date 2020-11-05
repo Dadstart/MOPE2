@@ -571,7 +571,7 @@ namespace B4.Mope
 			ShowDiffWindow(left, right);
 		}
 
-		private static void ShowDiffWindow(string left, string right)
+		private void ShowDiffWindow(string left, string right)
 		{
 			var diffWindow = new DiffWindow(left, right)
 			{
@@ -580,6 +580,9 @@ namespace B4.Mope
 			};
 
 			diffWindow.Show();
+
+			// if no package is open close current window
+			Close();
 		}
 	}
 }
