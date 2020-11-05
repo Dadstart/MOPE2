@@ -7,6 +7,14 @@
 		xmlns:localUI="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
 		Title="MOPE Diff" Height="720" Width="1200">
+	<Window.Resources>
+
+		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
+			<MenuItem Header="Break" Click="debugBreak_Click" />
+			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
+		</MenuItem>
+
+	</Window.Resources>
 	<DockPanel>
 		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
 			<Menu.ItemsPanel>
@@ -15,8 +23,10 @@
 				</ItemsPanelTemplate>
 			</Menu.ItemsPanel>
 			<MenuItem Header="_File">
-				<MenuItem Header="Open _Left" Icon="⬅📂" />
-				<MenuItem Header="Open _Right" Icon="📂➡" />
+				<MenuItem Header="Open _Left" Icon="📂" />
+				<MenuItem Header="Open _Right" Icon="📂" />
+				<Separator />
+				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
 			</MenuItem>
 		</Menu>
 		<Grid>
@@ -24,7 +34,17 @@
 				<ColumnDefinition Width="Auto" MinWidth="320" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Column="0" />
+			<TreeView x:Name="treeViewFolders" SelectedItemChanged="treeViewFolders_SelectedItemChanged" Grid.Column="0" MouseRightButtonUp="treeViewFolders_MouseRightButtonUp" KeyUp="treeViewFolders_KeyUp">
+				<TreeView.ItemTemplate>
+					<HierarchicalDataTemplate DataType="{x:Type local:DiffPackageItem}" ItemsSource="{Binding Children}">
+						<StackPanel Orientation="Horizontal" Margin="1">
+							<TextBlock Text="{Binding Path=Path}" />
+							<!--<Image Source="{Binding Converter={StaticResource packageItemToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
+							<TextBlock Text="{Binding Converter={StaticResource packageItemToNameStringConverter}}" Margin="1" />-->
+						</StackPanel>
+					</HierarchicalDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
 			<GridSplitter Grid.Column="0" Width="5"/>
 			<TabControl Background="LightGray" Grid.Column="1" x:Name="partsTabControl">
 				<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">

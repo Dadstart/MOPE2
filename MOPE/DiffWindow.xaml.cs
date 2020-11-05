@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,12 +30,17 @@ namespace B4.Mope
 				OpenLeftPackage(left);
 			if (!string.IsNullOrEmpty(right))
 				OpenRightPackage(right);
+
+#if DEBUG
+			menuMain.Items.Add(FindResource("debugMenu"));
+#endif
 		}
 
 		private void Data_DiffsLoaded(object sender, EventArgs e)
 		{
 			partsTabControl.Items.Clear();
 			Title = $"MOPE Diff: {Data.Left.ZipFile} <=> {Data.Right.ZipFile}";
+			treeViewFolders.ItemsSource = Data.DiffPackage.Folders.Values;
 		}
 
 		private void listViewParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -87,5 +94,41 @@ namespace B4.Mope
 
 			return dlg.ShowDialog(this) == true ? dlg.FileName : null;
 		}
+
+		private void treeViewFolders_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		{
+
+		}
+
+		private void treeViewFolders_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+
+		}
+
+		private void treeViewFolders_KeyUp(object sender, KeyEventArgs e)
+		{
+
+		}
+
+		private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
+
+		private void debugInjectJsMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			//var currentWebView = partsTabControl.SelectedItem as WebViewTabItem;
+			//if (currentWebView == null)
+			//	return;
+
+
+			//currentWebView.Browser.ExecuteScriptAsync("window.alert('hello')");
+		}
+
+		private void debugBreak_Click(object sender, RoutedEventArgs e)
+		{
+			Debugger.Break();
+		}
+
 	}
 }

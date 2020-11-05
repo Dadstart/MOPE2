@@ -13,6 +13,8 @@ namespace B4.Mope
 		public Package Left { get; private set; }
 		public Package Right { get; private set; }
 
+		public DiffPackage DiffPackage { get; private set; }
+
 		public bool IsLoaded => (Left != null) && (Right != null);
 
 		public void LoadLeft(string path)
@@ -20,7 +22,13 @@ namespace B4.Mope
 			Left = new Package(path, GetTempDir());
 
 			if (IsLoaded)
-				DiffsLoaded?.Invoke(this, new EventArgs());
+				OnLoaded();
+		}
+
+		private void OnLoaded()
+		{
+			DiffPackage = new DiffPackage(Left, Right);
+			DiffsLoaded?.Invoke(this, new EventArgs());
 		}
 
 		public void LoadRight(string path)
@@ -28,7 +36,7 @@ namespace B4.Mope
 			Right = new Package(path, GetTempDir());
 
 			if (IsLoaded)
-				DiffsLoaded?.Invoke(this, new EventArgs());
+				OnLoaded();
 		}
 
 		private string GetTempDir()
