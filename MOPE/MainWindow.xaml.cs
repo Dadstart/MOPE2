@@ -535,5 +535,10 @@ namespace B4.Mope
 				webView.Browser.ExecuteScriptAsync($"setReadOnly({param})");
 			}
 		}
+
+		private void bigOpenButton_Click(object sender, RoutedEventArgs e)
+		{
+			CommandBinding_OpenExecuted(this, e: null);
+		}
 	}
 }

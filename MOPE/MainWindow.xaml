@@ -171,6 +171,13 @@
 			</Grid>
 			<GridSplitter Grid.Column="0" Width="5"/>
 			<TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" x:Name="partsTabControl">
+				<TabItem>
+					<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">
+						<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+							<Button FontSize="36" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenButton_Click">Click to Open a Package</Button>
+						</StackPanel>
+					</Grid>
+				</TabItem>
 			</TabControl>
 		</Grid>
 	</DockPanel>
