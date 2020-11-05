@@ -11,6 +11,8 @@ namespace B4.Mope
 		public IList<DiffPackageItem> Children { get; set; }
 		public DiffPart Part { get; }
 
+		public bool IsFolder() => Part == null;
+
 		public DiffPackageItem(DiffPackage package, string path, DiffPart part)
 		{
 			Package = package ?? throw new ArgumentNullException(nameof(package));

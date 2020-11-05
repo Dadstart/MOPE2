@@ -8,6 +8,8 @@
         mc:Ignorable="d"
 		Title="MOPE Diff" Height="720" Width="1200">
 	<Window.Resources>
+		<localUI:DiffPackageItemToBitmapSourceConverter x:Key="diffPackageItemToBitmapSourceConverter" />
+		<localUI:DiffPackageItemToNameStringConverter x:Key="diffPackageItemToNameStringConverter" />
 
 		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
 			<MenuItem Header="Break" Click="debugBreak_Click" />
@@ -38,9 +40,8 @@
 				<TreeView.ItemTemplate>
 					<HierarchicalDataTemplate DataType="{x:Type local:DiffPackageItem}" ItemsSource="{Binding Children}">
 						<StackPanel Orientation="Horizontal" Margin="1">
-							<TextBlock Text="{Binding Path=Path}" />
-							<!--<Image Source="{Binding Converter={StaticResource packageItemToBitmapSourceConverter}, ConverterParameter=16}" Margin="1"/>
-							<TextBlock Text="{Binding Converter={StaticResource packageItemToNameStringConverter}}" Margin="1" />-->
+							<Image Source="{Binding Converter={StaticResource diffPackageItemToBitmapSourceConverter}, ConverterParameter=32}" Margin="1"/>
+							<TextBlock Text="{Binding Converter={StaticResource diffPackageItemToNameStringConverter}}" Margin="1" />
 						</StackPanel>
 					</HierarchicalDataTemplate>
 				</TreeView.ItemTemplate>
