@@ -16,8 +16,8 @@ namespace B4.Mope
 		private static readonly DependencyProperty EditorReadOnlyModeProperty = DependencyProperty.Register("EditorReadOnlyMode", typeof(bool), typeof(Settings), new PropertyMetadata(false, EditorReadOnlyPropertyChanged));
 		public bool EditorReadOnlyMode
 		{
-			get { return (bool)GetValue(EditorReadOnlyModeProperty); }
-			set { SetValue(EditorReadOnlyModeProperty, value); }
+			get { return GetValueOnMainThread<bool>(EditorReadOnlyModeProperty); }
+			set { SetValueOnMainThread(EditorReadOnlyModeProperty, value); }
 		}
 
 		private static void EditorReadOnlyPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
@@ -34,8 +34,8 @@ namespace B4.Mope
 		private static readonly DependencyProperty EditorDarkModeProperty = DependencyProperty.Register("EditorDarkMode", typeof(bool), typeof(Settings), new PropertyMetadata(false, EditorDarkModePropertyChanged));
 		public bool EditorDarkMode
 		{
-			get { return (bool)GetValue(EditorDarkModeProperty); }
-			set { SetValue(EditorDarkModeProperty, value); }
+			get { return GetValueOnMainThread<bool>(EditorDarkModeProperty); }
+			set { SetValueOnMainThread(EditorDarkModeProperty, value); }
 		}
 		private static void EditorDarkModePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
 		{
@@ -50,8 +50,8 @@ namespace B4.Mope
 		private static readonly DependencyProperty ConfirmOverwritePackageProperty = DependencyProperty.Register("ConfirmOverwritePackage", typeof(bool), typeof(Settings), new PropertyMetadata(false, ConfirmOverwritePackagePropertyChanged));
 		public bool ConfirmOverwritePackage
 		{
-			get { return (bool)GetValue(ConfirmOverwritePackageProperty); }
-			set { SetValue(ConfirmOverwritePackageProperty, value); }
+			get { return GetValueOnMainThread<bool>(ConfirmOverwritePackageProperty); }
+			set { SetValueOnMainThread(ConfirmOverwritePackageProperty, value); }
 		}
 		private static void ConfirmOverwritePackagePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
 		{
@@ -66,8 +66,8 @@ namespace B4.Mope
 
 		public bool EditorFormatXmlOnLoad
 		{
-			get { return (bool)GetValue(EditorFormatXmlOnLoadProperty); }
-			set { SetValue(EditorFormatXmlOnLoadProperty, value); }
+			get { return GetValueOnMainThread<bool>(EditorFormatXmlOnLoadProperty); }
+			set { SetValueOnMainThread(EditorFormatXmlOnLoadProperty, value); }
 		}
 		private static void EditorFormatXmlOnLoadPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
 		{
@@ -76,6 +76,19 @@ namespace B4.Mope
 			settings.m_appSettings.Save();
 		}
 		#endregion
+
+		private void SetValueOnMainThread<T>(DependencyProperty prop, T value)
+		{
+			Dispatcher.Invoke(() => SetValue(prop, value));
+		}
+
+		private T GetValueOnMainThread<T>(DependencyProperty prop)
+		{
+			T value = default(T);
+			Dispatcher.Invoke(() => value = (T)GetValue(prop));
+
+			return value;
+		}
 
 		public Settings()
 		{
