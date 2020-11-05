@@ -265,6 +265,7 @@ namespace B4.Mope
 			{
 				using (Dispatcher.DisableProcessing())
 				{
+					Title = $"MOPE: {Data.Package.ZipFile}";
 					InitializePartsListView();
 					InitializeZipFilesTreeView();
 				}
