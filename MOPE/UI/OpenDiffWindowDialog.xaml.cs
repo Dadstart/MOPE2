@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 namespace B4.Mope.UI
 {
 	/// <summary>
-	/// Interaction logic for ConfirmOverwritePackageDialog.xaml
+	/// Interaction logic for OpenDiffWindowDialog.xaml
 	/// </summary>
 	public partial class OpenDiffWindowDialog : Window
 	{
@@ -31,17 +31,6 @@ namespace B4.Mope.UI
 		public OpenDiffWindowDialog()
 		{
 			InitializeComponent();
-		}
-
-		protected override void OnClosing(CancelEventArgs e)
-		{
-			base.OnClosing(e);
-
-			// user must choose an action
-			if (Result == OpenDiffWindowDialogResult.Unknown)
-			{
-				e.Cancel = true;
-			}
 		}
 
 		public static OpenDiffWindowDialogResult ShowModal(Window owner)

@@ -5,12 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
-        Title="How would you like to diff this package?" Height="136" Width="424"
+        Title="How would you like to diff this package?" Height="75" Width="466"
 		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
-	<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-		<Label>How would you like to open diff view</Label>
-		<Button x:Name="buttonLeft" Margin="5,5" Click="buttonLeft_Click">Diff Current Package as _Left ⬅</Button>
+	<StackPanel Orientation="Vertical">
+	<Label>How would you like to open diff view?</Label>
+	<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+		<Button x:Name="buttonLeft" Margin="5,5" Click="buttonLeft_Click">Diff Current Package as _Left</Button>
 		<Button x:Name="buttonNeither" Margin="5,5"  Click="buttonNeither_Click">_Ignore Current Package</Button>
-		<Button x:Name="buttonRight" Margin="5,5"  Click="buttonRight_Click">➡ Diff Current Package as _Right</Button>
+			<Button x:Name="buttonRight" Margin="5,5"  Click="buttonRight_Click">Diff Current Package as _Right</Button>
+	</StackPanel>
 	</StackPanel>
 </Window>

@@ -157,6 +157,9 @@
       <Compile Update="UI\BinaryViewTabItem.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="UI\OpenDiffWindowDialog.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
       <Compile Update="UI\ExternalPackageChangeDialog.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
@@ -174,6 +177,9 @@
 
     <ItemGroup>
       <Page Update="UI\BinaryViewTabItem.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="UI\OpenDiffWindowDialog.xaml">
         <SubType>Designer</SubType>
       </Page>
       <Page Update="UI\ExternalPackageChangeDialog.xaml">

@@ -4,9 +4,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope"
+		xmlns:localUI="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
-        Title="DiffWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+		Title="MOPE Diff" Height="720" Width="1200">
+	<DockPanel>
+		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
+			<Menu.ItemsPanel>
+				<ItemsPanelTemplate>
+					<DockPanel HorizontalAlignment="Stretch" />
+				</ItemsPanelTemplate>
+			</Menu.ItemsPanel>
+			<MenuItem Header="_File">
+				<MenuItem Header="Open _Left" Icon="⬅📂" />
+				<MenuItem Header="Open _Right" Icon="📂➡" />
+			</MenuItem>
+		</Menu>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" MinWidth="320" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Column="0" />
+			<GridSplitter Grid.Column="0" Width="5"/>
+			<TabControl Background="LightGray" Grid.Column="1" x:Name="partsTabControl">
+				<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0">
+						<Button FontSize="36" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenLeftButton_Click" x:Name="bigOpenLeftButton">Open Left Package</Button>
+						<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigLeftLabel" />
+					</StackPanel>
+					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1">
+						<Button FontSize="36" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenRightButton_Click" x:Name="bigOpenRightButton">Open Right Package</Button>
+						<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigRightLabel" />
+					</StackPanel>
+				</Grid>
+			</TabControl>
+
+		</Grid>
+	</DockPanel>
 </Window>
