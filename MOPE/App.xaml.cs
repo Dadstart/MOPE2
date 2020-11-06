@@ -19,10 +19,10 @@ namespace B4.Mope
 			// check if the Edge/WebView2 control is available
 			if ((GetAvailableCoreWebView2BrowserVersionString(null, out string edgeVersion) != 0) || (edgeVersion == null))
 			{
-				var result = MessageBox.Show("A compatible version of Microsoft Edge is not installed.\r\nClick OK to visit a web page where you can download and run the 'WebView2 Runtime installer'.\r\n\r\nNote: This will not affect your current Edge installation.", "Incompatible Version of Edge", MessageBoxButton.OKCancel, MessageBoxImage.Error, MessageBoxResult.OK);
+				var result = MessageBox.Show("A compatible version of Microsoft Edge is not installed.\r\nClick OK to launch your browser and download and run the 'WebView2 Runtime installer'.\r\n\r\nNote: This will not affect your current Edge installation.", "Incompatible Version of Edge", MessageBoxButton.OKCancel, MessageBoxImage.Error, MessageBoxResult.OK);
 				if (result == MessageBoxResult.OK)
 				{
-					var processStartInfo = new ProcessStartInfo("https://developer.microsoft.com/en-us/microsoft-edge/webview2/");
+					var processStartInfo = new ProcessStartInfo("https://go.microsoft.com/fwlink/p/?LinkId=2124703");
 					processStartInfo.UseShellExecute = true;
 					Process.Start(processStartInfo);
 				}
