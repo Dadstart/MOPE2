@@ -10,7 +10,7 @@ namespace B4.Mope.UI
 
 		public DiffPackageItemToBitmapSourceConverter()
 		{
-			IconManager = MainWindow.IconManager;
+			IconManager = DiffWindow.IconManager;
 		}
 
 		public DiffPackageItemToBitmapSourceConverter(IconManager iconManager)

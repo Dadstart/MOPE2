@@ -23,9 +23,9 @@ namespace B4.Mope
 
 		public ShellOpenWithData OpenWith { get; }
 
-		public DiffData(ShellOpenWithData openWith)
+		public DiffData()
 		{
-			OpenWith = openWith;
+			OpenWith = new ShellOpenWithData();
 		}
 
 		public void LoadLeft(string path)

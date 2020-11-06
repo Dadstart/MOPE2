@@ -1,20 +1,11 @@
 ﻿using B4.Mope.Packaging;
-using B4.Mope.Shell;
 using B4.Mope.UI;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace B4.Mope
 {
@@ -23,22 +14,28 @@ namespace B4.Mope
 	/// </summary>
 	public partial class DiffWindow : Window
 	{
-		private readonly IconManager m_iconManager;
+		internal static IconManager IconManager { get; private set; }
 
 		public DiffData Data { get; }
 
-		public DiffWindow(string left, string right, ShellOpenWithData openWith, IconManager iconManager)
+		public DiffWindow(string left, string right)
 		{
-			Data = new DiffData(openWith);
+			Data = new DiffData();
 			Data.DiffsLoaded += Data_DiffsLoaded;
 
 			InitializeComponent();
-			if (!string.IsNullOrEmpty(left))
-				OpenLeftPackage(left);
-			if (!string.IsNullOrEmpty(right))
-				OpenRightPackage(right);
 
-			m_iconManager = iconManager ?? throw new ArgumentNullException(nameof(iconManager));
+			if (!string.IsNullOrEmpty(left))
+			{
+				OpenLeftPackage(left);
+			}
+
+			if (!string.IsNullOrEmpty(right))
+			{
+				OpenRightPackage(right);
+			}
+
+			IconManager = new IconManager();
 
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
@@ -112,7 +109,7 @@ namespace B4.Mope
 
 			foreach (var command in Data.OpenWith.GetCommandsForPart(part))
 			{
-				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, part, Data.OpenWith), m_iconManager);
+				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, part, Data.OpenWith), IconManager);
 				openWithMenu.Items.Add(menuItem);
 			}
 		}
