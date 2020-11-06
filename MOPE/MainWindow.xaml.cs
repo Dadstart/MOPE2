@@ -1,9 +1,7 @@
 ﻿using B4.Mope.Packaging;
-using B4.Mope.Shell;
 using B4.Mope.UI;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -25,9 +23,10 @@ namespace B4.Mope
 
 		public static IconManager IconManager { get; private set; } //TODO: remove static
 
-		public MainWindow()
+		public MainWindow(string file)
 		{
 			InitializeComponent();
+
 			UpdateListViewAndMenus(ListViewState.Default);
 			IconManager = new IconManager();
 
@@ -41,6 +40,9 @@ namespace B4.Mope
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
 #endif
+
+			if (file != null)
+				OpenPackage(file);
 		}
 
 		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
@@ -74,9 +76,6 @@ namespace B4.Mope
 
 		private void CommandBinding_OpenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			Data.Reset();
-			partsTabControl.Items.Clear();
-
 			var dlg = new OpenFileDialog()
 			{
 				CheckFileExists = true,
@@ -92,6 +91,11 @@ namespace B4.Mope
 
 		private void OpenPackage(string fileName)
 		{
+			// REVIEW: might not need to call reset?
+			if (Data.Package != null)
+				Data.Reset();
+			partsTabControl.Items.Clear();
+
 			Data.Init(fileName);
 			Data.PackageWatcher.Changed += PackageWatcher_Changed;
 			InitializeViews();
@@ -112,7 +116,6 @@ namespace B4.Mope
 					break;
 				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiscardAndReload:
 					var file = Data.Package.ZipFile;
-					Data.Reset();
 					OpenPackage(file);
 					break;
 				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiffChanges:
@@ -552,7 +555,7 @@ namespace B4.Mope
 		{
 			Dispatcher.Invoke(() =>
 			{
-				var diffWindow = new DiffWindow(left, right, Data.OpenWith, IconManager)
+				var diffWindow = new DiffWindow(left, right)
 				{
 					ShowActivated = true,
 					ShowInTaskbar = true,
