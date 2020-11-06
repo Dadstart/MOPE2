@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace B4.Mope.Packaging
 {
+	[DebuggerDisplay("{Name} ({Uri})")]
 	public class Part
 	{
 		public Package Package { get; }
