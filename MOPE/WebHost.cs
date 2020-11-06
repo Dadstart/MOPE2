@@ -18,6 +18,11 @@ namespace B4.Mope
 		private bool m_stopped;
 		//Thread m_listeningThread;
 
+		private Settings Settings
+		{
+			get { return Data?.Settings ?? DiffData.Settings; }
+		}
+
 		public string GetUrl(string relativePath)
 		{
 			return $"http://127.0.0.1:{Port}/{relativePath}";
@@ -222,13 +227,12 @@ namespace B4.Mope
 
 		private void SetResponseToPart(HttpListenerContext context, Uri url, Part part)
 		{
-			context.Response.ContentType = part.ContentType;
-
 			if (part != null)
 			{
+				context.Response.ContentType = part.ContentType;
 				using (var partStream = part.GetFileInfo().OpenRead())
 				{
-					if (Data.Settings.EditorFormatXmlOnLoad && ContentTypes.IsXmlType(part.ContentType))
+					if (Settings.EditorFormatXmlOnLoad && ContentTypes.IsXmlType(part.ContentType))
 					{
 						var writerSettings = new XmlWriterSettings()
 						{
