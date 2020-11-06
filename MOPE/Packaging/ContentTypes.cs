@@ -172,6 +172,20 @@ namespace B4.Mope.Packaging
 			}
 		}
 
+		public static bool IsTextType(string contentType)
+		{
+			if (contentType == null)
+				return false;
+
+			return string.Equals(contentType, "application/text", StringComparison.OrdinalIgnoreCase)
+				|| contentType.ToUpperInvariant().StartsWith("TEXT/");
+		}
+
+		public static bool IsMonacoSupportedType(string contentType)
+		{
+			return IsXmlType(contentType) || IsCodeType(contentType) || IsTextType(contentType);
+		}
+
 		public static bool IsSupportedImageType(string contentType)
 		{
 			return m_imageContentTypes.Contains(contentType);

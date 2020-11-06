@@ -134,7 +134,7 @@ namespace B4.Mope
 		private void CommandBinding_SaveExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			// save current part
-			var webView = partsTabControl.SelectedItem as WebViewTabItem;
+			var webView = partsTabControl.SelectedItem as EditorWebViewTabItem;
 			if ((webView != null) && (webView.PartModel.IsDirty))
 				webView.Browser.ExecuteScriptAsync($"postFile()");
 		}
@@ -191,7 +191,7 @@ namespace B4.Mope
 			// save any dirty parts
 			foreach (var tabViewItem in partsTabControl.Items)
 			{
-				var webView = tabViewItem as WebViewTabItem;
+				var webView = tabViewItem as EditorWebViewTabItem;
 				if ((webView != null) && (webView.PartModel.IsDirty))
 					webView.Browser.ExecuteScriptAsync($"postFile()");
 			}
@@ -242,7 +242,7 @@ namespace B4.Mope
 
 		private PartModel GetPartModelFromTabView(object tabViewItem)
 		{
-			var webView = tabViewItem as WebViewTabItem;
+			var webView = tabViewItem as EditorWebViewTabItem;
 			if (webView != null)
 				return webView.PartModel;
 
@@ -306,7 +306,7 @@ namespace B4.Mope
 			{
 				if (part.CanViewInBrowser())
 				{
-					var webItem = new WebViewTabItem(Data, model);
+					var webItem = new EditorWebViewTabItem(Data, model);
 					partsTabControl.Items.Add(webItem);
 					partsTabControl.SelectedItem = webItem;
 				}
@@ -463,7 +463,7 @@ namespace B4.Mope
 
 		private void debugInjectJsMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var currentWebView = partsTabControl.SelectedItem as WebViewTabItem;
+			var currentWebView = partsTabControl.SelectedItem as EditorWebViewTabItem;
 			if (currentWebView == null)
 				return;
 
@@ -487,7 +487,7 @@ namespace B4.Mope
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
 			{
-				var webView = partView as WebViewTabItem;
+				var webView = partView as EditorWebViewTabItem;
 				if (webView == null)
 					continue;
 
@@ -507,7 +507,7 @@ namespace B4.Mope
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
 			{
-				var webView = partView as WebViewTabItem;
+				var webView = partView as EditorWebViewTabItem;
 				if (webView == null)
 					continue;
 

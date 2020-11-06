@@ -131,7 +131,31 @@ namespace B4.Mope
 
 		private void treeViewFolders_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
+			var packageItem = (DiffPackageItem)treeViewFolders.SelectedItem;
 
+			if (packageItem.IsFolder())
+				return;
+
+			SetActivePart(packageItem);
+		}
+
+		private void SetActivePart(DiffPackageItem packageItem)
+		{
+			if (packageItem.IsFolder())
+				return;
+
+			// TODO: find existing tab item
+			bool canDiff = (packageItem.Part.Left != null) ? packageItem.Part.Left.IsAnyTextType() : packageItem.Part.Right.IsAnyTextType();
+			if (canDiff)
+			{
+				var webItem = new DiffWebViewTabItem(Data, packageItem);
+				partsTabControl.Items.Add(webItem);
+				partsTabControl.SelectedItem = webItem;
+			}
+			else
+			{
+				// TODO
+			}
 		}
 
 		private void treeViewFolders_MouseRightButtonUp(object sender, MouseButtonEventArgs e)

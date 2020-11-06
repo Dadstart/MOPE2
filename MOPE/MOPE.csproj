@@ -28,8 +28,10 @@
       <None Remove="icons\visio.ico" />
       <None Remove="icons\word.ico" />
       <None Remove="icons\xml.ico" />
-      <None Remove="monaco\differ.html" />
+      <None Remove="monaco\diff.html" />
+      <None Remove="monaco\diff.js" />
       <None Remove="monaco\editor.js" />
+      <None Remove="monaco\shared.js" />
     </ItemGroup>
 
     <ItemGroup>
@@ -49,7 +51,9 @@
         <Resource Include="icons\visio.ico" />
         <Resource Include="icons\word.ico" />
         <Resource Include="icons\xml.ico" />
-        <Resource Include="monaco\differ.html" />
+        <Resource Include="monaco\diff.html" />
+        <Resource Include="monaco\diff.js" />
+        <Resource Include="monaco\shared.js" />
         <Resource Include="monaco\editor.html" />
     </ItemGroup>
 

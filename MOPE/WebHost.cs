@@ -14,6 +14,7 @@ namespace B4.Mope
 		HttpListener HttpListener { get; } = new HttpListener();
 		public int Port { get; }
 		public Data Data { get; }
+		public DiffData DiffData { get; }
 		private bool m_stopped;
 		//Thread m_listeningThread;
 
@@ -25,7 +26,7 @@ namespace B4.Mope
 		private bool m_isDisposed;
 		private bool m_paused;
 
-		public WebHost(Data data, int? port = null)
+		private WebHost(int? port = null)
 		{
 			if (port != null)
 			{
@@ -38,7 +39,18 @@ namespace B4.Mope
 				Port = rand.Next(49152, 65535);
 			}
 			HttpListener.Prefixes.Add($"http://127.0.0.1:{Port}/");
+		}
+
+		public WebHost(Data data, int? port = null)
+			: this(port)
+		{
 			Data = data ?? throw new ArgumentNullException(nameof(data));
+		}
+
+		public WebHost(DiffData data, int? port = null)
+			: this(port)
+		{
+			DiffData = data ?? throw new ArgumentNullException(nameof(data));
 		}
 
 		public void ListenOnThread()
@@ -64,6 +76,8 @@ namespace B4.Mope
 					return "text/html";
 				case ".ttf":
 					return "application/x-font-ttf";
+				case ".txt":
+					return "text/plain";
 				default:
 					return string.Empty;
 			}
@@ -90,7 +104,9 @@ namespace B4.Mope
 				var url = context.Request.Url;
 				if (url.LocalPath.StartsWith("/part/"))
 				{
-					SetResponseToPart(context, url);
+					var partUri = url.LocalPath.Substring(6);
+					var part = Data.Package.Parts[partUri];
+					SetResponseToPart(context, url, part);
 				}
 				else if (url.LocalPath.StartsWith("/post/"))
 				{
@@ -99,6 +115,18 @@ namespace B4.Mope
 				else if (url.LocalPath.StartsWith("/dirty/"))
 				{
 					HandleDirtyRequest(context, url);
+				}
+				else if (url.LocalPath.StartsWith("/left/"))
+				{
+					var partUri = url.LocalPath.Substring(6);
+					var part = DiffData.Parts[partUri].Left;
+					SetResponseToPart(context, url, part);
+				}
+				else if (url.LocalPath.StartsWith("/right/"))
+				{
+					var partUri = url.LocalPath.Substring(7);
+					var part = DiffData.Parts[partUri].Right;
+					SetResponseToPart(context, url, part);
 				}
 				else
 				{
@@ -192,37 +220,38 @@ namespace B4.Mope
 			context.Response.OutputStream.Close();
 		}
 
-		private void SetResponseToPart(HttpListenerContext context, Uri url)
+		private void SetResponseToPart(HttpListenerContext context, Uri url, Part part)
 		{
-			var partUri = url.LocalPath.Substring(6);
-			var part = Data.Package.Parts[partUri];
-
 			context.Response.ContentType = part.ContentType;
 
-			using (var partStream = part.GetFileInfo().OpenRead())
+			if (part != null)
 			{
-				if (Data.Settings.EditorFormatXmlOnLoad && ContentTypes.IsXmlType(part.ContentType))
+				using (var partStream = part.GetFileInfo().OpenRead())
 				{
-					var writerSettings = new XmlWriterSettings()
+					if (Data.Settings.EditorFormatXmlOnLoad && ContentTypes.IsXmlType(part.ContentType))
 					{
-						Indent = true,
-					};
+						var writerSettings = new XmlWriterSettings()
+						{
+							Indent = true,
+						};
 
-					using (var textReader = new StreamReader(partStream))
-					using (var xmlWriter = XmlWriter.Create(context.Response.OutputStream, writerSettings))
-					{
-						var elt = XElement.Parse(textReader.ReadToEnd());
-						elt.Save(xmlWriter);
+						using (var textReader = new StreamReader(partStream))
+						using (var xmlWriter = XmlWriter.Create(context.Response.OutputStream, writerSettings))
+						{
+							var elt = XElement.Parse(textReader.ReadToEnd());
+							elt.Save(xmlWriter);
+						}
 					}
-				}
-				else
-				{
-					partStream.CopyTo(context.Response.OutputStream);
-				}
+					else
+					{
+						partStream.CopyTo(context.Response.OutputStream);
+					}
 
-				context.Response.StatusCode = 200;
-				context.Response.OutputStream.Close();
+				}
 			}
+
+			context.Response.StatusCode = 200;
+			context.Response.OutputStream.Close();
 		}
 
 		protected virtual void Dispose(bool disposing)

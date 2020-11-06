@@ -40,9 +40,9 @@ namespace B4.Mope.UI
 			string viewType;
 			PartModel.DirtyChanged += PartModel_DirtyChanged;
 			var part = PartModel.Part;
-			if (ContentTypes.IsXmlType(part.ContentType))
+			if (ContentTypes.IsMonacoSupportedType(part.ContentType))
 			{
-				uri = new UriBuilder(Data.WebHost.GetUrl(part.GetMonacoUrl()));
+				uri = new UriBuilder(Data.WebHost.GetUrl(part.GetMonacoEditorUrl()));
 				viewType = "⚡";
 
 				if (Data.Settings.EditorDarkMode)

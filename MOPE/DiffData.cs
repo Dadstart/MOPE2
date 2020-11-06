@@ -16,6 +16,8 @@ namespace B4.Mope
 		public Package Right { get; private set; }
 		public IDictionary<string, DiffPackageItem> Folders { get; } = new Dictionary<string, DiffPackageItem>();
 		public IDictionary<string, DiffPart> Parts { get; } = new Dictionary<string, DiffPart>();
+		public Settings Settings { get; } = new Settings();
+		public WebHost WebHost { get; private set; }
 
 		public bool IsLoaded => (Left != null) && (Right != null);
 
@@ -46,6 +48,8 @@ namespace B4.Mope
 		{
 			ReadPackages();
 			DiffsLoaded?.Invoke(this, new EventArgs());
+
+			InitializeWebHost();
 		}
 
 		private void ReadPackages()
@@ -112,5 +116,19 @@ namespace B4.Mope
 				Directory.CreateDirectory(tempDir);
 			return tempDir;
 		}
+
+		private void InitializeWebHost()
+		{
+			if (WebHost == null)
+			{
+				WebHost = new WebHost(this);
+				WebHost.ListenOnThread();
+			}
+			else
+			{
+				WebHost.Resume();
+			}
+		}
+
 	}
 }
