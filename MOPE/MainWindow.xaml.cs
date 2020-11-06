@@ -116,13 +116,10 @@ namespace B4.Mope
 					OpenPackage(file);
 					break;
 				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiffChanges:
-					ShowDiffWindow(Data.Package.ZipFile, right: null);
+					Data.BackupCopyOwned = false;
+					ShowDiffWindow(Data.BackupCopy, right: Data.Package.ZipFile);
 					break;
-
-
-
 			}
-			MessageBox.Show($"{result}");
 		}
 
 		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -553,17 +550,20 @@ namespace B4.Mope
 
 		private void ShowDiffWindow(string left, string right)
 		{
-			var diffWindow = new DiffWindow(left, right, Data.OpenWith, IconManager)
+			Dispatcher.Invoke(() =>
 			{
-				ShowActivated = true,
-				ShowInTaskbar = true,
-			};
+				var diffWindow = new DiffWindow(left, right, Data.OpenWith, IconManager)
+				{
+					ShowActivated = true,
+					ShowInTaskbar = true,
+				};
 
-			diffWindow.Show();
+				diffWindow.Show();
 
-			// if no package is open close current window
-			if (Data?.Package == null)
-				Close();
+				// if no package is open close current window
+				if (Data?.Package == null)
+					Close();
+			});
 		}
 	}
 }

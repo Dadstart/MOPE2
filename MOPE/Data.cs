@@ -26,6 +26,10 @@ namespace B4.Mope
 		public List<PackageItem> Items { get; private set; }
 		public Settings Settings { get; } = new Settings();
 		public string TempDirectory { get; private set; }
+		public string BackupCopy { get; private set; }
+		public bool BackupCopyOwned { get; set; }
+
+		private Random m_random = new Random();
 
 
 		public bool IsPackageDirty { get; internal set; }
@@ -54,12 +58,56 @@ namespace B4.Mope
 			// leave Shell related fields the same to use as cache for future opens
 		}
 
-		private string GetTempDir()
+		private string GetRootTempDir()
 		{
-			var tempDir = Path.Combine(Path.GetTempPath(), "MOPE2", Guid.NewGuid().ToString());
+			var tempDir = Path.Combine(Path.GetTempPath(), "MOPE2");
 			if (!Directory.Exists(tempDir))
 				Directory.CreateDirectory(tempDir);
+
 			return tempDir;
+		}
+
+		/// <summary>
+		/// Generate a unique name in the temp dir that can be used as dir or file name
+		/// </summary>
+		private string GetTempName(out string path)
+		{
+			var rootTempDir = GetRootTempDir();
+			string name;
+
+			do
+			{
+				var rand = m_random.Next(0xFFFFFFF);
+				name = rand.ToString("X7");
+
+				path = Path.Combine(rootTempDir, name);
+			} while (Directory.Exists(path) || File.Exists(path));
+
+			return name;
+		}
+
+		/// <summary>
+		/// Get a temp directory
+		/// </summary>
+		private string GetTempDir()
+		{
+			GetTempName(out string path);
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+			return path;
+		}
+
+		private void CreateBackupCopy()
+		{
+			var original = new FileInfo(Package.ZipFile);
+			var tempName = GetTempName(out string tempFullPath);
+
+			int extIndex = original.Name.LastIndexOf('.');
+			var baseName = original.Name.Substring(0, extIndex);
+			
+			BackupCopy = Path.Combine(GetRootTempDir(), $"{baseName} ({tempName}){original.Extension}");
+			File.Copy(Package.ZipFile, BackupCopy);
+			BackupCopyOwned = true;
 		}
 
 		public void Init(string path)
@@ -68,8 +116,7 @@ namespace B4.Mope
 			Package = new Package(path, TempDirectory);
 
 			// create a copy for possible diffing later
-			var fileInfo = new FileInfo(path);
-			File.Copy(path, Path.Combine(TempDirectory, fileInfo.Name));
+			CreateBackupCopy();
 
 			InitializePackageWatcher();
 			InitializeWebHost();
@@ -159,8 +206,15 @@ namespace B4.Mope
 					// TODO: dispose managed state (managed objects)
 					if (!string.IsNullOrEmpty(TempDirectory) && Directory.Exists(TempDirectory))
 					{
-						TempDirectory = null;
 						Directory.Delete(TempDirectory, recursive: true);
+						TempDirectory = null;
+					}
+
+					if (BackupCopyOwned && File.Exists(BackupCopy))
+					{
+						BackupCopyOwned = false;
+						File.Delete(BackupCopy);
+						BackupCopy = null;
 					}
 				}
 
