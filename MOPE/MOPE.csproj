@@ -163,6 +163,9 @@
       <Compile Update="UI\ExternalPackageChangeDialog.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="UI\OpenWithMenuItem.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
       <Compile Update="UI\ShellCommandMenuItem.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
@@ -183,6 +186,9 @@
         <SubType>Designer</SubType>
       </Page>
       <Page Update="UI\ExternalPackageChangeDialog.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="UI\OpenWithMenuItem.xaml">
         <SubType>Designer</SubType>
       </Page>
       <Page Update="UI\ShellCommandMenuItem.xaml">

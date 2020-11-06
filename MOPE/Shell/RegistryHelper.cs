@@ -6,27 +6,44 @@ namespace B4.Mope.Shell
 	{
 		public static string[] GetSubKeyList(RegistryKey parentKey, string subPath)
 		{
-			RegistryKey regKey = null;
-
 			try
 			{
-				string[] subKeys;
-				regKey = parentKey.OpenSubKey(subPath);
-				if (regKey == null)
-					return null;
-				subKeys = regKey.GetSubKeyNames();
-				regKey.Close();
+				using (var regKey = parentKey.OpenSubKey(subPath))
+				{
+					string[] subKeys;
+					if (regKey == null)
+						return null;
+					subKeys = regKey.GetSubKeyNames();
+					regKey.Close();
 
-				return subKeys;
+					return subKeys;
+				}
 
 			}
 			catch { }
 
-			if (regKey != null)
-				regKey.Close();
+			return new string[0];
+		}
 
-			return null;
+		public static string[] GetValueNames(RegistryKey parentKey, string subPath)
+		{
+			try
+			{
+				using (var regKey = parentKey.OpenSubKey(subPath))
+				{
+					string[] names;
+					if (regKey == null)
+						return null;
+					names = regKey.GetValueNames();
+					regKey.Close();
 
+					return names;
+				}
+
+			}
+			catch { }
+
+			return new string[0];
 		}
 
 		public static string StringValueFromRegKey(RegistryKey parentKey, string subPath, string valueName)

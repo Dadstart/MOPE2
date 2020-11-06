@@ -21,7 +21,7 @@ namespace B4.Mope
 
 		public IDictionary<string, PartModel> PartModels { get; private set; }
 
-		public OpenWith OpenWith { get; private set; } = new OpenWith();
+		public ShellOpenWithData OpenWith { get; private set; } = new ShellOpenWithData();
 		public IList<string> Applications { get; private set; } = new List<string>();
 		public List<PackageItem> Items { get; private set; }
 		public Settings Settings { get; } = new Settings();
@@ -105,7 +105,7 @@ namespace B4.Mope
 			PartModels = new Dictionary<string, PartModel>(Package.Parts.Count);
 			foreach (Part part in Package.Parts.Values)
 			{
-				var shellCommands = LoadShellCommandsForPart(part);
+				var shellCommands = OpenWith.GetCommandsForPart(part);
 				var model = new PartModel(part, shellCommands);
 				PartModels.Add(part.Uri.Replace('\\','/'), model);
 			}
@@ -148,58 +148,6 @@ namespace B4.Mope
 				packageItem.Children = childrenItems.Values.ToList();
 				return packageItem;
 			}
-		}
-
-
-		private IList<ShellCommand> LoadShellCommandsForPart(Part part)
-		{
-			var shellCommands = new List<ShellCommand>();
-
-			// load shell commands based on part's extension
-			var extension = part.GetFileInfo().Extension;
-
-			// override if it's an xml file
-			if (ContentTypes.IsXmlType(part.ContentType))
-				extension = ".xml";
-
-			OpenWith.LoadShellCommandsForExtension(extension);
-
-			// iterate through apps list based on this part's extension
-			var partApps = OpenWith.ExtensionApplications.GetValues(extension);
-			if (partApps != null)
-			{
-				foreach (var app in partApps)
-				{
-					if (string.IsNullOrEmpty(app))
-						continue;
-
-					if (!OpenWith.ApplicationFullPaths.TryGetValue(app, out string appFullPath) || string.IsNullOrEmpty(appFullPath))
-						continue;
-
-					if (!OpenWith.ApplicationCommands.TryGetValue(app, out ShellCommand commmand))
-						continue;
-
-					shellCommands.Add(commmand);
-				}
-			}
-
-			// iterate through prog ids registered for this part's extension
-			var progIds = OpenWith.ExtensionProgIds.GetValues(extension);
-			if (progIds != null)
-			{
-				foreach (var progId in progIds)
-				{
-					if (string.IsNullOrEmpty(progId))
-						continue;
-
-					if (!OpenWith.ProgIdCommands.TryGetValue(progId, out ShellCommand command))
-						continue;
-
-					shellCommands.Add(command);
-				}
-			}
-
-			return shellCommands;
 		}
 
 		protected virtual void Dispose(bool disposing)

@@ -7,7 +7,7 @@ namespace B4.Mope
 {
 	public class DiffPackageItem
 	{
-		public DiffPackage Package { get; }
+		public DiffData DiffData{ get; }
 		public string Path { get; }
 
 		private Dictionary<string, DiffPackageItem> m_children;
@@ -16,9 +16,9 @@ namespace B4.Mope
 
 		public bool IsFolder() => Part == null;
 
-		public DiffPackageItem(DiffPackage package, string path, DiffPart part)
+		public DiffPackageItem(DiffData diffData, string path, DiffPart part)
 		{
-			Package = package ?? throw new ArgumentNullException(nameof(package));
+			DiffData = diffData ?? throw new ArgumentNullException(nameof(diffData));
 			Path = path ?? throw new ArgumentNullException(nameof(path));
 			Part = part;
 		}

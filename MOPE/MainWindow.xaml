@@ -47,13 +47,6 @@
 
 		<localUI:IconCustomListView x:Key="iconCustomListViewTiles" ItemWidth="128" />
 
-		<ContextMenu x:Key="openWithContextMenu">
-			<MenuItem Header="Open With" x:Name="openWithMenuItem">
-				<MenuItem Header="Other" Click="partOpenMenuItem_Click" />
-				<Separator />
-			</MenuItem>
-		</ContextMenu>
-
 		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
 			<MenuItem Header="Break" Click="debugBreak_Click" />
 			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
@@ -127,10 +120,6 @@
 				<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
 					<ListView.ContextMenu>
 						<ContextMenu>
-							<MenuItem Header="Open With" x:Name="listViewOpenWithMenuItem">
-								<MenuItem Header="Other" Click="partOpenMenuItem_Click" />
-								<Separator />
-							</MenuItem>
 							<Separator />
 							<MenuItem Header="View" x:Name="listViewViewMenuItem">
 								<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>

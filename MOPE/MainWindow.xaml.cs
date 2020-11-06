@@ -318,28 +318,20 @@ namespace B4.Mope
 				}
 			}
 
-			UpdateContextMenu(listViewOpenWithMenuItem, model);
+			// remove existing OpenWithMenu
+			if (listViewParts.ContextMenu.Items[0] is OpenWithMenuItem)
+				listViewParts.ContextMenu.Items.RemoveAt(0);
+
+			var openWithMenuItem = new OpenWithMenuItem(model.Part);
+			listViewParts.ContextMenu.Items.Insert(0, openWithMenuItem);
+			UpdateContextMenu(openWithMenuItem, model);
 		}
 
 		private void UpdateContextMenu(MenuItem parentMenuItem, PartModel model)
 		{
-			// remove all existing ShellCommandMenuItems
-			var itemsToRemove = new List<object>();
-			foreach (var item in parentMenuItem.Items)
-			{
-				if (item is ShellCommandMenuItem)
-					itemsToRemove.Add(item);
-			}
-
-			foreach (var item in itemsToRemove)
-			{
-				parentMenuItem.Items.Remove(item);
-			}
-
-			// add new ShellCommandMenuItems
 			foreach (var command in model.ShellCommands)
 			{
-				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model, Data.OpenWith), IconManager);
+				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model.Part, Data.OpenWith), IconManager);
 				parentMenuItem.Items.Add(menuItem);
 			}
 		}
@@ -418,20 +410,6 @@ namespace B4.Mope
 			}
 		}
 
-		private void partOpenMenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			OpenPart(listViewParts.SelectedItem as PartModel);
-		}
-
-		private void OpenPart(PartModel part)
-		{
-			if (part?.Part == null)
-				return;
-
-			var fileInfo = part.Part.GetFileInfo();
-			ShellCommand.ShellExecute(IntPtr.Zero, null, "rundll32.exe", string.Concat("shell32.dll,OpenAs_RunDLL ", fileInfo.FullName), null, 0);
-		}
-
 		private void treeViewZipFiles_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			if (e.OriginalSource == null)
@@ -466,9 +444,11 @@ namespace B4.Mope
 			if ((packageItem == null) || packageItem.IsFolder())
 				return;
 
-			var contextMenu = (ContextMenu)FindResource("openWithContextMenu");
-			var menuItem = (MenuItem)LogicalTreeHelper.FindLogicalNode(contextMenu, "openWithMenuItem");
-			UpdateContextMenu(menuItem, packageItem.Model);
+			var contextMenu = new ContextMenu();
+			var openWithMenu = new OpenWithMenuItem(packageItem.Model.Part);
+			contextMenu.Items.Add(openWithMenu);
+
+			UpdateContextMenu(openWithMenu, packageItem.Model);
 			contextMenu.IsOpen = true;
 		}
 
@@ -573,7 +553,7 @@ namespace B4.Mope
 
 		private void ShowDiffWindow(string left, string right)
 		{
-			var diffWindow = new DiffWindow(left, right)
+			var diffWindow = new DiffWindow(left, right, Data.OpenWith, IconManager)
 			{
 				ShowActivated = true,
 				ShowInTaskbar = true,
@@ -582,7 +562,8 @@ namespace B4.Mope
 			diffWindow.Show();
 
 			// if no package is open close current window
-			Close();
+			if (Data?.Package == null)
+				Close();
 		}
 	}
 }

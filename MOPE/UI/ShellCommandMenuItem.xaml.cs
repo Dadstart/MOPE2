@@ -32,7 +32,11 @@ namespace B4.Mope.UI
 			Click += ShellCommandMenuItem_Click;
 
 			var command = Model.Command;
-			var appFullPath = Model.OpenWith.ApplicationFullPaths[command.Application];
+			string appFullPath;
+			if (command.Application != null)
+				appFullPath = Model.OpenWith.ApplicationFullPaths[command.Application];
+			else
+				appFullPath = command.GetApplication();
 			Header = command.FriendlyName ?? FileHelper.DisplayNameForApplication(command.Application, appFullPath);
 
 			var icon = m_iconManager.GetImageForApplicationName(appFullPath);
@@ -44,7 +48,7 @@ namespace B4.Mope.UI
 		{
 			var process = new Process();
 			var command = Model.Command;
-			var fileInfo = Model.PartModel.Part.GetFileInfo();
+			var fileInfo = Model.Part.GetFileInfo();
 
 			if (command.DDE != null)
 			{
