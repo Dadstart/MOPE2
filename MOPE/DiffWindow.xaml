@@ -1,0 +1,73 @@
+﻿<Window x:Class="B4.Mope.DiffWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:B4.Mope"
+		xmlns:localUI="clr-namespace:B4.Mope.UI"
+        mc:Ignorable="d"
+		Title="MOPE Diff" Height="720" Width="1200">
+	<Window.Resources>
+		<localUI:DiffPackageItemToBitmapSourceConverter x:Key="diffPackageItemToBitmapSourceConverter" />
+		<localUI:DiffPackageItemToNameStringConverter x:Key="diffPackageItemToNameStringConverter" />
+
+		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
+			<MenuItem Header="Break" Click="debugBreak_Click" />
+			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
+		</MenuItem>
+
+	</Window.Resources>
+	<DockPanel>
+		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
+			<Menu.ItemsPanel>
+				<ItemsPanelTemplate>
+					<DockPanel HorizontalAlignment="Stretch" />
+				</ItemsPanelTemplate>
+			</Menu.ItemsPanel>
+			<MenuItem Header="_File">
+				<MenuItem Header="Open _Left" Icon="📂" />
+				<MenuItem Header="Open _Right" Icon="📂" />
+				<Separator />
+				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
+			</MenuItem>
+		</Menu>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" MinWidth="320" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TreeView x:Name="treeViewFolders" SelectedItemChanged="treeViewFolders_SelectedItemChanged" Grid.Column="0" MouseRightButtonUp="treeViewFolders_MouseRightButtonUp" KeyUp="treeViewFolders_KeyUp">
+				<TreeView.ItemTemplate>
+					<HierarchicalDataTemplate DataType="{x:Type local:DiffPackageItem}" ItemsSource="{Binding Children}">
+						<StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
+							<Image Source="{Binding Converter={StaticResource diffPackageItemToBitmapSourceConverter}, ConverterParameter=32}" Margin="1"/>
+							<TextBlock Text="{Binding Converter={StaticResource diffPackageItemToNameStringConverter}}" Margin="1" VerticalAlignment="Center" />
+						</StackPanel>
+					</HierarchicalDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
+			<GridSplitter Grid.Column="0" Width="5"/>
+			<TabControl Background="LightGray" Grid.Column="1" x:Name="partsTabControl">
+				<TabItem>
+					<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0">
+							<Label FontSize="36" FontWeight="Bold" Content="Left" HorizontalAlignment="Center" />
+							<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenLeftButton_Click" x:Name="bigOpenLeftButton">Open Left Package</Button>
+							<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigLeftLabel" />
+						</StackPanel>
+						<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1">
+							<Label FontSize="36" FontWeight="Bold" Content="Right" HorizontalAlignment="Center" />
+							<Button FontSize="24" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenRightButton_Click" x:Name="bigOpenRightButton">Open Right Package</Button>
+							<Label Visibility="Collapsed" FontSize="18" FontWeight="Bold" Padding="5" x:Name="bigRightLabel" />
+						</StackPanel>
+					</Grid>
+				</TabItem>
+			</TabControl>
+
+		</Grid>
+	</DockPanel>
+</Window>

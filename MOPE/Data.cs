@@ -11,74 +11,33 @@ namespace B4.Mope
 	/// <summary>
 	/// Data holder for app
 	/// </summary>
-	public class Data : DependencyObject
+	public class Data : DependencyObject, IDisposable
 	{
-		public Package Package { get; private set; }
+		private bool m_isDisposed;
 
+		public Package Package { get; private set; }
+		public FileSystemWatcher PackageWatcher { get; private set; }
 		public WebHost WebHost { get; private set; }
 
 		public IDictionary<string, PartModel> PartModels { get; private set; }
 
-		public OpenWith OpenWith { get; private set; } = new OpenWith();
-
+		public ShellOpenWithData OpenWith { get; private set; } = new ShellOpenWithData();
 		public IList<string> Applications { get; private set; } = new List<string>();
 		public List<PackageItem> Items { get; private set; }
-		internal AppSettings Settings { get; } = new AppSettings();
+		public Settings Settings { get; } = new Settings();
+		public string TempDirectory { get; private set; }
+		public string BackupCopy { get; private set; }
+		public bool BackupCopyOwned { get; set; }
 
-		public delegate void BooleanPropertyChangedEventHandler(object sender, BooleanPropertyChangedEventArgs e);
+		private Random m_random = new Random();
 
-		public event BooleanPropertyChangedEventHandler EditorReadOnlyModeChanged;
-		private static readonly DependencyProperty EditorReadOnlyModeProperty = DependencyProperty.Register("EditorReadOnlyMode", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorReadOnlyPropertyChanged));
-		public bool EditorReadOnlyMode
-		{
-			get { return (bool)GetValue(EditorReadOnlyModeProperty); }
-			set { SetValue(EditorReadOnlyModeProperty, value); }
-		}
-
-		private static void EditorReadOnlyPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var data = (Data)obj;
-			data.Settings.EditorReadOnlyMode = (bool)e.NewValue;
-			data.Settings.Save();
-			data.EditorReadOnlyModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
-		}
-
-		public event BooleanPropertyChangedEventHandler EditorDarkModeChanged;
-		private static readonly DependencyProperty EditorDarkModeProperty = DependencyProperty.Register("EditorDarkMode", typeof(bool), typeof(Data), new PropertyMetadata(false, EditorDarkPropertyChanged));
-		public bool EditorDarkMode
-		{
-			get { return (bool)GetValue(EditorDarkModeProperty); }
-			set { SetValue(EditorDarkModeProperty, value); }
-		}
-		private static void EditorDarkPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var data = (Data)obj;
-			data.Settings.EditorUseDarkMode = (bool)e.NewValue;
-			data.Settings.Save();
-			data.EditorDarkModeChanged?.Invoke(data, new BooleanPropertyChangedEventArgs((bool)e.OldValue, (bool)e.NewValue));
-		}
-
-
-		private static readonly DependencyProperty ConfirmOverwritePackageProperty = DependencyProperty.Register("ConfirmOverwritePackage", typeof(bool), typeof(Data), new PropertyMetadata(false, ConfirmOverwritePackagePropertyChanged));
-		public bool ConfirmOverwritePackage
-		{
-			get { return (bool)GetValue(ConfirmOverwritePackageProperty); }
-			set { SetValue(ConfirmOverwritePackageProperty, value); }
-		}
-		private static void ConfirmOverwritePackagePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-		{
-			var data = (Data)obj;
-			data.Settings.ConfirmOverwritePackage = (bool)e.NewValue;
-			data.Settings.Save();
-		}
 
 		public bool IsPackageDirty { get; internal set; }
 
+		public bool IgnoringChanges { get; set; }
+
 		public Data()
 		{
-			EditorReadOnlyMode = Settings.EditorReadOnlyMode;
-			EditorDarkMode = Settings.EditorUseDarkMode;
-			ConfirmOverwritePackage = Settings.ConfirmOverwritePackage;
 		}
 
 		public void OnReadOnlyModeChanged()
@@ -90,25 +49,102 @@ namespace B4.Mope
 		{
 			Package?.Close();
 			Package = null;
-			WebHost?.Stop();
+			WebHost?.Pause();
 			PartModels = null;
 			Items = null;
+			PackageWatcher?.Dispose();
+			PackageWatcher = null;
+			IgnoringChanges = false;
 			// leave Shell related fields the same to use as cache for future opens
 		}
 
-		public void Init(Package package)
+		private string GetRootTempDir()
 		{
-			Package = package ?? throw new ArgumentNullException(nameof(package));
+			var tempDir = Path.Combine(Path.GetTempPath(), "MOPE2");
+			if (!Directory.Exists(tempDir))
+				Directory.CreateDirectory(tempDir);
+
+			return tempDir;
+		}
+
+		/// <summary>
+		/// Generate a unique name in the temp dir that can be used as dir or file name
+		/// </summary>
+		private string GetTempName(out string path)
+		{
+			var rootTempDir = GetRootTempDir();
+			string name;
+
+			do
+			{
+				var rand = m_random.Next(0xFFFFFFF);
+				name = rand.ToString("X7");
+
+				path = Path.Combine(rootTempDir, name);
+			} while (Directory.Exists(path) || File.Exists(path));
+
+			return name;
+		}
+
+		/// <summary>
+		/// Get a temp directory
+		/// </summary>
+		private string GetTempDir()
+		{
+			GetTempName(out string path);
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+			return path;
+		}
+
+		private void CreateBackupCopy()
+		{
+			var original = new FileInfo(Package.ZipFile);
+			var tempName = GetTempName(out string tempFullPath);
+
+			int extIndex = original.Name.LastIndexOf('.');
+			var baseName = original.Name.Substring(0, extIndex);
+			
+			BackupCopy = Path.Combine(GetRootTempDir(), $"{baseName} ({tempName}){original.Extension}");
+			File.Copy(Package.ZipFile, BackupCopy);
+			BackupCopyOwned = true;
+		}
+
+		public void Init(string path)
+		{
+			TempDirectory = GetTempDir();
+			Package = new Package(path, TempDirectory);
+
+			// create a copy for possible diffing later
+			CreateBackupCopy();
+
+			InitializePackageWatcher();
 			InitializeWebHost();
 			InitializePartModels();
 			InitializeHierarchyTree();
 		}
 
+		private void InitializePackageWatcher()
+		{
+			var fileInfo = new FileInfo(Package.ZipFile);
+			PackageWatcher = new FileSystemWatcher(fileInfo.DirectoryName, fileInfo.Name)
+			{
+				NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.CreationTime,
+				EnableRaisingEvents = true,
+			};
+		}
+
 		private void InitializeWebHost()
 		{
 			if (WebHost == null)
+			{
 				WebHost = new WebHost(this);
-			WebHost.ListenOnThread();
+				WebHost.ListenOnThread();
+			}
+			else
+			{
+				WebHost.Resume();
+			}
 		}
 
 		private void InitializePartModels()
@@ -116,7 +152,7 @@ namespace B4.Mope
 			PartModels = new Dictionary<string, PartModel>(Package.Parts.Count);
 			foreach (Part part in Package.Parts.Values)
 			{
-				var shellCommands = LoadShellCommandsForPart(part);
+				var shellCommands = OpenWith.GetCommandsForPart(part);
 				var model = new PartModel(part, shellCommands);
 				PartModels.Add(part.Uri.Replace('\\','/'), model);
 			}
@@ -161,56 +197,45 @@ namespace B4.Mope
 			}
 		}
 
-
-		private IList<ShellCommand> LoadShellCommandsForPart(Part part)
+		protected virtual void Dispose(bool disposing)
 		{
-			var shellCommands = new List<ShellCommand>();
-
-			// load shell commands based on part's extension
-			var extension = part.GetFileInfo().Extension;
-
-			// override if it's an xml file
-			if (ContentTypes.IsXmlType(part.ContentType))
-				extension = ".xml";
-
-			OpenWith.LoadShellCommandsForExtension(extension);
-
-			// iterate through apps list based on this part's extension
-			var partApps = OpenWith.ExtensionApplications.GetValues(extension);
-			if (partApps != null)
+			if (!m_isDisposed)
 			{
-				foreach (var app in partApps)
+				if (disposing)
 				{
-					if (string.IsNullOrEmpty(app))
-						continue;
+					// TODO: dispose managed state (managed objects)
+					if (!string.IsNullOrEmpty(TempDirectory) && Directory.Exists(TempDirectory))
+					{
+						Directory.Delete(TempDirectory, recursive: true);
+						TempDirectory = null;
+					}
 
-					if (!OpenWith.ApplicationFullPaths.TryGetValue(app, out string appFullPath) || string.IsNullOrEmpty(appFullPath))
-						continue;
-
-					if (!OpenWith.ApplicationCommands.TryGetValue(app, out ShellCommand commmand))
-						continue;
-
-					shellCommands.Add(commmand);
+					if (BackupCopyOwned && File.Exists(BackupCopy))
+					{
+						BackupCopyOwned = false;
+						File.Delete(BackupCopy);
+						BackupCopy = null;
+					}
 				}
+
+				// TODO: free unmanaged resources (unmanaged objects) and override finalizer
+				// TODO: set large fields to null
+				m_isDisposed = true;
 			}
+		}
 
-			// iterate through prog ids registered for this part's extension
-			var progIds = OpenWith.ExtensionProgIds.GetValues(extension);
-			if (progIds != null)
-			{
-				foreach (var progId in progIds)
-				{
-					if (string.IsNullOrEmpty(progId))
-						continue;
+		// // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+		// ~Data()
+		// {
+		//     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		//     Dispose(disposing: false);
+		// }
 
-					if (!OpenWith.ProgIdCommands.TryGetValue(progId, out ShellCommand command))
-						continue;
-
-					shellCommands.Add(command);
-				}
-			}
-
-			return shellCommands;
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }

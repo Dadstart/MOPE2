@@ -108,9 +108,12 @@ namespace B4.Mope.Shell
 			try
 			{
 				// check the cache in the registry
-				string name = RegistryHelper.StringValueFromRegKey(Registry.CurrentUser, @"HKEY_CURRENT_USER\Software\Microsoft\Windows\ShellNoRoam\MUICache", application);
-				if (name != null)
-					return name;
+				if (application != null)
+				{
+					string name = RegistryHelper.StringValueFromRegKey(Registry.CurrentUser, @"HKEY_CURRENT_USER\Software\Microsoft\Windows\ShellNoRoam\MUICache", application);
+					if (name != null)
+						return name;
+				}
 
 				FileInfo fi = new FileInfo(appFullPath);
 				if (fi.Exists)

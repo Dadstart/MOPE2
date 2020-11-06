@@ -21,7 +21,7 @@ namespace B4.Mope.Packaging
 		public Package(string path, string tempDirPath)
 		{
 			ZipFile = path;
-			TempDirectory = tempDirPath;
+			TempDirectory = Path.Combine(tempDirPath, "package");
 
 			if (Directory.Exists(TempDirectory))
 				Directory.Delete(TempDirectory, true);

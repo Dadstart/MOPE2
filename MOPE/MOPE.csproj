@@ -28,7 +28,10 @@
       <None Remove="icons\visio.ico" />
       <None Remove="icons\word.ico" />
       <None Remove="icons\xml.ico" />
+      <None Remove="monaco\diff.html" />
+      <None Remove="monaco\diff.js" />
       <None Remove="monaco\editor.js" />
+      <None Remove="monaco\shared.js" />
     </ItemGroup>
 
     <ItemGroup>
@@ -48,6 +51,9 @@
         <Resource Include="icons\visio.ico" />
         <Resource Include="icons\word.ico" />
         <Resource Include="icons\xml.ico" />
+        <Resource Include="monaco\diff.html" />
+        <Resource Include="monaco\diff.js" />
+        <Resource Include="monaco\shared.js" />
         <Resource Include="monaco\editor.html" />
     </ItemGroup>
 
@@ -155,6 +161,15 @@
       <Compile Update="UI\BinaryViewTabItem.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="UI\OpenDiffWindowDialog.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="UI\ExternalPackageChangeDialog.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="UI\OpenWithMenuItem.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
       <Compile Update="UI\ShellCommandMenuItem.xaml.cs">
         <SubType>Code</SubType>
       </Compile>
@@ -169,6 +184,15 @@
 
     <ItemGroup>
       <Page Update="UI\BinaryViewTabItem.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="UI\OpenDiffWindowDialog.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="UI\ExternalPackageChangeDialog.xaml">
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="UI\OpenWithMenuItem.xaml">
         <SubType>Designer</SubType>
       </Page>
       <Page Update="UI\ShellCommandMenuItem.xaml">

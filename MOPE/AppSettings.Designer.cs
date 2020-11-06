@@ -58,5 +58,17 @@ namespace B4.Mope {
                 this["ConfirmOverwritePackage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EditorFormatXmlOnLoad {
+            get {
+                return ((bool)(this["EditorFormatXmlOnLoad"]));
+            }
+            set {
+                this["EditorFormatXmlOnLoad"] = value;
+            }
+        }
     }
 }

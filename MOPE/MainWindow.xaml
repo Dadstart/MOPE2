@@ -47,13 +47,6 @@
 
 		<localUI:IconCustomListView x:Key="iconCustomListViewTiles" ItemWidth="128" />
 
-		<ContextMenu x:Key="openWithContextMenu">
-			<MenuItem Header="Open With" x:Name="openWithMenuItem">
-				<MenuItem Header="Other" Click="partOpenMenuItem_Click" />
-				<Separator />
-			</MenuItem>
-		</ContextMenu>
-
 		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
 			<MenuItem Header="Break" Click="debugBreak_Click" />
 			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
@@ -70,6 +63,11 @@
 	</Window.CommandBindings>
 	<DockPanel>
 		<Menu IsMainMenu="True" x:Name="menuMain" DockPanel.Dock="Top">
+			<Menu.ItemsPanel>
+				<ItemsPanelTemplate>
+					<DockPanel HorizontalAlignment="Stretch" />
+				</ItemsPanelTemplate>
+			</Menu.ItemsPanel>
 			<MenuItem Header="_File">
 				<MenuItem Header="_Open" Icon="📂" InputGestureText="Ctrl+O" Command="ApplicationCommands.Open"/>
 				<MenuItem Header="_Save Part" Icon="💾" InputGestureText="Ctrl+S" Command="ApplicationCommands.Save"/>
@@ -78,14 +76,17 @@
 				<MenuItem Header="Save _Package" Icon="💾" InputGestureText="Ctrl+Shift+S" Command="localUI:CustomCommands.SavePackage" />
 				<MenuItem Header="Save Package As" Icon="💾" InputGestureText="Ctrl+Shift+F12" Command="localUI:CustomCommands.SavePackageAs" />
 				<Separator />
+				<MenuItem Header="_Diff View" Icon="2️⃣" Click="DiffMenuItem_Click" />
+				<Separator />
 				<MenuItem Header="E_xit" Click="Exit_Click" />
 				<Separator />
-				<MenuItem Header="Confirm Overwrite Package" IsCheckable="True" IsChecked="{Binding ConfirmOverwritePackage, Mode=TwoWay}"/>
+				<MenuItem Header="Confirm Overwrite Package" IsCheckable="True" DataContext="{Binding Path=Settings}" IsChecked="{Binding ConfirmOverwritePackage, Mode=TwoWay}"/>
 			</MenuItem>
 			<MenuItem Header="_View" x:Name="toolbarViewMenu">
-				<MenuItem Header="Code Editor">
-					<MenuItem Header="Dark Mode" x:Name="editorDarkModeMenuItem" IsCheckable="True" IsChecked="{Binding EditorDarkMode, Mode=TwoWay}"/>
-					<MenuItem Header="Read Only" x:Name="editorReadOnlyModeMenuItem" IsCheckable="True" IsChecked="{Binding EditorReadOnlyMode, Mode=TwoWay}"/>
+				<MenuItem Header="Code Editor" DataContext="{Binding Path=Settings}">
+					<MenuItem Header="Dark Mode" IsCheckable="True" IsChecked="{Binding EditorDarkMode, Mode=TwoWay}"/>
+					<MenuItem Header="Read Only" IsCheckable="True" IsChecked="{Binding EditorReadOnlyMode, Mode=TwoWay}"/>
+					<MenuItem Header="Format XML on Load" IsCheckable="True" IsChecked="{Binding EditorFormatXmlOnLoad, Mode=TwoWay}"/>
 				</MenuItem>
 				<Separator />
 				<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
@@ -119,10 +120,6 @@
 				<ListView x:Name="listViewParts" SelectionChanged="listViewParts_SelectionChanged" Grid.Row="1">
 					<ListView.ContextMenu>
 						<ContextMenu>
-							<MenuItem Header="Open With" x:Name="listViewOpenWithMenuItem">
-								<MenuItem Header="Other" Click="partOpenMenuItem_Click" />
-								<Separator />
-							</MenuItem>
 							<Separator />
 							<MenuItem Header="View" x:Name="listViewViewMenuItem">
 								<localUI:ListViewStateMenuItem Header="Tiles" ViewState="Tiles" Click="ListViewStateMenuItem_Click"/>
@@ -165,6 +162,13 @@
 			</Grid>
 			<GridSplitter Grid.Column="0" Width="5"/>
 			<TabControl Background="LightGray" Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" x:Name="partsTabControl">
+				<TabItem>
+					<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">
+						<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+							<Button FontSize="36" Padding="10" FontWeight="Bold" BorderThickness="4" Click="bigOpenButton_Click">Click to Open a Package</Button>
+						</StackPanel>
+					</Grid>
+				</TabItem>
 			</TabControl>
 		</Grid>
 	</DockPanel>

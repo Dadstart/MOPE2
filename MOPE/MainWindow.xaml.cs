@@ -35,8 +35,8 @@ namespace B4.Mope
 			Data = new Data();
 			DataContext = Data;
 
-			Data.EditorReadOnlyModeChanged += Data_EditorReadOnlyModeChanged;
-			Data.EditorDarkModeChanged += Data_EditorDarkModeChanged;
+			Data.Settings.EditorReadOnlyModeChanged += Data_EditorReadOnlyModeChanged;
+			Data.Settings.EditorDarkModeChanged += Data_EditorDarkModeChanged;
 
 #if DEBUG
 			menuMain.Items.Add(FindResource("debugMenu"));
@@ -77,9 +77,49 @@ namespace B4.Mope
 			Data.Reset();
 			partsTabControl.Items.Clear();
 
-			var package = new Package(@"C:\temp\lorem2.docx", @"C:\temp\x");
-			Data.Init(package);
+			var dlg = new OpenFileDialog()
+			{
+				CheckFileExists = true,
+				CheckPathExists = true,
+				Filter = "Office Files|*.docx;*.docm;*.dotx;*.dotm;*.xlsx;*.xlsm;*.pptx;*.pptm;*.odt;*.ods;*.odp|All Files|*.*",
+			};
+
+			if (dlg.ShowDialog(this) != true)
+				return;
+
+			OpenPackage(dlg.FileName);
+		}
+
+		private void OpenPackage(string fileName)
+		{
+			Data.Init(fileName);
+			Data.PackageWatcher.Changed += PackageWatcher_Changed;
 			InitializeViews();
+		}
+
+		private void PackageWatcher_Changed(object sender, FileSystemEventArgs e)
+		{
+			if (Data.IgnoringChanges)
+				return;
+
+			var result = ExternalPackageChangeDialog.ShowModal(this);
+
+			switch (result)
+			{
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.Unknown:
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.IgnoreChanges:
+					Data.IgnoringChanges = true;
+					break;
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiscardAndReload:
+					var file = Data.Package.ZipFile;
+					Data.Reset();
+					OpenPackage(file);
+					break;
+				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiffChanges:
+					Data.BackupCopyOwned = false;
+					ShowDiffWindow(Data.BackupCopy, right: Data.Package.ZipFile);
+					break;
+			}
 		}
 
 		private void CommandBinding_SaveCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -91,7 +131,7 @@ namespace B4.Mope
 		private void CommandBinding_SaveExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			// save current part
-			var webView = partsTabControl.SelectedItem as WebViewTabItem;
+			var webView = partsTabControl.SelectedItem as EditorWebViewTabItem;
 			if ((webView != null) && (webView.PartModel.IsDirty))
 				webView.Browser.ExecuteScriptAsync($"postFile()");
 		}
@@ -135,7 +175,6 @@ namespace B4.Mope
 				if (confirmDialog.DontShowDialogAgain)
 				{
 					Data.Settings.ConfirmOverwritePackage = true;
-					Data.Settings.Save();
 				}
 			}
 
@@ -149,7 +188,7 @@ namespace B4.Mope
 			// save any dirty parts
 			foreach (var tabViewItem in partsTabControl.Items)
 			{
-				var webView = tabViewItem as WebViewTabItem;
+				var webView = tabViewItem as EditorWebViewTabItem;
 				if ((webView != null) && (webView.PartModel.IsDirty))
 					webView.Browser.ExecuteScriptAsync($"postFile()");
 			}
@@ -200,7 +239,7 @@ namespace B4.Mope
 
 		private PartModel GetPartModelFromTabView(object tabViewItem)
 		{
-			var webView = tabViewItem as WebViewTabItem;
+			var webView = tabViewItem as EditorWebViewTabItem;
 			if (webView != null)
 				return webView.PartModel;
 
@@ -219,11 +258,15 @@ namespace B4.Mope
 
 		private void InitializeViews()
 		{
-			using (Dispatcher.DisableProcessing())
+			Dispatcher.Invoke(() =>
 			{
-				InitializePartsListView();
-				InitializeZipFilesTreeView();
-			}
+				using (Dispatcher.DisableProcessing())
+				{
+					Title = $"MOPE: {Data.Package.ZipFile}";
+					InitializePartsListView();
+					InitializeZipFilesTreeView();
+				}
+			});
 		}
 
 		private void InitializeZipFilesTreeView()
@@ -260,7 +303,7 @@ namespace B4.Mope
 			{
 				if (part.CanViewInBrowser())
 				{
-					var webItem = new WebViewTabItem(Data, model);
+					var webItem = new EditorWebViewTabItem(Data, model);
 					partsTabControl.Items.Add(webItem);
 					partsTabControl.SelectedItem = webItem;
 				}
@@ -272,28 +315,20 @@ namespace B4.Mope
 				}
 			}
 
-			UpdateContextMenu(listViewOpenWithMenuItem, model);
+			// remove existing OpenWithMenu
+			if (listViewParts.ContextMenu.Items[0] is OpenWithMenuItem)
+				listViewParts.ContextMenu.Items.RemoveAt(0);
+
+			var openWithMenuItem = new OpenWithMenuItem(model.Part);
+			listViewParts.ContextMenu.Items.Insert(0, openWithMenuItem);
+			UpdateContextMenu(openWithMenuItem, model);
 		}
 
 		private void UpdateContextMenu(MenuItem parentMenuItem, PartModel model)
 		{
-			// remove all existing ShellCommandMenuItems
-			var itemsToRemove = new List<object>();
-			foreach (var item in parentMenuItem.Items)
-			{
-				if (item is ShellCommandMenuItem)
-					itemsToRemove.Add(item);
-			}
-
-			foreach (var item in itemsToRemove)
-			{
-				parentMenuItem.Items.Remove(item);
-			}
-
-			// add new ShellCommandMenuItems
 			foreach (var command in model.ShellCommands)
 			{
-				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model, Data.OpenWith), IconManager);
+				var menuItem = new ShellCommandMenuItem(new ShellCommandMenuModel(command, model.Part, Data.OpenWith), IconManager);
 				parentMenuItem.Items.Add(menuItem);
 			}
 		}
@@ -372,20 +407,6 @@ namespace B4.Mope
 			}
 		}
 
-		private void partOpenMenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			OpenPart(listViewParts.SelectedItem as PartModel);
-		}
-
-		private void OpenPart(PartModel part)
-		{
-			if (part?.Part == null)
-				return;
-
-			var fileInfo = part.Part.GetFileInfo();
-			ShellCommand.ShellExecute(IntPtr.Zero, null, "rundll32.exe", string.Concat("shell32.dll,OpenAs_RunDLL ", fileInfo.FullName), null, 0);
-		}
-
 		private void treeViewZipFiles_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			if (e.OriginalSource == null)
@@ -420,9 +441,11 @@ namespace B4.Mope
 			if ((packageItem == null) || packageItem.IsFolder())
 				return;
 
-			var contextMenu = (ContextMenu)FindResource("openWithContextMenu");
-			var menuItem = (MenuItem)LogicalTreeHelper.FindLogicalNode(contextMenu, "openWithMenuItem");
-			UpdateContextMenu(menuItem, packageItem.Model);
+			var contextMenu = new ContextMenu();
+			var openWithMenu = new OpenWithMenuItem(packageItem.Model.Part);
+			contextMenu.Items.Add(openWithMenu);
+
+			UpdateContextMenu(openWithMenu, packageItem.Model);
 			contextMenu.IsOpen = true;
 		}
 
@@ -437,7 +460,7 @@ namespace B4.Mope
 
 		private void debugInjectJsMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var currentWebView = partsTabControl.SelectedItem as WebViewTabItem;
+			var currentWebView = partsTabControl.SelectedItem as EditorWebViewTabItem;
 			if (currentWebView == null)
 				return;
 
@@ -461,7 +484,7 @@ namespace B4.Mope
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
 			{
-				var webView = partView as WebViewTabItem;
+				var webView = partView as EditorWebViewTabItem;
 				if (webView == null)
 					continue;
 
@@ -481,13 +504,66 @@ namespace B4.Mope
 			// update all open browsers
 			foreach (var partView in partsTabControl.Items)
 			{
-				var webView = partView as WebViewTabItem;
+				var webView = partView as EditorWebViewTabItem;
 				if (webView == null)
 					continue;
 
 				var param = e.NewValue ? "true" : "false";
 				webView.Browser.ExecuteScriptAsync($"setReadOnly({param})");
 			}
+		}
+
+		private void bigOpenButton_Click(object sender, RoutedEventArgs e)
+		{
+			CommandBinding_OpenExecuted(this, e: null);
+		}
+
+
+		private void DiffMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			string left = null;
+			string right = null;
+
+			// if a package is open show the dialog prompting how to use current package
+			if (Data?.Package != null)
+			{
+				var result = OpenDiffWindowDialog.ShowModal(this);
+				switch (result)
+				{
+					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Left:
+						left = Data.Package.ZipFile;
+						break;
+					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Right:
+						right = Data.Package.ZipFile;
+						break;
+					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Neither:
+						//no-op
+						break;
+					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Unknown:
+						// canceled
+						return;
+				}
+			}
+
+			ShowDiffWindow(left, right);
+		}
+
+		private void ShowDiffWindow(string left, string right)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				var diffWindow = new DiffWindow(left, right, Data.OpenWith, IconManager)
+				{
+					ShowActivated = true,
+					ShowInTaskbar = true,
+				};
+
+				diffWindow.Show();
+
+				// if no package is open close current window
+				if (Data?.Package == null)
+					Close();
+			});
 		}
 	}
 }
