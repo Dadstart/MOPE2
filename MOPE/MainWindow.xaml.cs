@@ -216,12 +216,14 @@ namespace B4.Mope
 		{
 			SaveDirtyParts();
 
+			Data.PackageWatcher.EnableRaisingEvents = false;
 			// create the archive and overwrite the file
 			using (var zipStream = CreateZipArchiveStream())
 			using (var file = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
 			{
 				zipStream.CopyTo(file);
 			}
+			Data.PackageWatcher.EnableRaisingEvents = true;
 		}
 
 		private void CommandBinding_SavePackageAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
