@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MOPE", "MOPE\MOPE.csproj", "{3F52CE90-3A1E-4395-9CC1-E10C93E3659A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MOPE.Tests", "MOPE.Tests\MOPE.Tests.csproj", "{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,26 +39,6 @@ Global
 		{3F52CE90-3A1E-4395-9CC1-E10C93E3659A}.Release|x64.Build.0 = Release|x64
 		{3F52CE90-3A1E-4395-9CC1-E10C93E3659A}.Release|x86.ActiveCfg = Release|Any CPU
 		{3F52CE90-3A1E-4395-9CC1-E10C93E3659A}.Release|x86.Build.0 = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|ARM.Build.0 = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|x64.Build.0 = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Debug|x86.Build.0 = Debug|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|ARM.ActiveCfg = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|ARM.Build.0 = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|ARM64.Build.0 = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|x64.ActiveCfg = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|x64.Build.0 = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|x86.ActiveCfg = Release|Any CPU
-		{C24853C0-1499-4110-A8C2-0EBC58A2AEA4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
