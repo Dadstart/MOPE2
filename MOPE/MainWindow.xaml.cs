@@ -91,14 +91,17 @@ namespace B4.Mope
 
 		private void OpenPackage(string fileName)
 		{
-			// REVIEW: might not need to call reset?
-			if (Data.Package != null)
-				Data.Reset();
-			partsTabControl.Items.Clear();
+			Dispatcher.Invoke(() =>
+			{
+				// REVIEW: might not need to call reset?
+				if (Data.Package != null)
+					Data.Reset();
+				partsTabControl.Items.Clear();
 
-			Data.Init(fileName);
-			Data.PackageWatcher.Changed += PackageWatcher_Changed;
-			InitializeViews();
+				Data.Init(fileName);
+				Data.PackageWatcher.Changed += PackageWatcher_Changed;
+				InitializeViews();
+			});
 		}
 
 		private void PackageWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -216,12 +219,14 @@ namespace B4.Mope
 		{
 			SaveDirtyParts();
 
+			Data.PackageWatcher.EnableRaisingEvents = false;
 			// create the archive and overwrite the file
 			using (var zipStream = CreateZipArchiveStream())
 			using (var file = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
 			{
 				zipStream.CopyTo(file);
 			}
+			Data.PackageWatcher.EnableRaisingEvents = true;
 		}
 
 		private void CommandBinding_SavePackageAsCanExecute(object sender, CanExecuteRoutedEventArgs e)

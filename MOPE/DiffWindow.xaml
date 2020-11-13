@@ -10,6 +10,7 @@
 	<Window.Resources>
 		<localUI:DiffPackageItemToBitmapSourceConverter x:Key="diffPackageItemToBitmapSourceConverter" />
 		<localUI:DiffPackageItemToNameStringConverter x:Key="diffPackageItemToNameStringConverter" />
+		<localUI:DiffPackageItemToBackgroundConverter x:Key="diffPackageItemToBackgroundConverter" />
 
 		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
 			<MenuItem Header="Break" Click="debugBreak_Click" />
@@ -36,15 +37,20 @@
 				<ColumnDefinition Width="Auto" MinWidth="320" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<TreeView x:Name="treeViewFolders" SelectedItemChanged="treeViewFolders_SelectedItemChanged" Grid.Column="0" MouseRightButtonUp="treeViewFolders_MouseRightButtonUp" KeyUp="treeViewFolders_KeyUp">
+			<TreeView x:Name="treeViewFolders" SelectedItemChanged="treeViewFolders_SelectedItemChanged" Grid.Column="0" MouseRightButtonUp="treeViewFolders_MouseRightButtonUp" KeyUp="treeViewFolders_KeyUp" HorizontalAlignment="Stretch">
 				<TreeView.ItemTemplate>
 					<HierarchicalDataTemplate DataType="{x:Type local:DiffPackageItem}" ItemsSource="{Binding Children}">
-						<StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
-							<Image Source="{Binding Converter={StaticResource diffPackageItemToBitmapSourceConverter}, ConverterParameter=32}" Margin="1"/>
-							<TextBlock Text="{Binding Converter={StaticResource diffPackageItemToNameStringConverter}}" Margin="1" VerticalAlignment="Center" />
-						</StackPanel>
+						<DockPanel Margin="1,1,5,1" Background="{Binding Converter={StaticResource diffPackageItemToBackgroundConverter}}">
+							<Image DockPanel.Dock="Left" Source="{Binding Converter={StaticResource diffPackageItemToBitmapSourceConverter}, ConverterParameter=32}" Margin="2,1,1,1"/>
+							<TextBlock Text="{Binding Converter={StaticResource diffPackageItemToNameStringConverter}}" VerticalAlignment="Center" Margin="1,1,5,1" />
+						</DockPanel>
 					</HierarchicalDataTemplate>
 				</TreeView.ItemTemplate>
+				<TreeView.ItemContainerStyle>
+					<Style TargetType="TreeViewItem">
+						<Setter Property="IsExpanded" Value="True" />
+					</Style>
+				</TreeView.ItemContainerStyle>
 			</TreeView>
 			<GridSplitter Grid.Column="0" Width="5"/>
 			<TabControl Background="LightGray" Grid.Column="1" x:Name="partsTabControl">
