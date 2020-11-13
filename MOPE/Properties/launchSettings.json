@@ -1,8 +1,7 @@
 {
   "profiles": {
     "MOPE": {
-      "commandName": "Project",
-      "commandLineArgs": "C:\\temp\\2.docx"
+      "commandName": "Project"
     }
   }
 }
