@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 
 namespace B4.Mope.Packaging
 {
 	public class Package : IDisposable
 	{
-		public string ZipFile { get; }
+		public string ZipFile { get; private set; }
 		public string TempDirectory { get; }
 		public Dictionary<string, Part> Parts { get; } = new Dictionary<string, Part>();
 		public ContentTypes ContentTypes { get; }
@@ -27,7 +28,6 @@ namespace B4.Mope.Packaging
 				Directory.Delete(TempDirectory, true);
 
 			var tempDir = Directory.CreateDirectory(TempDirectory);
-
 			var entries = ZipContainer.ExtractTo(ZipFile, TempDirectory, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
 			// read [Content_Types].xml
@@ -147,6 +147,16 @@ namespace B4.Mope.Packaging
 			// TODO: uncomment the following line if the finalizer is overridden above.
 			// GC.SuppressFinalize(this);
 		}
+
 		#endregion
+
+		public void SaveAs(string filename)
+		{
+			if (File.Exists(filename))
+				File.Delete(filename);
+
+			System.IO.Compression.ZipFile.CreateFromDirectory(TempDirectory, filename);
+			ZipFile = filename;
+		}
 	}
 }

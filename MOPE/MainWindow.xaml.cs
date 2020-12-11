@@ -200,33 +200,19 @@ namespace B4.Mope
 			}
 		}
 
-		private Stream CreateZipArchiveStream()
-		{
-			var stream = new MemoryStream();
-			using (var zipArchive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
-			{
-				foreach (var part in Data.Package.Parts.Values)
-				{
-					zipArchive.CreateEntryFromFile(part.GetFileInfo().FullName, part.Uri.Replace('/', '\\'));
-				}
-			}
-
-			stream.Seek(0, SeekOrigin.Begin);
-			return stream;
-		}
-
 		private void SavePackageAs(string filename)
 		{
 			SaveDirtyParts();
 
-			Data.PackageWatcher.EnableRaisingEvents = false;
-			// create the archive and overwrite the file
-			using (var zipStream = CreateZipArchiveStream())
-			using (var file = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+			try
 			{
-				zipStream.CopyTo(file);
+				Data.SaveAs(filename);
+				Title = $"MOPE: {Data.Package.ZipFile}";
 			}
-			Data.PackageWatcher.EnableRaisingEvents = true;
+			catch (Exception exc)
+			{
+				MessageBox.Show(this, $"Error saving to {filename}\r\n\r\n{exc}", "File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 
 		private void CommandBinding_SavePackageAsCanExecute(object sender, CanExecuteRoutedEventArgs e)

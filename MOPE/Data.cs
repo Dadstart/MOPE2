@@ -224,6 +224,15 @@ namespace B4.Mope
 			}
 		}
 
+		public void SaveAs(string filename)
+		{
+			PackageWatcher.EnableRaisingEvents = false;
+
+			Package.SaveAs(filename);
+
+			PackageWatcher.EnableRaisingEvents = true;
+		}
+
 		// // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
 		// ~Data()
 		// {
