@@ -5,19 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
-        Title="Overwrite the original file?" Height="114" Width="399"
+        Title="Overwrite the original file?" Height="113" Width="350"
 		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 	<StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-		<Label>Are you sure you want to overwrite the existing package?</Label>
-		<CheckBox x:Name="dontShowThisCheckbox">
+		<Label Padding="0, 10">Are you sure you want to overwrite the existing package?</Label>
+		<StackPanel Orientation="Horizontal" Margin="0, 10, 0, 0">
+			<Button x:Name="buttonYes" Margin="0,0,25,0" Click="buttonYes_Click" Padding="10,0">_Yes</Button>
+			<Button x:Name="buttonNo" Click="buttonNo_Click" Padding="10,0">_No</Button>
+		</StackPanel>
+		<CheckBox x:Name="dontShowThisCheckbox" Margin="0,15,0,0">
 			<CheckBox.LayoutTransform>
-				<ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
+				<ScaleTransform ScaleX="0.50" ScaleY="0.50"/>
 			</CheckBox.LayoutTransform>
 			D_on't show this dialog again
 		</CheckBox>
-		<StackPanel Orientation="Horizontal" Margin="10">
-			<Button x:Name="buttonYes" Margin="0,0,10,0" Click="buttonYes_Click">_Yes</Button>
-			<Button x:Name="buttonNo" Click="buttonNo_Click">_No</Button>
-		</StackPanel>
 	</StackPanel>
 </Window>
