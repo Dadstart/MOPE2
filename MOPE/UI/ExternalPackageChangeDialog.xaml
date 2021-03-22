@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:B4.Mope.UI"
         mc:Ignorable="d"
-        Title="Original file changed" Height="136" Width="424"
+        Title="Original file changed" MinHeight="150" MinWidth="425" Height="Auto" Width="Auto"
 		Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
 	<StackPanel Orientation="Vertical" HorizontalAlignment="Center">
 		<Label>The original package has changed. What do you want to do?</Label>
-		<Button x:Name="buttonIgnore" Margin="5,5" Click="buttonIgnore_Click" Width="369">_Ignore this and all future changes and keep original package open</Button>
-		<Button x:Name="buttonDiscard" Margin="5,5"  Click="buttonDiscard_Click">_Discard any changes and reload package</Button>
-		<Button x:Name="buttonDiff" Margin="5,5"  Click="buttonDiff_Click">Launch new window to compare the changes (experimental)</Button>
+		<Button x:Name="buttonIgnore" Margin="5,5" Padding="10,10" Click="buttonIgnore_Click" Width="369">_Ignore this and all future changes and keep original package open</Button>
+		<Button x:Name="buttonDiscard" Margin="5,5" Padding="10,10"  Click="buttonDiscard_Click">_Discard any changes and reload package</Button>
+		<Button x:Name="buttonDiff" Margin="5,5" Padding="10,10"  Click="buttonDiff_Click">Launch new window to see the changes (experimental)</Button>
 	</StackPanel>
 </Window>

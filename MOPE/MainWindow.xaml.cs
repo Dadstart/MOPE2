@@ -172,18 +172,15 @@ namespace B4.Mope
 			// confirm
 			if (Data.Settings.ConfirmOverwritePackage)
 			{
-				var confirmDialog = new ConfirmOverwritePackageDialog();
-				confirmDialog.ShowDialog();
-
-				if (confirmDialog.Result != MessageBoxResult.Yes)
+				var confirmDialog = new ConfirmOverwritePackageDialog(!Data.Settings.ConfirmOverwritePackage);
+				if (confirmDialog.ShowDialog() != true || !confirmDialog.OvewriteResult)
 					return;
 
-				if (confirmDialog.DontShowDialogAgain)
+				if (confirmDialog.AlwaysOverwritePackage)
 				{
-					Data.Settings.ConfirmOverwritePackage = true;
+					Data.Settings.ConfirmOverwritePackage = false;
 				}
 			}
-
 
 			SavePackageAs(Data.Package.ZipFile);
 			Data.IsPackageDirty = false;
@@ -211,7 +208,15 @@ namespace B4.Mope
 			}
 			catch (Exception exc)
 			{
-				MessageBox.Show(this, $"Error saving to {filename}\r\n\r\n{exc}", "File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				//if (exc.HResult == -2147024864)
+				//{
+					// file is in use
+					//MessageBox.Show(this, $"Cannot overwrite {filename}. File is locked or in use by another application.\r\n\r\nChoose Yes to save as a different filename or cancel to cancel ", MessageBoxButton.)
+				//}
+				//else
+				{
+					MessageBox.Show(this, $"Error saving to {filename}\r\n\r\n{exc}", "File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				}
 			}
 		}
 
@@ -465,6 +470,28 @@ namespace B4.Mope
 		private void debugBreak_Click(object sender, RoutedEventArgs e)
 		{
 			Debugger.Break();
+		}
+
+		private void debugShowConfirmOverwritePackageDialog_Click(object sender, RoutedEventArgs e)
+		{
+			var dialog = new ConfirmOverwritePackageDialog(!Data.Settings.ConfirmOverwritePackage);
+			var dialogResult = dialog.ShowDialog();
+
+			MessageBox.Show($"ShowDialog Result: {dialogResult}\r\n\r\nOverwrite Result:{dialog.OvewriteResult}\r\n\r\nAlwaysOvewrite:{dialog.AlwaysOverwritePackage}");
+		}
+
+		private void debugShowExternalPackageChangeDialog_Click(object sender, RoutedEventArgs e)
+		{
+			var result = ExternalPackageChangeDialog.ShowModal(this);
+
+			MessageBox.Show($"Dialog Result: {result}");
+		}
+
+		private void debugShowOpenDiffWindowDialog_Click(object sender, RoutedEventArgs e)
+		{
+			var result = OpenDiffWindowDialog.ShowModal(this);
+
+			MessageBox.Show($"Dialog Result: {result}");
 		}
 
 		private void Data_EditorDarkModeChanged(object sender, BooleanPropertyChangedEventArgs e)

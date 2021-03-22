@@ -50,6 +50,12 @@
 		<MenuItem x:Key="debugMenu" Header="Debug" HorizontalAlignment="Right" HorizontalContentAlignment="Right">
 			<MenuItem Header="Break" Click="debugBreak_Click" />
 			<MenuItem Header="Inject JS code" Click="debugInjectJsMenuItem_Click" />
+			<Separator />
+			<MenuItem Header="Dialogs">
+				<MenuItem Header="Confirm Overwrite Package" Click="debugShowConfirmOverwritePackageDialog_Click" />
+				<MenuItem Header="External Package Change" Click="debugShowExternalPackageChangeDialog_Click" />
+				<MenuItem Header="Open Diff Window" Click="debugShowOpenDiffWindowDialog_Click" />
+			</MenuItem>
 		</MenuItem>
 
 	</Window.Resources>
