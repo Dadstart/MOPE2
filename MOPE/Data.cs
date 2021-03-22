@@ -230,6 +230,8 @@ namespace B4.Mope
 
 			Package.SaveAs(filename);
 
+			IsPackageDirty = false;
+
 			PackageWatcher.EnableRaisingEvents = true;
 		}
 

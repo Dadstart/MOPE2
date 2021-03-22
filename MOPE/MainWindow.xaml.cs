@@ -208,14 +208,18 @@ namespace B4.Mope
 			}
 			catch (Exception exc)
 			{
-				//if (exc.HResult == -2147024864)
-				//{
-					// file is in use
-					//MessageBox.Show(this, $"Cannot overwrite {filename}. File is locked or in use by another application.\r\n\r\nChoose Yes to save as a different filename or cancel to cancel ", MessageBoxButton.)
-				//}
-				//else
+				var result = MessageBox.Show(this, $"Error saving to {filename}\r\n\t{exc.Message}\r\n\r\nClick Yes to retry, No to save as, or Cancel to cancel", "Error Saving Package", MessageBoxButton.YesNoCancel, MessageBoxImage.Error, MessageBoxResult.Cancel);
+				switch (result)
 				{
-					MessageBox.Show(this, $"Error saving to {filename}\r\n\r\n{exc}", "File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					case MessageBoxResult.Yes:
+						SavePackageAs(filename);
+						break;
+					case MessageBoxResult.No:
+						ExecuteSaveAsWithDialog();
+						break;
+					default:
+						return;
+
 				}
 			}
 		}
@@ -226,6 +230,11 @@ namespace B4.Mope
 		}
 
 		private void CommandBinding_SavePackageAsExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ExecuteSaveAsWithDialog();
+		}
+
+		private void ExecuteSaveAsWithDialog()
 		{
 			SaveFileDialog saveFileDialog = new SaveFileDialog()
 			{
