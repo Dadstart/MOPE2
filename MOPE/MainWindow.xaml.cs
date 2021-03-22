@@ -183,7 +183,6 @@ namespace B4.Mope
 			}
 
 			SavePackageAs(Data.Package.ZipFile);
-			Data.IsPackageDirty = false;
 		}
 
 		private void SaveDirtyParts()

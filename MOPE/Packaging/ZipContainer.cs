@@ -33,10 +33,16 @@ namespace B4.Mope.Packaging
 				Directory.CreateDirectory(outputDir);
 				foreach (var entry in archive.Entries)
 				{
+					// ignore directory entries
+					if (entry.FullName.EndsWith("/"))
+						continue;
+
 					string relativePath = entry.FullName.Replace('/', '\\');
 					string outputFile = Path.Combine(outputDir, relativePath);
 					string directory = outputFile.Substring(0, outputFile.Length - entry.Name.Length - 1);
 					Directory.CreateDirectory(directory);
+
+					// extract the file
 					entry.ExtractToFile(outputFile, overwrite: true);
 				}
 
