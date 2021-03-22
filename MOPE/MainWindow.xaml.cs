@@ -586,5 +586,28 @@ namespace B4.Mope
 					Close();
 			});
 		}
+
+		private void helpAboutMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var result = MessageBox.Show("MOPE (Microsoft Office Package Editor).\r\n\r\nEmail abishop@microsoft.com or visit https://github.com/Dadstart/MOPE2.\r\n\r\nGo to GitHub now?", "About MOPE", MessageBoxButton.YesNo);
+
+			if (result == MessageBoxResult.Yes)
+				LaunchGitHub();
+		}
+
+		private void helpGitHubMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			LaunchGitHub();
+		}
+
+		private void LaunchGitHub()
+		{
+			var processStartInfo = new ProcessStartInfo("https://github.com/Dadstart/MOPE2")
+			{
+				UseShellExecute = true
+			};
+
+			Process.Start(processStartInfo);
+		}
 	}
 }
