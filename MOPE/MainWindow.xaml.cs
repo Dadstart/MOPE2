@@ -192,7 +192,9 @@ namespace B4.Mope
 			{
 				var webView = tabViewItem as EditorWebViewTabItem;
 				if ((webView != null) && (webView.PartModel.IsDirty))
+				{
 					webView.Browser.ExecuteScriptAsync($"postFile()");
+				}
 			}
 		}
 
