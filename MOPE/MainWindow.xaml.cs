@@ -1,5 +1,6 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.UI;
+using B4.Mope.Utility;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
@@ -185,7 +186,7 @@ namespace B4.Mope
 			SavePackageAs(Data.Package.ZipFile);
 		}
 
-		private void SaveDirtyParts()
+		private void SaveDirtyParts(WaitOnPartsNotDirty waitOperation)
 		{
 			// save any dirty parts
 			foreach (var tabViewItem in partsTabControl.Items)
@@ -193,6 +194,8 @@ namespace B4.Mope
 				var webView = tabViewItem as EditorWebViewTabItem;
 				if ((webView != null) && (webView.PartModel.IsDirty))
 				{
+					if (waitOperation != null)
+						waitOperation.AddPart(webView.PartModel);
 					webView.Browser.ExecuteScriptAsync($"postFile()");
 				}
 			}
@@ -200,8 +203,38 @@ namespace B4.Mope
 
 		private void SavePackageAs(string filename)
 		{
-			SaveDirtyParts();
+			WaitOnPartsNotDirty waitOperation = new WaitOnPartsNotDirty();
+			SaveDirtyParts(waitOperation);
 
+
+			if (!waitOperation.HasDirtyParts)
+			{
+				SavePackageAsCore(filename);
+			}
+			else
+			{
+				m_pendingSaveAsPreviousCursor = Cursor;
+				Cursor = Cursors.Wait;
+				m_pendingSaveAsFilename = filename;
+				waitOperation.AllPartsNotDirty += WaitOperation_AllPartsNotDirty;
+			}
+
+		}
+
+		private Cursor m_pendingSaveAsPreviousCursor;
+		private string m_pendingSaveAsFilename;
+
+		private void WaitOperation_AllPartsNotDirty(object sender, EventArgs e)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				Cursor = m_pendingSaveAsPreviousCursor;
+				SavePackageAsCore(m_pendingSaveAsFilename);
+			});
+		}
+
+		private void SavePackageAsCore(string filename)
+		{
 			try
 			{
 				Data.SaveAs(filename);
@@ -213,7 +246,7 @@ namespace B4.Mope
 				switch (result)
 				{
 					case MessageBoxResult.Yes:
-						SavePackageAs(filename);
+						SavePackageAsCore(filename);
 						break;
 					case MessageBoxResult.No:
 						ExecuteSaveAsWithDialog();
