@@ -36,6 +36,10 @@ namespace B4.Mope.Packaging
 			// loop through entries and create parts
 			foreach (var entry in entries)
 			{
+				// ignore directory entries
+				if (entry.FullName.EndsWith("/"))
+					continue;
+
 				var part = new Part(this, entry.Name, entry.FullName, ContentTypes.GetContentType(entry.FullName), entry.Crc32, entry.Length, entry.CompressedLength);
 				Parts.Add(part.Uri.Replace('\\','/'), part);
 			}

@@ -1,5 +1,6 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.UI;
+using B4.Mope.Utility;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
@@ -183,24 +184,57 @@ namespace B4.Mope
 			}
 
 			SavePackageAs(Data.Package.ZipFile);
-			Data.IsPackageDirty = false;
 		}
 
-		private void SaveDirtyParts()
+		private void SaveDirtyParts(WaitOnPartsNotDirty waitOperation)
 		{
 			// save any dirty parts
 			foreach (var tabViewItem in partsTabControl.Items)
 			{
 				var webView = tabViewItem as EditorWebViewTabItem;
 				if ((webView != null) && (webView.PartModel.IsDirty))
+				{
+					if (waitOperation != null)
+						waitOperation.AddPart(webView.PartModel);
 					webView.Browser.ExecuteScriptAsync($"postFile()");
+				}
 			}
 		}
 
 		private void SavePackageAs(string filename)
 		{
-			SaveDirtyParts();
+			WaitOnPartsNotDirty waitOperation = new WaitOnPartsNotDirty();
+			SaveDirtyParts(waitOperation);
 
+
+			if (!waitOperation.HasDirtyParts)
+			{
+				SavePackageAsCore(filename);
+			}
+			else
+			{
+				m_pendingSaveAsPreviousCursor = Cursor;
+				Cursor = Cursors.Wait;
+				m_pendingSaveAsFilename = filename;
+				waitOperation.AllPartsNotDirty += WaitOperation_AllPartsNotDirty;
+			}
+
+		}
+
+		private Cursor m_pendingSaveAsPreviousCursor;
+		private string m_pendingSaveAsFilename;
+
+		private void WaitOperation_AllPartsNotDirty(object sender, EventArgs e)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				Cursor = m_pendingSaveAsPreviousCursor;
+				SavePackageAsCore(m_pendingSaveAsFilename);
+			});
+		}
+
+		private void SavePackageAsCore(string filename)
+		{
 			try
 			{
 				Data.SaveAs(filename);
@@ -208,14 +242,18 @@ namespace B4.Mope
 			}
 			catch (Exception exc)
 			{
-				//if (exc.HResult == -2147024864)
-				//{
-					// file is in use
-					//MessageBox.Show(this, $"Cannot overwrite {filename}. File is locked or in use by another application.\r\n\r\nChoose Yes to save as a different filename or cancel to cancel ", MessageBoxButton.)
-				//}
-				//else
+				var result = MessageBox.Show(this, $"Error saving to {filename}\r\n\t{exc.Message}\r\n\r\nClick Yes to retry, No to save as, or Cancel to cancel", "Error Saving Package", MessageBoxButton.YesNoCancel, MessageBoxImage.Error, MessageBoxResult.Cancel);
+				switch (result)
 				{
-					MessageBox.Show(this, $"Error saving to {filename}\r\n\r\n{exc}", "File Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					case MessageBoxResult.Yes:
+						SavePackageAsCore(filename);
+						break;
+					case MessageBoxResult.No:
+						ExecuteSaveAsWithDialog();
+						break;
+					default:
+						return;
+
 				}
 			}
 		}
@@ -226,6 +264,11 @@ namespace B4.Mope
 		}
 
 		private void CommandBinding_SavePackageAsExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ExecuteSaveAsWithDialog();
+		}
+
+		private void ExecuteSaveAsWithDialog()
 		{
 			SaveFileDialog saveFileDialog = new SaveFileDialog()
 			{
@@ -585,6 +628,29 @@ namespace B4.Mope
 				if (Data?.Package == null)
 					Close();
 			});
+		}
+
+		private void helpAboutMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var result = MessageBox.Show("MOPE (Microsoft Office Package Editor).\r\n\r\nEmail abishop@microsoft.com or visit https://github.com/Dadstart/MOPE2.\r\n\r\nGo to GitHub now?", "About MOPE", MessageBoxButton.YesNo);
+
+			if (result == MessageBoxResult.Yes)
+				LaunchGitHub();
+		}
+
+		private void helpGitHubMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			LaunchGitHub();
+		}
+
+		private void LaunchGitHub()
+		{
+			var processStartInfo = new ProcessStartInfo("https://github.com/Dadstart/MOPE2")
+			{
+				UseShellExecute = true
+			};
+
+			Process.Start(processStartInfo);
 		}
 	}
 }

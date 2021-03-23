@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
@@ -16,7 +17,7 @@ namespace B4.Mope
 		public Data Data { get; }
 		public DiffData DiffData { get; }
 		private bool m_stopped;
-		//Thread m_listeningThread;
+		Thread m_listeningThread;
 
 		private Settings Settings
 		{
@@ -60,10 +61,10 @@ namespace B4.Mope
 
 		public void ListenOnThread()
 		{
-			//m_listeningThread = new Thread(Listen);
-			//m_listeningThread.IsBackground = true;
-			//m_listeningThread.Start();
-			Listen();
+			m_listeningThread = new Thread(Listen);
+			m_listeningThread.IsBackground = true;
+			m_listeningThread.Start();
+			//Listen();
 		}
 
 		private static string GetContentType(string url)

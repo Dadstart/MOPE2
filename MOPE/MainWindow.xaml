@@ -104,9 +104,10 @@
 				<MenuItem Header="_Options" Icon="⛭"/>
 			</MenuItem>
 			<MenuItem Header="_Help">
-				<MenuItem Header="_Feedback" Icon="📣"/>
-				<MenuItem Header="_About" Icon="❔"/>
+				<MenuItem Header="_GitHub" Icon=". /" Click="helpGitHubMenuItem_Click" />
+				<MenuItem Header="_GitHub" Icon="❔" Click="helpAboutMenuItem_Click" />
 			</MenuItem>
+
 		</Menu>
 		<Grid>
 			<Grid.ColumnDefinitions>
