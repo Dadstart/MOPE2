@@ -122,10 +122,6 @@ namespace B4.Mope
 					var file = Data.Package.ZipFile;
 					OpenPackage(file);
 					break;
-				case ExternalPackageChangeDialog.PackageChangeDialogResult.DiffChanges:
-					Data.BackupCopyOwned = false;
-					ShowDiffWindow(Data.BackupCopy, right: Data.Package.ZipFile);
-					break;
 			}
 		}
 
@@ -530,13 +526,6 @@ namespace B4.Mope
 			MessageBox.Show($"Dialog Result: {result}");
 		}
 
-		private void debugShowOpenDiffWindowDialog_Click(object sender, RoutedEventArgs e)
-		{
-			var result = OpenDiffWindowDialog.ShowModal(this);
-
-			MessageBox.Show($"Dialog Result: {result}");
-		}
-
 		private void Data_EditorDarkModeChanged(object sender, BooleanPropertyChangedEventArgs e)
 		{
 			if (partsTabControl == null)
@@ -580,54 +569,6 @@ namespace B4.Mope
 		private void bigOpenButton_Click(object sender, RoutedEventArgs e)
 		{
 			CommandBinding_OpenExecuted(this, e: null);
-		}
-
-
-		private void DiffMenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			string left = null;
-			string right = null;
-
-			// if a package is open show the dialog prompting how to use current package
-			if (Data?.Package != null)
-			{
-				var result = OpenDiffWindowDialog.ShowModal(this);
-				switch (result)
-				{
-					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Left:
-						left = Data.Package.ZipFile;
-						break;
-					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Right:
-						right = Data.Package.ZipFile;
-						break;
-					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Neither:
-						//no-op
-						break;
-					case OpenDiffWindowDialog.OpenDiffWindowDialogResult.Unknown:
-						// canceled
-						return;
-				}
-			}
-
-			ShowDiffWindow(left, right);
-		}
-
-		private void ShowDiffWindow(string left, string right)
-		{
-			Dispatcher.Invoke(() =>
-			{
-				var diffWindow = new DiffWindow(left, right)
-				{
-					ShowActivated = true,
-					ShowInTaskbar = true,
-				};
-
-				diffWindow.Show();
-
-				// if no package is open close current window
-				if (Data?.Package == null)
-					Close();
-			});
 		}
 
 		private void helpAboutMenuItem_Click(object sender, RoutedEventArgs e)
