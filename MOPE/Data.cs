@@ -1,5 +1,6 @@
 ﻿using B4.Mope.Packaging;
 using B4.Mope.Shell;
+using B4.Mope.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,9 +30,6 @@ namespace B4.Mope
 		public string BackupCopy { get; private set; }
 		public bool BackupCopyOwned { get; set; }
 
-		private Random m_random = new Random();
-
-
 		public bool IsPackageDirty { get; internal set; }
 
 		public bool IgnoringChanges { get; set; }
@@ -58,61 +56,22 @@ namespace B4.Mope
 			// leave Shell related fields the same to use as cache for future opens
 		}
 
-		private string GetRootTempDir()
-		{
-			var tempDir = Path.Combine(Path.GetTempPath(), "MOPE2");
-			if (!Directory.Exists(tempDir))
-				Directory.CreateDirectory(tempDir);
-
-			return tempDir;
-		}
-
-		/// <summary>
-		/// Generate a unique name in the temp dir that can be used as dir or file name
-		/// </summary>
-		private string GetTempName(out string path)
-		{
-			var rootTempDir = GetRootTempDir();
-			string name;
-
-			do
-			{
-				var rand = m_random.Next(0xFFFFFFF);
-				name = rand.ToString("X7");
-
-				path = Path.Combine(rootTempDir, name);
-			} while (Directory.Exists(path) || File.Exists(path));
-
-			return name;
-		}
-
-		/// <summary>
-		/// Get a temp directory
-		/// </summary>
-		private string GetTempDir()
-		{
-			GetTempName(out string path);
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			return path;
-		}
-
 		private void CreateBackupCopy()
 		{
 			var original = new FileInfo(Package.ZipFile);
-			var tempName = GetTempName(out string tempFullPath);
+			var tempName = Temp.GetTempName("zip", out string tempFullPath);
 
 			int extIndex = original.Name.LastIndexOf('.');
 			var baseName = original.Name.Substring(0, extIndex);
 			
-			BackupCopy = Path.Combine(GetRootTempDir(), $"{baseName} ({tempName}){original.Extension}");
+			BackupCopy = Path.Combine(Temp.GetRootTempDir(), $"{baseName} ({tempName}){original.Extension}");
 			File.Copy(Package.ZipFile, BackupCopy);
 			BackupCopyOwned = true;
 		}
 
 		public void Init(string path)
 		{
-			TempDirectory = GetTempDir();
+			TempDirectory = Temp.GetTempDir();
 			Package = new Package(path, TempDirectory);
 
 			// create a copy for possible diffing later

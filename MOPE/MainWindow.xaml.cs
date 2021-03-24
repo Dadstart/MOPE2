@@ -23,8 +23,9 @@ namespace B4.Mope
 		public Data Data { get; }
 
 		public static IconManager IconManager { get; private set; } //TODO: remove static
+		public WebViewHost WebViewHost { get; }
 
-		public MainWindow(string file)
+		public MainWindow(string file, WebViewHost webViewHost)
 		{
 			InitializeComponent();
 
@@ -32,6 +33,7 @@ namespace B4.Mope
 			IconManager = new IconManager();
 
 			Unloaded += MainWindow_Unloaded;
+			WebViewHost = webViewHost ?? throw new ArgumentNullException(nameof(webViewHost));
 			Data = new Data();
 			DataContext = Data;
 
@@ -49,6 +51,7 @@ namespace B4.Mope
 		private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
 		{
 			Data?.Reset();
+			Data.Dispose();
 		}
 
 		private string GetEmbeddedResourceAsText(string folder, string name)
@@ -341,7 +344,7 @@ namespace B4.Mope
 			{
 				if (part.CanViewInBrowser())
 				{
-					var webItem = new EditorWebViewTabItem(Data, model);
+					var webItem = new EditorWebViewTabItem(Data, WebViewHost, model);
 					partsTabControl.Items.Add(webItem);
 					partsTabControl.SelectedItem = webItem;
 				}
