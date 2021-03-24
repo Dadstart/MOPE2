@@ -54,7 +54,6 @@
 			<MenuItem Header="Dialogs">
 				<MenuItem Header="Confirm Overwrite Package" Click="debugShowConfirmOverwritePackageDialog_Click" />
 				<MenuItem Header="External Package Change" Click="debugShowExternalPackageChangeDialog_Click" />
-				<MenuItem Header="Open Diff Window" Click="debugShowOpenDiffWindowDialog_Click" />
 			</MenuItem>
 		</MenuItem>
 
@@ -81,8 +80,6 @@
 				<Separator />
 				<MenuItem Header="Save _Package" Icon="💾" InputGestureText="Ctrl+Shift+S" Command="localUI:CustomCommands.SavePackage" />
 				<MenuItem Header="Save Package As" Icon="💾" InputGestureText="Ctrl+Shift+F12" Command="localUI:CustomCommands.SavePackageAs" />
-				<Separator />
-				<MenuItem Header="_Diff View" Icon="2️⃣" Click="DiffMenuItem_Click" />
 				<Separator />
 				<MenuItem Header="E_xit" Click="Exit_Click" />
 				<Separator />

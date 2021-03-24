@@ -23,7 +23,6 @@ namespace B4.Mope.UI
 			Unknown,
 			IgnoreChanges,
 			DiscardAndReload,
-			DiffChanges,
 		}
 
 		public PackageChangeDialogResult Result { get; private set; } = PackageChangeDialogResult.Unknown;
@@ -42,12 +41,6 @@ namespace B4.Mope.UI
 		private void buttonDiscard_Click(object sender, RoutedEventArgs e)
 		{
 			Result = PackageChangeDialogResult.DiscardAndReload;
-			Close();
-		}
-
-		private void buttonDiff_Click(object sender, RoutedEventArgs e)
-		{
-			Result = PackageChangeDialogResult.DiffChanges;
 			Close();
 		}
 
