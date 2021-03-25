@@ -295,6 +295,7 @@ namespace B4.Mope
 		{
 			base.OnClosed(e);
 			Data?.Package?.Close();
+			Data.Dispose();
 		}
 
 		private void InitializeViews()

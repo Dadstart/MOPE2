@@ -199,6 +199,10 @@ namespace B4.Mope
 				if (Debugger.IsAttached)
 					Debugger.Break();
 			}
+			catch (ObjectDisposedException)
+			{
+				// swallow; this can happen on shutdown
+			}
 		}
 
 		private void ReadPartFromRequest(HttpListenerContext context, Uri url)

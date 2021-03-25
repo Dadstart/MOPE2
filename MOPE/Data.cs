@@ -53,6 +53,7 @@ namespace B4.Mope
 			PackageWatcher?.Dispose();
 			PackageWatcher = null;
 			IgnoringChanges = false;
+			DeleteTempFiles();
 			// leave Shell related fields the same to use as cache for future opens
 		}
 
@@ -162,24 +163,29 @@ namespace B4.Mope
 			{
 				if (disposing)
 				{
-					// TODO: dispose managed state (managed objects)
-					if (!string.IsNullOrEmpty(TempDirectory) && Directory.Exists(TempDirectory))
-					{
-						Directory.Delete(TempDirectory, recursive: true);
-						TempDirectory = null;
-					}
-
-					if (BackupCopyOwned && File.Exists(BackupCopy))
-					{
-						BackupCopyOwned = false;
-						File.Delete(BackupCopy);
-						BackupCopy = null;
-					}
+					// dispose managed state (managed objects)
+					Package?.Close();
+					DeleteTempFiles();
+					WebHost.Dispose();
 				}
 
-				// TODO: free unmanaged resources (unmanaged objects) and override finalizer
-				// TODO: set large fields to null
 				m_isDisposed = true;
+			}
+		}
+
+		private void DeleteTempFiles()
+		{
+			if (!string.IsNullOrEmpty(TempDirectory) && Directory.Exists(TempDirectory))
+			{
+				Directory.Delete(TempDirectory, recursive: true);
+				TempDirectory = null;
+			}
+
+			if (BackupCopyOwned && File.Exists(BackupCopy))
+			{
+				BackupCopyOwned = false;
+				File.Delete(BackupCopy);
+				BackupCopy = null;
 			}
 		}
 
