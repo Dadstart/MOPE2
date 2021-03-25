@@ -1,4 +1,5 @@
 ﻿using B4.Mope.Packaging;
+using B4.Mope.Utility;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -230,9 +231,9 @@ namespace B4.Mope
 		{
 			if (part != null)
 			{
-				context.Response.ContentType = part.ContentType;
 				using (var partStream = part.GetFileInfo().OpenRead())
 				{
+					context.Response.ContentType = part.ContentType;
 					if (Settings.EditorFormatXmlOnLoad && ContentTypes.IsXmlType(part.ContentType))
 					{
 						var writerSettings = new XmlWriterSettings()
@@ -247,8 +248,14 @@ namespace B4.Mope
 							elt.Save(xmlWriter);
 						}
 					}
+					else if ((part.ContentType == "image/x-emf") || (part.ContentType == "image/x-wmf"))
+					{
+						context.Response.ContentType = "image/png";
+						MetafileConverter.CopyToImage(partStream, context.Response.OutputStream, System.Drawing.Imaging.ImageFormat.Png);
+					}
 					else
 					{
+						context.Response.ContentType = part.ContentType;
 						partStream.CopyTo(context.Response.OutputStream);
 					}
 
