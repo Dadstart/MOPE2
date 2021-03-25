@@ -28,6 +28,8 @@ namespace B4.Mope.Packaging
 			"image/png",
 			"image/svg",
 			"image/webp",
+			"image/x-emf",
+			"image/x-wmf",
 		};
 
 		/// <summary>
