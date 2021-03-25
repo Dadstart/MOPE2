@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -21,6 +22,8 @@ namespace B4.Mope.UI
 	/// </summary>
 	public partial class BinaryViewTabItem : TabItem
 	{
+		private Stream m_stream;
+
 		public BinaryViewTabItem(Data data, PartModel partModel)
 		{
 			InitializeComponent();
@@ -34,7 +37,16 @@ namespace B4.Mope.UI
 			var header = ((CloseButtonTabHeader)Header);
 			header.Text = $"{PartModel.Part.Uri}";
 			header.ViewType = "🧩";
-			Editor.FileName = PartModel.Part.GetFileInfo().FullName;
+			using (var fileStream = PartModel.Part.GetFileInfo().OpenRead())
+			{
+				m_stream?.Dispose();
+				m_stream = new MemoryStream();
+				fileStream.CopyTo(m_stream);
+				m_stream.Seek(0, SeekOrigin.Begin);
+
+			}
+			Editor.Stream = m_stream;
+			//Editor.FileName = PartModel.Part.GetFileInfo().FullName;
 		}
 
 		public Data Data { get; }
