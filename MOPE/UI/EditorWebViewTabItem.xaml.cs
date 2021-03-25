@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using B4.Mope.Packaging;
+using B4.Mope.Utility;
 using Microsoft.Web.WebView2.Wpf;
 
 namespace B4.Mope.UI
@@ -23,12 +24,16 @@ namespace B4.Mope.UI
 	public partial class EditorWebViewTabItem : TabItem
 	{
 		public Data Data { get; }
+		public WebViewHost WebViewHost { get; }
 
-		public EditorWebViewTabItem(Data data, PartModel model)
+		public EditorWebViewTabItem(Data data, WebViewHost webViewHost, PartModel model)
 		{
-			InitializeComponent();
 			Data = data ?? throw new ArgumentNullException(nameof(data));
+			WebViewHost = webViewHost ?? throw new ArgumentNullException(nameof(webViewHost));
 			PartModel = model ?? throw new ArgumentNullException(nameof(model));
+
+			InitializeComponent();
+			Browser.EnsureCoreWebView2Async(WebViewHost.Environment);
 			UpdatePartView();
 		}
 
