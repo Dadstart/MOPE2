@@ -33,7 +33,7 @@ namespace B4.Mope
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
 			m_webViewHost = new WebViewHost();
-			string file = GetArgOrDefault(e.Args, 1);
+			string file = GetArgOrDefault(e.Args, 0);
 			(new MainWindow(file, m_webViewHost)).Show();
 		}
 	}
