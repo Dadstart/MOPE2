@@ -150,7 +150,7 @@ namespace B4.Mope.Packaging
 			if (Defaults.ContainsKey(ext))
 				return Defaults[ext];
 
-			throw new Exception($"No known content type for {ext}");
+			return "unknown";
 		}
 
 		public static bool IsXmlType(string contentType)
